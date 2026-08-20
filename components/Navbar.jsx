@@ -68,7 +68,7 @@ export default function Navbar() {
           {/* CTA Buttons */}
           <div className="hidden md:flex items-center gap-4">
             <a
-              href="public\Tanishq_Tiwari_Frontend_Developer_Resume.pdf"
+              href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs font-semibold px-4 py-2 rounded-lg border border-surfaceBorder bg-surface text-textMain hover:border-accentPrimary hover:text-accentPrimary transition-all duration-200 flex items-center gap-1.5"
@@ -105,7 +105,7 @@ export default function Navbar() {
           ))}
           <div className="pt-2 border-t border-surfaceBorder">
             <a
-              href="https://realtanishqtiwari.in/resume.pdf"
+              href="/resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex w-full justify-center items-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-accentPrimary text-background hover:bg-sky-400 transition-colors"

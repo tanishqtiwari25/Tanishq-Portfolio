@@ -66,7 +66,7 @@ export default function Hero() {
               </a>
 
               <a
-                href="public\Tanishq_Tiwari_Frontend_Developer_Resume.pdf"
+                href="/resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 download="public\Tanishq_Tiwari_Frontend_Developer_Resume.pdf"
