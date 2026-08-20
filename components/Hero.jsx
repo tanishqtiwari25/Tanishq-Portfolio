@@ -66,9 +66,10 @@ export default function Hero() {
               </a>
 
               <a
-                href="https://realtanishqtiwari.in/resume.pdf"
+                href="public\Tanishq_Tiwari_Frontend_Developer_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
+                download="public\Tanishq_Tiwari_Frontend_Developer_Resume.pdf"
                 className="px-6 py-3.5 rounded-xl bg-surface border border-surfaceBorder text-textMain font-medium text-sm hover:border-accentPrimary hover:text-accentPrimary transition-all flex items-center gap-2"
               >
                 <Download className="w-4 h-4" />
