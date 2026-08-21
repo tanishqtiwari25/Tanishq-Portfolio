@@ -62,7 +62,7 @@ export default function About() {
 
               <div className="pt-4 border-t border-surfaceBorder/60 grid grid-cols-2 gap-4 text-center">
                 <div className="p-3 rounded-xl bg-background/50 border border-surfaceBorder">
-                  <span className="block text-xl font-bold text-textMain">6+</span>
+                  <span className="block text-xl font-bold text-textMain">15+</span>
                   <span className="text-xs text-textMuted">Practical Projects</span>
                 </div>
                 <div className="p-3 rounded-xl bg-background/50 border border-surfaceBorder">
