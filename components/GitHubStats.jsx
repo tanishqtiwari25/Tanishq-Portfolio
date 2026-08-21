@@ -23,7 +23,7 @@ export default function GitHubStats() {
 
             <div className="lg:col-span-5 flex flex-col sm:flex-row gap-4 justify-end">
               <a
-                href="https://github.com/your-username" // Replace with real GitHub link
+                href="https://github.com/tanishqtiwari25" // Replace with real GitHub link
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-6 py-3.5 rounded-xl bg-surface border border-surfaceBorder text-textMain text-xs font-bold hover:border-accentPrimary transition-all flex items-center justify-center gap-2 group"

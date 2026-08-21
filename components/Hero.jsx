@@ -89,7 +89,7 @@ export default function Hero() {
               <span className="text-xs uppercase tracking-wider text-textMuted font-mono">Connect:</span>
               <div className="flex items-center gap-3">
                 <a
-                  href="https://github.com/tanishqtiwati25" // Replace with real profile link
+                  href="https://github.com/tanishqtiwari25" // Replace with real profile link
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-lg bg-surface border border-surfaceBorder text-textMuted hover:text-accentPrimary hover:border-accentPrimary/40 transition-all"

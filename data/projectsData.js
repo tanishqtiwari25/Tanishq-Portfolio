@@ -28,7 +28,7 @@ export const projectsData = [
     category: "React / Frontend",
     featured: true,
     technologies: ["React.js", "JavaScript (ES6+)", "Tailwind CSS", "REST API", "Context API"],
-    githubUrl: "https://github.com/your-username/react-ecommerce",
+    githubUrl: "https://github.com/tanishqtiwari25/E-COMMERCE-website",
     liveUrl: "https://pickk.realtanishqtiwari.in",
     keyFeatures: [
       "Dynamic catalog fetching via external REST API.",
@@ -70,7 +70,7 @@ export const projectsData = [
     category: "Frontend / Game Dev",
     featured: false,
     technologies: ["HTML5", "CSS3", "JavaScript (ES6+)", "Phaser.js"],
-    githubUrl: "https://github.com/your-username/2d-browser-game",
+    githubUrl: "https://github.com/tanishqtiwari25/Bird-Game",
     liveUrl: "https://bird.realtanishqtiwari.in",
     keyFeatures: [
       "Sprite movement physics, jump velocity, and ground collision logic.",
