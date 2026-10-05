@@ -27,7 +27,7 @@ export default function Skills() {
             Skills &amp; Technology Stack
           </h2>
           <p className="text-textMuted text-sm sm:text-base">
-            Categorized skills highlighting hands-on development expertise. No arbitrary percentage bars—just practical capabilities.
+            The tools I use to turn an idea into a responsive, functional web experience.
           </p>
           <div className="w-12 h-1 bg-accentPrimary mx-auto rounded-full" />
         </div>

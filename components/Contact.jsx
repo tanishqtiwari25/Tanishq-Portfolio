@@ -1,16 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { validateContact } from '@/lib/contact-validation.mjs';
 import { Mail, Phone, Linkedin, MapPin, Send, CheckCircle2 } from 'lucide-react';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', website: '', message: '' });
 
-  const handleSubmit = (e) => {
+  const lock = useRef(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Connect your Email API (e.g. Resend, EmailJS, Formspree) here.
-    setSubmitted(true);
+    if(lock.current)return;
+    if(!validateContact(formData)){setError('Please enter a name (2–100 characters), valid email, and message (10–5,000 characters).');return;}
+    lock.current=true;setSending(true);setError('');
+    try { const response=await fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(formData),signal:AbortSignal.timeout(15000)});const result=await response.json();if(!response.ok || !result.ok)throw new Error('send');setSubmitted(true);setFormData({name:'',email:'',message:'',website:''}); }
+    catch {setError('Something went wrong. Please try again.');}
+    finally {lock.current=false;setSending(false);}
   };
 
   return (
@@ -98,9 +106,9 @@ export default function Contact() {
           <div className="lg:col-span-7">
             <div className="p-8 rounded-2xl bg-surface border border-surfaceBorder shadow-xl">
               {submitted ? (
-                <div className="py-12 text-center space-y-4">
-                  <CheckCircle2 className="w-12 h-12 text-emerald-400 mx-auto" />
-                  <h3 className="text-xl font-bold text-textMain">Message Sent!</h3>
+                <div className="py-12 text-center space-y-4 form-success" role="status">
+                  <CheckCircle2 className="w-12 h-12 text-textMuted mx-auto" />
+                  <h3 className="text-xl font-bold text-textMain">Message sent successfully.</h3>
                   <p className="text-xs text-textMuted max-w-sm mx-auto">
                     Thank you for reaching out. I will get back to you shortly.
                   </p>
@@ -120,7 +128,7 @@ export default function Contact() {
                       <input
                         suppressHydrationWarning
                         type="text"
-                        id="name"
+                        id="name" name="name" autoComplete="name" minLength={2} maxLength={100}
                         required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -134,7 +142,7 @@ export default function Contact() {
                       <input
                         suppressHydrationWarning
                         type="email"
-                        id="email"
+                        id="email" name="email" autoComplete="email" maxLength={254}
                         required
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -144,25 +152,13 @@ export default function Contact() {
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label htmlFor="subject" className="block text-xs font-medium text-textMain">Subject</label>
-                    <input
-                      suppressHydrationWarning
-                      type="text"
-                      id="subject"
-                      required
-                      value={formData.subject}
-                      onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                      placeholder="Job Opportunity / Project Inquiry"
-                      className="w-full px-4 py-2.5 rounded-xl bg-background border border-surfaceBorder text-textMain text-xs focus:border-accentPrimary focus:outline-none transition-colors"
-                    />
-                  </div>
+                  <div className="honeypot" aria-hidden="true"><label htmlFor="website">Website</label><input id="website" name="website" tabIndex={-1} autoComplete="off" value={formData.website} onChange={e=>setFormData({...formData,website:e.target.value})}/></div>
 
                   <div className="space-y-1.5">
                     <label htmlFor="message" className="block text-xs font-medium text-textMain">Message</label>
                     <textarea
                       suppressHydrationWarning
-                      id="message"
+                      id="message" name="message" minLength={10} maxLength={5000}
                       rows={5}
                       required
                       value={formData.message}
@@ -173,17 +169,18 @@ export default function Contact() {
                   </div>
 
                   <button
-                    type="submit"
-                    className="w-full py-3.5 rounded-xl bg-accentPrimary text-background text-xs font-bold hover:bg-sky-400 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-sky-500/10"
+                    type="submit" disabled={sending} aria-busy={sending}
+                    className="w-full py-3.5 rounded-xl bg-accentPrimary text-background text-xs font-bold hover:bg-accentSecondary transition-colors flex items-center justify-center gap-2 shadow-lg shadow-sky-500/10"
                   >
                     <Send className="w-4 h-4" />
-                    Send Message
+                    {sending ? "Sending..." : "Send Message"}
                   </button>
 
                   <p className="text-[10px] text-center text-textMuted pt-1">
-                    * Note: Connected to email service endpoint.
+                    Your email is used only to reply to your message.
                   </p>
 
+                <p role="status" aria-live="polite" className="form-status">{error}</p>
                 </form>
               )}
             </div>

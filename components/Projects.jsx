@@ -18,20 +18,21 @@ export default function Projects() {
             // Featured Work
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-textMain tracking-tight">
-            Production-Grade &amp; Practical Projects
+            Selected work. Real applications.
           </h2>
           <p className="text-textMuted text-sm sm:text-base">
-            Detailed breakdown of real applications built with React, Node.js, and modern CSS frameworks. Click any card for the engineering case study.
+            From automated data collection to intuitive product interfaces. Explore the work, the functionality and the thinking behind it.
           </p>
           <div className="w-12 h-1 bg-accentPrimary mx-auto rounded-full" />
         </div>
 
         {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projectsData.map((project) => (
+        <div className="project-list">
+          {projectsData.map((project, index) => (
             <ProjectCard
               key={project.id}
               project={project}
+              index={index}
               onOpenModal={(p) => setSelectedProject(p)}
             />
           ))}

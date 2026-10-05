@@ -8,21 +8,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: '#090D16',
-        surface: '#111726',
-        surfaceBorder: '#1E293B',
-        accentPrimary: '#38BDF8', // Cyan/Sky
-        accentSecondary: '#6366F1', // Indigo
-        textMain: '#F8FAFC',
-        textMuted: '#94A3B8',
-      },
+background: 'rgb(var(--color-background) / <alpha-value>)', surface: 'rgb(var(--color-surface) / <alpha-value>)',
+surfaceBorder: 'rgb(var(--color-border) / <alpha-value>)', accentPrimary: 'rgb(var(--color-primary) / <alpha-value>)',
+accentSecondary: 'rgb(var(--color-secondary) / <alpha-value>)', textMain: 'rgb(var(--color-text) / <alpha-value>)', textMuted: 'rgb(var(--color-text-muted) / <alpha-value>)'
+},
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       backgroundImage: {
-        'hero-gradient': 'radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.08) 0%, rgba(17, 23, 38, 0) 70%)',
-        'card-glow': 'radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(56, 189, 248, 0.12) 0%, transparent 80%)',
+        'hero-gradient': 'var(--gradient-hero)',
+        'card-glow': 'var(--gradient-card)',
       },
     },
   },

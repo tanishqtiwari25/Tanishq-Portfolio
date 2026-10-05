@@ -69,7 +69,7 @@ export default function Experience() {
 
                   <ul className="space-y-1.5 pt-1">
                     {m.bullets.map((b, bIdx) => (
-                      <li key={bIdx} className="flex items-start gap-2 text-xs text-slate-300">
+                      <li key={bIdx} className="flex items-start gap-2 text-xs text-textMuted">
                         <CheckCircle2 className="w-3.5 h-3.5 text-accentPrimary shrink-0 mt-0.5" />
                         <span>{b}</span>
                       </li>

@@ -1,4 +1,4 @@
-export const projectsData = [
+const originalProjects = [
   {
     id: "data-scraper-system",
     title: "Data Scraper & Lead Collection System",
@@ -43,27 +43,6 @@ export const projectsData = [
     whatILearned: "Mastered React state hooks (`useState`, `useContext`, `useReducer`), component re-render optimizations, and API error state management."
   },
   {
-    id: "business-crm-system",
-    title: "Business CRM & Lead Pipeline System",
-    shortDescription: "Comprehensive client relationship management interface to track sales pipelines, lead conversions, follow-up timelines, and revenue analytics.",
-    category: "Full Stack Web App",
-    featured: true,
-    technologies: ["React.js", "JavaScript", "Node.js", "Express.js", "MongoDB", "Tailwind CSS"],
-    githubUrl: "https://github.com/your-username/business-crm",
-    liveUrl: "",
-    keyFeatures: [
-      "Kanban-style sales pipeline visualizer for lead tracking.",
-      "Interactive data tables with dynamic sorting and pagination.",
-      "CRUD operations for client accounts, meeting notes, and task lists.",
-      "Secure REST API backend connecting React frontend to MongoDB database."
-    ],
-    problem: "Small sales teams lack intuitive visual dashboards to track leads without paying heavy subscription fees.",
-    solution: "Developed an intuitive dashboard featuring interactive UI elements, clean task-status indicators, and instant REST API data syncing.",
-    myRole: "Full Stack Developer — Created the dashboard React wireframes, responsive state logic, and API routes.",
-    challenges: "Designing intuitive multi-step form structures for adding customer details seamlessly.",
-    whatILearned: "Understood full MERN stack data flow, CORS policies, REST endpoint organization, and dynamic component styling."
-  },
-  {
     id: "2d-browser-game",
     title: "Interactive 2D Arcade Game",
     shortDescription: "Canvas-based interactive browser game built with Phaser.js featuring custom player physics, collision detection, and high-score logic.",
@@ -83,47 +62,13 @@ export const projectsData = [
     myRole: "Frontend Game Developer — Programmed game state machines, collision callbacks, and UI score overlays.",
     challenges: "Ensuring consistent movement speeds across devices with varying monitor refresh rates.",
     whatILearned: "Gained hands-on proficiency with object-oriented programming in JS, delta-time math, dynamic audio trigger loops, and HTML5 Canvas API."
-  },
-  {
-    id: "ai-chatbot-interface",
-    title: "Conversational AI Chatbot Interface",
-    shortDescription: "Sleek glassmorphism AI assistant UI with stream-response parsing, code syntax highlighting, and dynamic context retention.",
-    category: "Generative AI / Frontend",
-    featured: false,
-    technologies: ["HTML5", "CSS3", "JavaScript", "REST API", "Generative AI"],
-    githubUrl: "https://github.com/your-username/ai-chatbot-ui",
-    liveUrl: "https://realtanishqtiwari.in/ai-chatbot",
-    keyFeatures: [
-      "Conversational chat UI with auto-scrolling message feeds.",
-      "Streaming API response rendering with realistic typing indicators.",
-      "Prompts preview panels and Quick-Prompt suggestion chips.",
-      "Dark-themed glassmorphism aesthetic optimized for high contrast."
-    ],
-    problem: "Standard text interfaces for AI tools often lack proper UI cues for streaming responses and code formatting.",
-    solution: "Designed a specialized conversational UI component that handles loading states, error boundaries, and formatted responses gracefully.",
-    myRole: "Frontend Engineer — Designed the UI components, REST API integration, and user interaction states.",
-    challenges: "Handling rapid user input submission during active API request streams.",
-    whatILearned: "Practical implementation of API fetch streams, prompt engineering UI flows, and asynchronous error boundaries."
-  },
-  {
-    id: "agency-business-websites",
-    title: "High-Converting Business & Agency Portals",
-    shortDescription: "Modern, SEO-optimized corporate web designs built for conversion, fast Core Web Vitals, and responsive service presentations.",
-    category: "Next.js / Agency",
-    featured: false,
-    technologies: ["Next.js", "React.js", "JavaScript", "Tailwind CSS"],
-    githubUrl: "https://github.com/your-username/agency-websites",
-    liveUrl: "https://realtanishqtiwari.in",
-    keyFeatures: [
-      "Server-Side Rendering (SSR) for fast initial load performance.",
-      "Custom UI sections for services, pricing plans, and client testimonials.",
-      "Clean metadata architecture yielding perfect Lighthouse accessibility scores.",
-      "Mobile-first responsive drawer navigation and seamless micro-interactions."
-    ],
-    problem: "Local businesses and boutique service providers struggle with slow, template-heavy site structures that hurt search rankings.",
-    solution: "Architected modern Next.js static and dynamic web portals utilizing Tailwind CSS for ultra-lightweight asset bundles.",
-    myRole: "Frontend Architect — Built reusable component design systems and layout wrappers.",
-    challenges: "Achieving top-tier Core Web Vitals while maintaining high visual appeal.",
-    whatILearned: "Deepened Next.js App Router knowledge, dynamic image optimization, and semantic SEO tag construction."
   }
+];
+const clean = p => ({...p, githubUrl: p.githubUrl?.includes('your-username') ? '' : p.githubUrl});
+export const projectsData = [
+{...clean(originalProjects[0]), title: 'Data Scraper', subtitle: 'Data Scraper & Lead Collection System', visual: 'scraper'},
+{ id: 'montra-money-manager', title: 'Montra Money Manager', category: 'Financial software', shortDescription: 'Montra Money Manager is a financial software designed to help users track and manage their money, including income and expenses.', technologies: [], keyFeatures: ['Income tracking', 'Expense tracking', 'Money management'], visual: 'montra' },
+{ id: 'truly-grow', title: 'Truly Grow', category: 'Business / Digital growth', shortDescription: 'A modern business growth website offering web development, digital marketing, SEO and paid advertising services.', technologies: [], keyFeatures: ['Web Development', 'Digital Marketing', 'SEO', 'Paid Ads'], visual: 'grow' },
+{...clean(originalProjects[1]), title: 'E-Commerce Website', visual: 'commerce'},
+{...clean(originalProjects[2]), title: 'Game', subtitle: 'Interactive 2D Browser Game', visual: 'game'}
 ];

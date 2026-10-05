@@ -1,18 +1,24 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { X, Github, ExternalLink, CheckCircle2, AlertCircle, Lightbulb, Code2, UserCheck } from 'lucide-react';
 
 export default function ProjectModal({ project, onClose }) {
+  const dialog = useRef(null);
   useEffect(() => {
+    const previous = document.activeElement;
+    const overflow = document.body.style.overflow;
+    dialog.current?.querySelector("button")?.focus();
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
+      if(e.key === 'Tab') { const items=dialog.current.querySelectorAll('button,a[href]'); const first=items[0],last=items[items.length-1]; if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();} else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();} }
     };
     window.addEventListener('keydown', handleKeyDown);
     document.body.style.overflow = 'hidden';
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = overflow;
+      previous?.focus();
     };
   }, [onClose]);
 
@@ -24,6 +30,7 @@ export default function ProjectModal({ project, onClose }) {
       {/* Modal Container */}
       <div 
         className="relative w-full max-w-3xl max-h-[90vh] rounded-2xl bg-surface border border-surfaceBorder shadow-2xl overflow-y-auto text-textMain flex flex-col"
+        ref={dialog}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
@@ -60,7 +67,7 @@ export default function ProjectModal({ project, onClose }) {
             <p>{project.shortDescription}</p>
           </div>
 
-          {/* Tech Stack Used */}
+          {project.technologies.length > 0 && <> {/* Tech Stack Used */}
           <div className="space-y-2">
             <h3 className="text-xs font-mono font-semibold text-textMain uppercase tracking-wider">
               Technologies Utilized
@@ -77,24 +84,24 @@ export default function ProjectModal({ project, onClose }) {
             </div>
           </div>
 
-          {/* Problem & Solution Grid */}
+          </>} {project.problem && <> {/* Problem & Solution Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-4 rounded-xl bg-background/50 border border-surfaceBorder space-y-2">
-              <h4 className="text-xs font-semibold text-rose-400 flex items-center gap-1.5 uppercase">
+              <h4 className="text-xs font-semibold text-textMuted flex items-center gap-1.5 uppercase">
                 <AlertCircle className="w-4 h-4" /> Problem Statement
               </h4>
               <p className="text-xs text-textMuted">{project.problem}</p>
             </div>
 
             <div className="p-4 rounded-xl bg-background/50 border border-surfaceBorder space-y-2">
-              <h4 className="text-xs font-semibold text-emerald-400 flex items-center gap-1.5 uppercase">
+              <h4 className="text-xs font-semibold text-textMuted flex items-center gap-1.5 uppercase">
                 <Lightbulb className="w-4 h-4" /> Architectural Solution
               </h4>
               <p className="text-xs text-textMuted">{project.solution}</p>
             </div>
           </div>
 
-          {/* Key Features */}
+          </>} {/* Key Features */}
           <div className="space-y-3">
             <h3 className="text-xs font-mono font-semibold text-textMain uppercase tracking-wider">
               Key Features &amp; Implementations
@@ -109,7 +116,7 @@ export default function ProjectModal({ project, onClose }) {
             </ul>
           </div>
 
-          {/* Role & Engineering Insights */}
+          {project.myRole && <> {/* Role & Engineering Insights */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-surfaceBorder">
             <div>
               <h4 className="text-xs font-semibold text-textMain mb-1 flex items-center gap-1.5">
@@ -121,7 +128,7 @@ export default function ProjectModal({ project, onClose }) {
               <h4 className="text-xs font-semibold text-textMain mb-1">Key Learnings</h4>
               <p className="text-xs text-textMuted">{project.whatILearned}</p>
             </div>
-          </div>
+          </div></>}
 
         </div>
 
@@ -143,7 +150,7 @@ export default function ProjectModal({ project, onClose }) {
                 href={project.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-lg bg-accentPrimary text-background text-xs font-semibold hover:bg-sky-400 flex items-center gap-1.5"
+                className="px-4 py-2 rounded-lg bg-accentPrimary text-background text-xs font-semibold hover:bg-accentSecondary flex items-center gap-1.5"
               >
                 <ExternalLink className="w-4 h-4" /> Live Demo
               </a>

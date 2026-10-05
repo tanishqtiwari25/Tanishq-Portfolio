@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Code2, ArrowUpRight } from 'lucide-react';
 
 const navLinks = [
+  { name: 'Home', href: '#home' },
   { name: 'About', href: '#about' },
   { name: 'Skills', href: '#skills' },
+  { name: 'Experience', href: '#journey' },
   { name: 'Projects', href: '#projects' },
-  { name: 'Journey', href: '#journey' },
-  { name: 'Education', href: '#education' },
   { name: 'Contact', href: '#contact' },
 ];
 
@@ -17,6 +17,11 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    const escape = e => {if(e.key==='Escape')setMobileMenuOpen(false);};
+    window.addEventListener('keydown',escape);
+    return ()=>window.removeEventListener('keydown',escape);
+  },[]);
+  useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 20) {
         setScrolled(true);
@@ -24,7 +29,8 @@ export default function Navbar() {
         setScrolled(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -40,7 +46,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <a
-            href="#"
+            href="#home"
             className="flex items-center gap-2 group text-xl font-bold tracking-tight text-textMain"
             aria-label="Tanishq Tiwari Home"
           >
@@ -53,7 +59,7 @@ export default function Navbar() {
           </a>
 
           {/* Desktop Links */}
-          <nav className="hidden md:flex items-center gap-8" aria-label="Main Navigation">
+          <nav className="hidden md:flex items-center gap-6" aria-label="Main Navigation">
             {navLinks.map((link) => (
               <a
                 key={link.name}
@@ -65,25 +71,14 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* CTA Buttons */}
-          <div className="hidden md:flex items-center gap-4">
-            <a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs font-semibold px-4 py-2 rounded-lg border border-surfaceBorder bg-surface text-textMain hover:border-accentPrimary hover:text-accentPrimary transition-all duration-200 flex items-center gap-1.5"
-            >
-              Resume <ArrowUpRight className="w-3.5 h-3.5" />
-            </a>
-          </div>
-
           {/* Mobile Menu Toggle */}
           <button
             suppressHydrationWarning
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg bg-surface border border-surfaceBorder text-textMuted hover:text-textMain focus:outline-none"
+            className="md:hidden p-2 rounded-lg bg-surface border border-surfaceBorder text-textMuted hover:text-textMain "
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -92,7 +87,7 @@ export default function Navbar() {
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-surfaceBorder bg-surface/95 backdrop-blur-lg px-4 pt-4 pb-6 mt-3 space-y-3">
+        <nav id="mobile-navigation" aria-label="Mobile navigation" className="md:hidden border-b border-surfaceBorder bg-surface/95 backdrop-blur-lg px-4 pt-4 pb-6 mt-3 space-y-3">
           {navLinks.map((link) => (
             <a
               key={link.name}
@@ -103,17 +98,8 @@ export default function Navbar() {
               {link.name}
             </a>
           ))}
-          <div className="pt-2 border-t border-surfaceBorder">
-            <a
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full justify-center items-center gap-2 py-2.5 text-sm font-semibold rounded-lg bg-accentPrimary text-background hover:bg-sky-400 transition-colors"
-            >
-              Download Resume <ArrowUpRight className="w-4 h-4" />
-            </a>
-          </div>
-        </div>
+
+        </nav>
       )}
     </header>
   );

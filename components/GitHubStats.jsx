@@ -17,7 +17,7 @@ export default function GitHubStats() {
                 Continuous Learning &amp; Clean Commit History
               </h2>
               <p className="text-xs sm:text-sm text-textMuted leading-relaxed">
-                I maintain active repositories showcasing clean folder structure, semantic HTML, modular React hooks, and interview-defensible coding patterns.
+                I maintain active repositories showcasing clean folder structure, semantic HTML, modular React hooks, and practical development patterns.
               </p>
             </div>
 

@@ -3,10 +3,11 @@ import './globals.css';
 export const metadata = {
   metadataBase: new URL('https://realtanishqtiwari.in'),
   title: {
-    default: 'Tanishq Tiwari | Frontend Developer & React Specialist',
+    default: 'Tanishq Tiwari | Frontend Developer',
     template: '%s | Tanishq Tiwari'
   },
   description: 'Frontend Developer specializing in JavaScript, React.js, Next.js, and modern web applications. Explore responsive projects, interactive UIs, and clean frontend architecture.',
+  alternates: { canonical: 'https://realtanishqtiwari.in' },
   keywords: [
     'Frontend Developer',
     'React Developer',

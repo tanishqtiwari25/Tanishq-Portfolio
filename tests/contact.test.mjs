@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {handleContact} from '../lib/contact-handler.mjs';
+const valid={name:'Test Visitor',email:'visitor@example.com',message:'A frontend opportunity to discuss.'};
+const env={EMAIL_API_KEY:'test-secret',CONTACT_FROM_EMAIL:'owner@verified.test',CONTACT_RECEIVER_EMAIL:'owner@example.com',CONTACT_TRUSTED_IP_HEADER:'x-test-ip'};
+let number=0;const request=(data=valid,headers={})=>new Request('http://localhost:3000/api/contact',{method:'POST',headers:{'Content-Type':'application/json','Origin':'http://localhost:3000','x-test-ip':String(++number),...headers},body:typeof data==='string'?data:JSON.stringify(data)});
+for(const [name,data] of [['empty name',{...valid,name:''}],['empty message',{...valid,message:''}],['invalid email',{...valid,email:'bad'}],['long message',{...valid,message:'a'.repeat(5001)}],['malformed','{'],['wrong shape',[]]])test(name,async()=>assert.equal((await handleContact(request(data))).status,400));
+test('oversized payload',async()=>assert.equal((await handleContact(request({...valid,message:'a'.repeat(18000)}))).status,413));
+test('cross-origin',async()=>assert.equal((await handleContact(request(valid,{Origin:'https://other.test'}))).status,403));
+test('missing configuration never claims success',async()=>assert.equal((await handleContact(request(),{env:{}})).status,503));
+test('provider failure hides details',async()=>{const res=await handleContact(request(),{env,fetcher:async()=>new Response('private provider error',{status:500})});assert.equal(res.status,502);assert.doesNotMatch(await res.text(),/private|test-secret/);});
+test('network failure',async()=>assert.equal((await handleContact(request(),{env,fetcher:async()=>{throw Error('secret')}})).status,503));
+test('honeypot blocked',async()=>assert.equal((await handleContact(request({...valid,website:'spam'}),{env})).status,400));
+test('valid submission uses verified sender, reply-to and timestamp',async()=>{let sent;const res=await handleContact(request(),{env,fetcher:async(url,options)=>{sent=JSON.parse(options.body);return Response.json({id:'test-email'})}});assert.equal(res.status,200);assert.deepEqual(await res.json(),{ok:true});assert.equal(sent.from,env.CONTACT_FROM_EMAIL);assert.equal(sent.reply_to,valid.email);assert.match(sent.text,/Time: \d{4}-/);});
+test('duplicate requests rate limited',async()=>{const options={env,fetcher:async()=>Response.json({id:'test'})};for(let i=0;i<5;i++)assert.equal((await handleContact(request(valid,{'x-test-ip':'limited'}),options)).status,200);assert.equal((await handleContact(request(valid,{'x-test-ip':'limited'}),options)).status,429);});
+test('serverless production requires shared limiter',async()=>assert.equal((await handleContact(request(),{env:{...env,NODE_ENV:'production'}})).status,503));
+test('Redis limiter',async()=>{const config={...env,NODE_ENV:'production',UPSTASH_REDIS_REST_URL:'https://redis.test',UPSTASH_REDIS_REST_TOKEN:'secret'};const fetcher=async url=>url.includes('redis.test')?Response.json([{result:6},{result:1}]):Response.json({id:'test'});assert.equal((await handleContact(request(),{env:config,fetcher})).status,429);});

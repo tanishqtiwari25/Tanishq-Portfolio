@@ -93,7 +93,7 @@ export default function EducationCertifications() {
                     <h3 className="text-sm font-bold text-textMain">{cert.title}</h3>
                     <p className="text-xs text-textMuted">{cert.issuer}</p>
                   </div>
-                  <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                  <span className="text-[10px] font-mono px-2.5 py-1 rounded-full bg-accentPrimary/10 border border-accentPrimary/20 text-textMuted">
                     {cert.badge}
                   </span>
                 </div>

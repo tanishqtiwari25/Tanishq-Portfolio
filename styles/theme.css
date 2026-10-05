@@ -1,0 +1,11 @@
+:root {
+--color-background: 10 15 19; --color-background-secondary: 14 21 26;
+--color-surface: 18 27 32; --color-surface-hover: 25 38 44;
+--color-primary: 171 226 200; --color-primary-hover: 202 242 223;
+--color-secondary: 115 162 173; --color-accent: 171 226 200;
+--color-text: 239 243 237; --color-text-secondary: 172 188 187; --color-text-muted: 157 176 177;
+--color-border: 44 62 66; --color-success: 171 226 200; --color-warning: 233 198 132; --color-error: 245 155 155;
+--gradient-primary: linear-gradient(120deg,rgb(var(--color-primary)),rgb(var(--color-secondary)));
+--gradient-hero: radial-gradient(ellipse at 80% 35%,rgb(var(--color-secondary)/.13),transparent 60%);
+--gradient-card: linear-gradient(135deg,rgb(var(--color-surface-hover)),rgb(var(--color-background)));
+}

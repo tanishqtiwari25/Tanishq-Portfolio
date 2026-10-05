@@ -1,3 +1,5 @@
+import ScrollExperience from '@/components/ScrollExperience';
+import ThreeBackground from '@/components/ThreeBackground';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
@@ -12,12 +14,15 @@ import Footer from '@/components/Footer';
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
+      <a className="skip-link" href="#about">Skip to content</a>
+      <ThreeBackground />
+      <ScrollExperience />
       <Navbar />
       <Hero />
       <About />
       <Skills />
-      <Projects />
       <Experience />
+      <Projects />
       <EducationCertifications />
       <GitHubStats />
       <Contact />
