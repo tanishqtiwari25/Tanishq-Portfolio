@@ -1,9 +1,9 @@
 export default async function sitemap() {
   return [
     {
-      url: 'https://realtanishqtiwari.in',
+      url: "https://realtanishqtiwari.in",
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 1,
     },
   ];

@@ -31,33 +31,18 @@ Secrets belong in .env.local or host settings, never NEXT_PUBLIC variables. All 
 
 ## Design and motion
 
-Edit styles/theme.css to change all semantic UI colors. Values are space-separated RGB channels, for example `--color-primary: 120 180 240`. Tailwind colors consume these variables with alpha support. Gradients and Canvas geometry also use these tokens.
+The new dark/light design uses self-hosted Space Grotesk and Inter, semantic color tokens, an interactive iridescent R3F sculpture, GSAP/Lenis scroll choreography, desktop custom cursor, bento skills and sticky project cards. Case studies open in keyboard-accessible Motion dialogs. A short first-visit intro gives way to the editorial hero.
 
-ThreeBackground.jsx projects torus coordinates from 3D onto a Canvas. Its fixed background smoothly interpolates scroll progress into position, rotation, and opacity. It uses capped pixel density, fewer mobile rings, mobile frame throttling, and pauses in hidden tabs. Reduced motion presents a static object. No 3D/animation dependencies were added.
+Mobile, low-core devices, data-saving connections and reduced-motion preferences use a lightweight CSS sculpture. Desktop 3D is deferred, pixel density is capped and rendering pauses in hidden tabs. Illustrative project artwork is labeled as concept visuals; no product screenshots or testimonials were invented.
 
-ScrollExperience.jsx uses IntersectionObserver and CSS transforms for section/card reveals. Hero and navbar use staggered CSS reveals; project tilt is bounded to four degrees and only enabled for fine hover with full motion. Native smooth anchor scrolling preserves browser behavior. The normal browser cursor is retained.
+See [DESIGN-NOTES.md](DESIGN-NOTES.md) for the component map, animation ownership, dependencies, setup and further polish.
 
 ## Projects and content
 
-Exactly five showcase entries: Data Scraper, Wealth Pilot, Truly Grow, E-Commerce Website, Game. Old chatbot/agency entries and extra CRM showcase removed. No project screenshots were supplied; abstract typography/geometry visuals are intentionally illustrative, not fabricated screenshots. Wealth Pilot and Truly Grow use only the supplied descriptions and capabilities. Their technologies and links remain empty because none were supplied. Existing scraper placeholder URL removed. Resume UI and its public PDF removed.
+The five projects remain Data Scraper, Wealth Pilot, Truly Grow, E-Commerce Website and Game. Existing personal content, experience, education, contact details and working project links are preserved. Missing project links/stacks stay empty. Resume functionality is removed.
 
-## Files
+## Verification
 
-Created: styles/theme.css; components/ThreeBackground.jsx; components/ScrollExperience.jsx; app/api/contact/route.js; lib/contact-validation.mjs; lib/contact-handler.mjs; tests/contact.test.mjs; .env.example; README.md.
-Modified: app/globals.css, app/layout.jsx, app/page.jsx; tailwind.config.js; data/projectsData.js; components/Hero.jsx, Navbar.jsx, Projects.jsx, ProjectCard.jsx, ProjectModal.jsx, Contact.jsx; package.json, package-lock.json, .gitignore. Decorative utility colors in Experience, EducationCertifications were mapped to theme tokens. About, Skills, GitHubStats and Footer remain functionally preserved.
-Dependency change: Next.js upgraded from 14.1.0 to patched 14.2.35; no new libraries.
+Contact validation and delivery handling have 16 automated tests. Run npm test, then npm run build. TypeScript is enabled incrementally through tsconfig.json; existing JSX remains supported. Deployment still requires server-only email and shared Redis settings above.
 
-## Remaining configuration
-
-Real inbox delivery requires the above credentials. Wealth Pilot and Truly Grow stacks, screenshots, and real URLs can be added to data/projectsData.js once available. Performance claims are not benchmarked; there is no guarantee of 60fps on every device. Original project capability descriptions are retained from the portfolio, rather than independently verified against their separate repositories.
-
-## Verification results
-
-- Production build: passed on Next.js 14.2.35. Home first-load JavaScript: 99.7 kB reported by Next.js (not a runtime performance benchmark).
-- Contact automated tests: 16 passed, including validation, malformed/oversized payload, origin rejection, missing config, provider/network failure, honeypot, success envelope, verified From / Reply-To / timestamp, repeated-request limits, and shared Redis limit.
-- Browser: correct 01–05 project order; Wealth Pilot modal opens with focus and closes by Escape; desktop console clean before intentional failed contact request; mobile menu opens, closes after anchor selection; 390px mobile viewport shows no horizontal overflow; unconfigured contact correctly shows error and returns to enabled state.
-- Search: portfolio source contains no Resume/CV functionality, old showcase names, or custom cursor styling.
-- Build emitted nonfatal webpack cache snapshot warnings in this nested workspace; compilation, type checks, prerendering, and trace generation passed.
-- Not verified: real inbox delivery (no provider credentials), independent capability audits of separate projects, performance benchmarks, every device/browser, and reduced-motion behavior by browser emulation (CSS/Canvas paths implemented).
-
-Local email test: Resend accepted a live test email. The local sender was updated to contact@mail.realtanishqtiwari.in after the domain was verified. Configure your verified sender in host environment settings when deploying. Secrets stay only in ignored .env.local files.
+Performance measurements and browser verification are documented in DESIGN-NOTES.md. Local audit results are measurements of one environment, not a guarantee across devices.

@@ -1,23 +1,50 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import { X, Github, ExternalLink, CheckCircle2, AlertCircle, Lightbulb, Code2, UserCheck } from 'lucide-react';
+import ProjectArtwork from "./ProjectArtwork";
+import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import {
+  X,
+  Github,
+  ExternalLink,
+  CheckCircle2,
+  AlertCircle,
+  Lightbulb,
+  Code2,
+  UserCheck,
+} from "lucide-react";
 
 export default function ProjectModal({ project, onClose }) {
   const dialog = useRef(null);
+  const reduced = useReducedMotion();
   useEffect(() => {
     const previous = document.activeElement;
     const overflow = document.body.style.overflow;
     dialog.current?.querySelector("button")?.focus();
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
-      if(e.key === 'Tab') { const items=dialog.current.querySelectorAll('button,a[href]'); const first=items[0],last=items[items.length-1]; if(e.shiftKey && document.activeElement===first){e.preventDefault();last.focus();} else if(!e.shiftKey && document.activeElement===last){e.preventDefault();first.focus();} }
+      if (e.key === "Escape") onClose();
+      if (e.key === "Tab") {
+        const items = dialog.current.querySelectorAll("button,a[href]");
+        const first = items[0],
+          last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
-    window.addEventListener('keydown', handleKeyDown);
-    document.body.style.overflow = 'hidden';
+    window.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+    window.dispatchEvent(new CustomEvent("portfolio-modal", { detail: true }));
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = overflow;
+      window.dispatchEvent(
+        new CustomEvent("portfolio-modal", { detail: false }),
+      );
       previous?.focus();
     };
   }, [onClose]);
@@ -25,24 +52,31 @@ export default function ProjectModal({ project, onClose }) {
   if (!project) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn">
-      
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: reduced ? 0 : 0.2 }}
+      className="project-modal-overlay fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-background/95 backdrop-blur-xl"
+    >
       {/* Modal Container */}
-      <div 
-        className="relative w-full max-w-3xl max-h-[90vh] rounded-2xl bg-surface border border-surfaceBorder shadow-2xl overflow-y-auto text-textMain flex flex-col"
+      <div
+        data-lenis-prevent
+        className="immersive-modal relative w-full max-w-3xl max-h-[90vh] rounded-2xl bg-surface border border-surfaceBorder shadow-2xl overflow-y-auto text-textMain flex flex-col"
         ref={dialog}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
-        
         {/* Sticky Header */}
         <div className="sticky top-0 z-20 px-6 py-4 bg-surface/90 backdrop-blur-md border-b border-surfaceBorder flex items-center justify-between">
           <div>
             <span className="text-[10px] font-mono text-accentPrimary uppercase tracking-wider">
               Project Case Study
             </span>
-            <h2 id="modal-title" className="text-lg sm:text-xl font-bold text-textMain">
+            <h2
+              id="modal-title"
+              className="text-lg sm:text-xl font-bold text-textMain"
+            >
               {project.title}
             </h2>
           </div>
@@ -57,7 +91,11 @@ export default function ProjectModal({ project, onClose }) {
 
         {/* Modal Content */}
         <div className="p-6 space-y-8 text-sm leading-relaxed text-textMuted">
-          
+          <ProjectArtwork project={project} />
+          <div className="case-study-title">
+            <span>PROJECT NOTES / SELECTED WORK</span>
+            <h3>{project.title}</h3>
+          </div>
           {/* Overview */}
           <div className="space-y-2">
             <h3 className="text-xs font-mono font-semibold text-textMain uppercase tracking-wider flex items-center gap-1.5">
@@ -66,70 +104,88 @@ export default function ProjectModal({ project, onClose }) {
             </h3>
             <p>{project.shortDescription}</p>
           </div>
+          {project.technologies.length > 0 && (
+            <>
+              {" "}
+              {/* Tech Stack Used */}
+              <div className="space-y-2">
+                <h3 className="text-xs font-mono font-semibold text-textMain uppercase tracking-wider">
+                  Technologies Utilized
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {project.technologies.map((tech, idx) => (
+                    <span
+                      key={idx}
+                      className="text-xs font-mono px-3 py-1 rounded-md bg-background border border-surfaceBorder text-accentPrimary"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}{" "}
+          {project.problem && (
+            <>
+              {" "}
+              {/* Problem & Solution Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-4 rounded-xl bg-background/50 border border-surfaceBorder space-y-2">
+                  <h4 className="text-xs font-semibold text-textMuted flex items-center gap-1.5 uppercase">
+                    <AlertCircle className="w-4 h-4" /> Problem Statement
+                  </h4>
+                  <p className="text-xs text-textMuted">{project.problem}</p>
+                </div>
 
-          {project.technologies.length > 0 && <> {/* Tech Stack Used */}
-          <div className="space-y-2">
-            <h3 className="text-xs font-mono font-semibold text-textMain uppercase tracking-wider">
-              Technologies Utilized
-            </h3>
-            <div className="flex flex-wrap gap-2">
-              {project.technologies.map((tech, idx) => (
-                <span
-                  key={idx}
-                  className="text-xs font-mono px-3 py-1 rounded-md bg-background border border-surfaceBorder text-accentPrimary"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          </>} {project.problem && <> {/* Problem & Solution Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-4 rounded-xl bg-background/50 border border-surfaceBorder space-y-2">
-              <h4 className="text-xs font-semibold text-textMuted flex items-center gap-1.5 uppercase">
-                <AlertCircle className="w-4 h-4" /> Problem Statement
-              </h4>
-              <p className="text-xs text-textMuted">{project.problem}</p>
-            </div>
-
-            <div className="p-4 rounded-xl bg-background/50 border border-surfaceBorder space-y-2">
-              <h4 className="text-xs font-semibold text-textMuted flex items-center gap-1.5 uppercase">
-                <Lightbulb className="w-4 h-4" /> Architectural Solution
-              </h4>
-              <p className="text-xs text-textMuted">{project.solution}</p>
-            </div>
-          </div>
-
-          </>} {/* Key Features */}
+                <div className="p-4 rounded-xl bg-background/50 border border-surfaceBorder space-y-2">
+                  <h4 className="text-xs font-semibold text-textMuted flex items-center gap-1.5 uppercase">
+                    <Lightbulb className="w-4 h-4" /> Architectural Solution
+                  </h4>
+                  <p className="text-xs text-textMuted">{project.solution}</p>
+                </div>
+              </div>
+            </>
+          )}{" "}
+          {/* Key Features */}
           <div className="space-y-3">
             <h3 className="text-xs font-mono font-semibold text-textMain uppercase tracking-wider">
               Key Features &amp; Implementations
             </h3>
             <ul className="space-y-2">
               {project.keyFeatures.map((feat, idx) => (
-                <li key={idx} className="flex items-start gap-2.5 text-xs text-textMuted">
+                <li
+                  key={idx}
+                  className="flex items-start gap-2.5 text-xs text-textMuted"
+                >
                   <CheckCircle2 className="w-4 h-4 text-accentPrimary shrink-0 mt-0.5" />
                   <span>{feat}</span>
                 </li>
               ))}
             </ul>
           </div>
-
-          {project.myRole && <> {/* Role & Engineering Insights */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-surfaceBorder">
-            <div>
-              <h4 className="text-xs font-semibold text-textMain mb-1 flex items-center gap-1.5">
-                <UserCheck className="w-4 h-4 text-accentPrimary" /> My Contributions
-              </h4>
-              <p className="text-xs text-textMuted">{project.myRole}</p>
-            </div>
-            <div>
-              <h4 className="text-xs font-semibold text-textMain mb-1">Key Learnings</h4>
-              <p className="text-xs text-textMuted">{project.whatILearned}</p>
-            </div>
-          </div></>}
-
+          {project.myRole && (
+            <>
+              {" "}
+              {/* Role & Engineering Insights */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-surfaceBorder">
+                <div>
+                  <h4 className="text-xs font-semibold text-textMain mb-1 flex items-center gap-1.5">
+                    <UserCheck className="w-4 h-4 text-accentPrimary" /> My
+                    Contributions
+                  </h4>
+                  <p className="text-xs text-textMuted">{project.myRole}</p>
+                </div>
+                <div>
+                  <h4 className="text-xs font-semibold text-textMain mb-1">
+                    Key Learnings
+                  </h4>
+                  <p className="text-xs text-textMuted">
+                    {project.whatILearned}
+                  </p>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         {/* Modal Footer Links */}
@@ -163,8 +219,7 @@ export default function ProjectModal({ project, onClose }) {
             Close
           </button>
         </div>
-
       </div>
-    </div>
+    </motion.div>
   );
 }

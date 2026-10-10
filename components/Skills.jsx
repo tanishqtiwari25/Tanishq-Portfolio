@@ -1,46 +1,84 @@
-'use client';
+"use client";
 
-import { skillsData } from '@/data/skillsData';
-import { 
-  Code2, Palette, FileCode, Atom, Layers, Wind, Layout, Smartphone,
-  ArrowLeftRight, Server, Cpu, Database, Binary, GitBranch, Github,
-  Terminal, Wrench, LayoutGrid, Bot, MessageSquareCode, TrendingUp 
-} from 'lucide-react';
+import { skillsData } from "@/data/skillsData";
+import {
+  Code2,
+  Palette,
+  FileCode,
+  Atom,
+  Layers,
+  Wind,
+  Layout,
+  Smartphone,
+  ArrowLeftRight,
+  Server,
+  Cpu,
+  Database,
+  Binary,
+  GitBranch,
+  Github,
+  Terminal,
+  Wrench,
+  LayoutGrid,
+  Bot,
+  MessageSquareCode,
+  TrendingUp,
+} from "lucide-react";
 
 const iconMap = {
-  Code2, Palette, FileCode, Atom, Layers, Wind, Layout, Smartphone,
-  ArrowLeftRight, Server, Cpu, Database, Binary, GitBranch, Github,
-  Terminal, Wrench, LayoutGrid, Bot, MessageSquareCode, TrendingUp
+  Code2,
+  Palette,
+  FileCode,
+  Atom,
+  Layers,
+  Wind,
+  Layout,
+  Smartphone,
+  ArrowLeftRight,
+  Server,
+  Cpu,
+  Database,
+  Binary,
+  GitBranch,
+  Github,
+  Terminal,
+  Wrench,
+  LayoutGrid,
+  Bot,
+  MessageSquareCode,
+  TrendingUp,
 };
 
 export default function Skills() {
   return (
     <section id="skills" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <span className="text-xs font-mono font-semibold uppercase tracking-wider text-accentPrimary">
             // Technical Proficiency
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-textMain tracking-tight">
-            Skills &amp; Technology Stack
+            The tools behind the thinking.
           </h2>
           <p className="text-textMuted text-sm sm:text-base">
-            The tools I use to turn an idea into a responsive, functional web experience.
+            The tools I use to turn an idea into a responsive, functional web
+            experience.
           </p>
           <div className="w-12 h-1 bg-accentPrimary mx-auto rounded-full" />
         </div>
 
         {/* Skills Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="skills-bento grid grid-cols-1 md:grid-cols-2 gap-8">
           {skillsData.map((group, idx) => (
             <div
               key={idx}
               className="p-6 sm:p-8 rounded-2xl bg-surface border border-surfaceBorder hover:border-surfaceBorder/80 transition-all shadow-lg"
             >
               <div className="mb-6 space-y-1">
-                <h3 className="text-xl font-bold text-textMain">{group.category}</h3>
+                <h3 className="text-xl font-bold text-textMain">
+                  {group.category}
+                </h3>
                 <p className="text-xs text-textMuted">{group.description}</p>
               </div>
 
@@ -56,8 +94,12 @@ export default function Skills() {
                         <IconComponent className="w-4 h-4" />
                       </div>
                       <div>
-                        <span className="block text-xs font-semibold text-textMain">{skill.name}</span>
-                        <span className="block text-[10px] text-textMuted">{skill.level}</span>
+                        <span className="block text-xs font-semibold text-textMain">
+                          {skill.name}
+                        </span>
+                        <span className="block text-[10px] text-textMuted">
+                          {skill.level}
+                        </span>
                       </div>
                     </div>
                   );
@@ -66,7 +108,6 @@ export default function Skills() {
             </div>
           ))}
         </div>
-
       </div>
     </section>
   );
