@@ -40,7 +40,7 @@ npm start
 npm test
 ```
 
-Use Node 20 or newer. Keep email settings in `.env.local` or your deployment environment. The API, validation and rate-limiting code are unchanged by this visual redesign. See README.md for verified sender and Vercel/Redis setup.
+Use Node 20 or newer. Keep email settings in `.env.local` or your deployment environment. The API, validation and rate-limiting code are unchanged by this visual redesign. See README.md for verified sender and Vercel setup.
 
 ## Assets and libraries
 
@@ -60,3 +60,6 @@ Replace the labeled concept artwork with real optimized screenshots or short mut
 - Lighthouse 13.5.0, local production server, simulated mobile throttling, headless Chrome with GPU disabled: Performance 77, Accessibility 100, Best Practices 100, SEO 100. LCP 2.5s, TBT 830ms, CLS 0. The requested 90+ performance target is not yet met. Desktop performance and reduced-motion browser emulation were not measured.
 - The remaining performance work is main-thread startup on the throttled mobile audit. Re-test on deployed infrastructure and real hardware before claiming 90+ or a universal frame rate.
 - No fabricated testimonials or project screenshots were added. Case-study dialogs use explicit activation rather than opening automatically on hover.
+
+## Contact update
+Upstash is no longer required. RESEND_API_KEY and legacy EMAIL_API_KEY are supported. Rate limiting is best-effort per instance; Vercel instances do not share counters. Sender and recipient environment variables remain required.

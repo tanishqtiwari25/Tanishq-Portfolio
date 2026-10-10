@@ -20,10 +20,10 @@ If the machine's npm launcher is broken, substitute `node "C:\Program Files\node
 POST /api/contact validates bounded JSON, checks origin, limits requests, checks a honeypot, and calls the Resend API on the server. Emails include name, email, message and server UTC timestamp. The sender is your verified sender; visitor email is Reply-To. Errors are generic and no provider payload or secret is returned. The frontend disables duplicate submission and only shows success after the API confirms delivery acceptance.
 
 1. Create a Resend API key and verify your sending domain in Resend.
-2. Set EMAIL_API_KEY, CONTACT_RECEIVER_EMAIL, CONTACT_FROM_EMAIL, and CONTACT_ALLOWED_ORIGIN (exact public origin, without trailing slash).
-3. Single persistent Node process: CONTACT_RATE_LIMIT_MODE=single-instance. Memory limiting resets on process restart.
-4. Serverless / multiple instances: leave CONTACT_RATE_LIMIT_MODE unset and configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN. Production fails closed without a configured limiter. Redis counters use a ten-minute expiry.
-5. CONTACT_TRUSTED_IP_HEADER must name an IP header your reverse proxy overwrites. On Vercel use x-vercel-forwarded-for. An unset header applies a shared five-per-ten-minute limit; set a trustworthy header for per-visitor limits. Never trust visitor-supplied forwarding headers on a directly exposed server.
+2. Set RESEND_API_KEY (or legacy EMAIL_API_KEY), CONTACT_RECEIVER_EMAIL, CONTACT_FROM_EMAIL, and CONTACT_ALLOWED_ORIGIN (exact public origin, without trailing slash).
+3. No Upstash/Redis setup is required. A best-effort in-memory limit allows five attempts per ten minutes per IP on each instance. Counters reset on restart and are not shared across Vercel instances.
+4. Keep the honeypot, origin checks and input validation enabled.
+5. CONTACT_TRUSTED_IP_HEADER must name an IP header your reverse proxy overwrites. On Vercel the code defaults to x-vercel-forwarded-for. An unset header applies a shared five-per-ten-minute limit; set a trustworthy header for per-visitor limits. Never trust visitor-supplied forwarding headers on a directly exposed server.
 6. Deploy with the Next.js preset and this folder as the project root. Use server-only environment settings and redeploy. Static export / GitHub Pages cannot run this endpoint.
 7. Send a real test after configuring credentials, confirm inbox receipt and Reply-To, and inspect provider delivery status. Local automated tests mock provider responses; they do not prove live delivery.
 
@@ -43,6 +43,6 @@ The five projects remain Data Scraper, Wealth Pilot, Truly Grow, E-Commerce Webs
 
 ## Verification
 
-Contact validation and delivery handling have 16 automated tests. Run npm test, then npm run build. TypeScript is enabled incrementally through tsconfig.json; existing JSX remains supported. Deployment still requires server-only email and shared Redis settings above.
+Contact validation and delivery handling have 16 automated tests. Run npm test, then npm run build. TypeScript is enabled incrementally through tsconfig.json; existing JSX remains supported. Deployment still requires server-only email settings above.
 
 Performance measurements and browser verification are documented in DESIGN-NOTES.md. Local audit results are measurements of one environment, not a guarantee across devices.
