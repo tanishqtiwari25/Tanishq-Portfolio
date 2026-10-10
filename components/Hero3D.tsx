@@ -152,10 +152,6 @@ function Sculpture({ mobile, palette }: { mobile: boolean; palette: Palette }) {
             opacity={0.25}
           />
         </mesh>
-        <mesh position={[1.65, 0.8, -0.1]}>
-          <sphereGeometry args={[0.055, 12, 12]} />
-          <meshBasicMaterial color={palette.gold} />
-        </mesh>
       </group>
       <points ref={dust}>
         <bufferGeometry>
