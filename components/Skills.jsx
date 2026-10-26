@@ -82,19 +82,19 @@ export default function Skills() {
                 <p className="text-xs text-textMuted">{group.description}</p>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {group.skills.map((skill, sIdx) => {
                   const IconComponent = iconMap[skill.icon] || Code2;
                   return (
                     <div
                       key={sIdx}
-                      className="p-3 rounded-xl bg-background/60 border border-surfaceBorder/70 flex items-center gap-3 hover:border-accentPrimary/40 transition-colors group"
+                      className="min-w-0 p-3 rounded-xl bg-background/60 border border-surfaceBorder/70 flex items-center gap-3 hover:border-accentPrimary/40 transition-colors group"
                     >
-                      <div className="p-2 rounded-lg bg-surface text-accentPrimary group-hover:scale-105 transition-transform">
+                      <div className="shrink-0 p-2 rounded-lg bg-surface text-accentPrimary group-hover:scale-105 transition-transform">
                         <IconComponent className="w-4 h-4" />
                       </div>
-                      <div>
-                        <span className="block text-xs font-semibold text-textMain">
+                      <div className="min-w-0">
+                        <span className="block break-words text-xs font-semibold text-textMain">
                           {skill.name}
                         </span>
                         <span className="block text-[10px] text-textMuted">
