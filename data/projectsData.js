@@ -67,8 +67,8 @@ const originalProjects = [
 const clean = p => ({...p, githubUrl: p.githubUrl?.includes('your-username') ? '' : p.githubUrl});
 export const projectsData = [
 {...clean(originalProjects[0]), title: 'Data Scraper', subtitle: 'Data Scraper & Lead Collection System', visual: 'scraper'},
-{ id: 'wealth-pilot', title: 'Wealth Pilot', category: 'Financial software', shortDescription: 'Wealth Pilot is a financial software designed to help users track and manage their money, including income and expenses.', technologies: [], keyFeatures: ['Income tracking', 'Expense tracking', 'Money management'], visual: 'wealth-pilot' },
-{ id: 'truly-grow', title: 'Truly Grow', category: 'Business / Digital growth', shortDescription: 'A modern business growth website offering web development, digital marketing, SEO and paid advertising services.', technologies: [], keyFeatures: ['Web Development', 'Digital Marketing', 'SEO', 'Paid Ads'], visual: 'grow' },
+{ id: 'wealth-pilot', liveUrl: 'https://montra.realtanishqtiwari.in', title: 'Wealth Pilot', category: 'Financial software', shortDescription: 'Wealth Pilot is a financial software designed to help users track and manage their money, including income and expenses.', technologies: [], keyFeatures: ['Income tracking', 'Expense tracking', 'Money management'], visual: 'wealth-pilot' },
+{ id: 'truly-grow', liveUrl: 'https://trulygrow.realtanishqtiwari.in', title: 'Truly Grow', category: 'Business / Digital growth', shortDescription: 'A modern business growth website offering web development, digital marketing, SEO and paid advertising services.', technologies: [], keyFeatures: ['Web Development', 'Digital Marketing', 'SEO', 'Paid Ads'], visual: 'grow' },
 {...clean(originalProjects[1]), title: 'E-Commerce Website', visual: 'commerce'},
 {...clean(originalProjects[2]), title: 'Game', subtitle: 'Interactive 2D Browser Game', visual: 'game'}
 ];
