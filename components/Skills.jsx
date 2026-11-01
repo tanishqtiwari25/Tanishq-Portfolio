@@ -56,7 +56,7 @@ export default function Skills() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
           <span className="text-xs font-mono font-semibold uppercase tracking-wider text-accentPrimary">
-            // Technical Proficiency
+            {"// Technical Proficiency"}
           </span>
           <h2 className="text-3xl sm:text-4xl font-bold text-textMain tracking-tight">
             The tools behind the thinking.

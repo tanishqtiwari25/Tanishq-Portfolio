@@ -1,0 +1,40 @@
+{
+  "status": "DEVELOPMENT PLACEHOLDER — NOT A FACIAL LIKENESS",
+  "asset": "/models/tt-temporary.glb",
+  "heightMetres": 1.78,
+  "bones": 13,
+  "triangles": 1170,
+  "bytes": 94640,
+  "textures": [
+    "64px original fabric PNG",
+    "256px original TT chest mark PNG"
+  ],
+  "animations": [
+    {
+      "name": "EntranceWalk",
+      "duration": 1.2
+    },
+    {
+      "name": "Idle",
+      "duration": 2
+    },
+    {
+      "name": "ConfidentPose",
+      "duration": 1
+    },
+    {
+      "name": "Turn",
+      "duration": 1
+    }
+  ],
+  "walkCycleDistanceMetres": 1.28,
+  "walkCycleSeconds": 1.2,
+  "sampledStanceSoleErrorMetres": 0,
+  "limitations": [
+    "Faceless procedural body; no photo-derived facial reconstruction.",
+    "Rigid single-joint weights are suitable for blocking, not a finished realistic character.",
+    "No authored stairs or rope-entry animation.",
+    "Runtime walk distance must be signed and synchronized to the 1.28m gait cycle."
+  ],
+  "replacementRequired": "Identity-reviewed Blender character with UV-mapped base color/normal/roughness textures, skinned skeleton, grounded rootless walk/turn/pose/idle clips and authored stairs/rope entry; export glTF 2.0 GLB at metre scale, +Y up, +Z facing, approximately 1.78m tall. Provide front/three-quarter/side renders for user approval before replacing this temporary asset."
+}

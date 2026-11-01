@@ -1,0 +1,48 @@
+{
+  "purpose": "User-supplied identity references. These are photographs, not a 3D model or validated facial reconstruction.",
+  "primary": "reference-outdoor.webp",
+  "photos": [
+    {
+      "file": "reference-outdoor.webp",
+      "source": "WhatsApp Image 2026-11-01 at 22.56.57.jpeg",
+      "originalDimensions": [
+        1200,
+        1600
+      ],
+      "dimensions": [
+        960,
+        1280
+      ],
+      "bytes": 134382,
+      "processing": "Orientation correction, proportional resize, WebP compression only. No face/likeness changes."
+    },
+    {
+      "file": "reference-gym.webp",
+      "source": "WhatsApp Image 2026-11-01 at 22.56.57 (1).jpeg",
+      "originalDimensions": [
+        1200,
+        1600
+      ],
+      "dimensions": [
+        960,
+        1280
+      ],
+      "bytes": 101098,
+      "processing": "Orientation correction, proportional resize, WebP compression only. No face/likeness changes."
+    },
+    {
+      "file": "reference-seated.webp",
+      "source": "WhatsApp Image 2026-11-01 at 22.56.56.jpeg",
+      "originalDimensions": [
+        1440,
+        1440
+      ],
+      "dimensions": [
+        960,
+        960
+      ],
+      "bytes": 47616,
+      "processing": "Orientation correction, proportional resize, WebP compression only. No face/likeness changes."
+    }
+  ]
+}

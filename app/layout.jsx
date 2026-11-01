@@ -3,6 +3,7 @@ import "@fontsource/inter/500.css";
 import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/600.css";
 import "./globals.css";
+import "./arena.css";
 
 export const metadata = {
   metadataBase: new URL("https://realtanishqtiwari.in"),
