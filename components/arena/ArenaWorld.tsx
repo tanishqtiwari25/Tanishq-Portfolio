@@ -610,7 +610,9 @@ function Stadium() {
         <Truss key={x} x={0} z={x === -1 ? -18 : 9} width={28} y={13} />
       ))}
       <group position={[0, 11, 0]}>
-        <Box p={[0, 0, 0]} s={[6, 2.4, 4]} />
+        <mesh><cylinderGeometry args={[3.4, 3.4, 2.6, 8]} /><meshStandardMaterial color="#252b34" metalness={0.8} roughness={0.3} /></mesh>
+        {[0, Math.PI / 2, Math.PI, -Math.PI / 2].map(angle => <group key={angle} rotation={[0, angle, 0]}><Sign p={[0, 0, 3.17]} s={[2.5, 2.1]} lines={["TT", "CODE. BUILD. CREATE."]} /></group>)}
+        {[-1.4, 1.4].map(y => <mesh key={y} position={[0,y,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[3.4,0.06,6,32]} /><meshStandardMaterial color="#e01739" emissive="#e01739" emissiveIntensity={1.5} /></mesh>)}
         <Sign
           p={[0, 0, 2.01]}
           s={[5.6, 2]}

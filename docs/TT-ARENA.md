@@ -103,3 +103,6 @@ The previous portfolio is the user's named **Project Pink** baseline, identified
 ## Honest visual-delivery boundary
 
 This is a working procedural 3D implementation, not a photorealistic reproduction of the storyboard. The audience uses simplified instanced people, stage haze uses sprites, and the scene currently uses one active project display on mechanical rails. An identity-reviewed final facial model, production stair/rope choreography and higher-detail crowd assets are still required for the requested final cinematic fidelity. No final avatar approval or exact likeness is claimed. The inherited Next.js dependency findings above must be addressed before calling this a production-ready release.
+
+## Portfolio display refinement
+Desktop project station now uses two suspended displays showing adjacent real projects. Mobile presents a single display. The physical production console includes About, Skills, Experience and Education controls, with independent readable Education and Experience dialogs. The arena menu exposes these details directly. The overhead scoreboard has a metal octagonal body, four branded faces and illuminated trim. These remain procedural assets; the supplied photographic storyboard and exact facial likeness are not reproduced.

@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { MutableRefObject } from "react";
 import * as T from "three";
@@ -28,11 +28,11 @@ type Props = {
   onFailure: () => void;
   running: boolean;
 };
-function Mount() {
+function Mount({ offset = 0 }: { offset?: number }) {
   return (
     <group>
       {[-3.6, 3.6].map((x) => (
-        <group key={x}>
+        <group key={x} position={[offset, 0, 0]}>
           <mesh position={[x, 9.1, 0.7]}>
             <cylinderGeometry args={[0.1, 0.1, 7.2, 8]} />
             <meshStandardMaterial
@@ -94,7 +94,9 @@ function ProjectDisplay({
   selected,
   onSelect,
   onRead,
+  offset = 0,
 }: {
+  offset?: number;
   journey: Props["journey"];
   visible: boolean;
   selected: number;
@@ -120,9 +122,9 @@ function ProjectDisplay({
   });
   return (
     <group>
-      <Mount />
+      <Mount offset={offset} />
       <group ref={mount}>
-        <PhysicalScreen p={[0, 5.3, 1.2]} size={[8.8, 4.9]} visible={visible}>
+        <PhysicalScreen p={[offset, 5.3, 1.2]} rotation={[0, offset > 0 ? -0.12 : 0.12, 0]} size={[7.2, 4.3]} visible={visible}>
           <div className="project-screen-content">
             <div className="screen-kicker">
               <span>RINGSIDE / SELECTED WORK</span>
@@ -223,6 +225,7 @@ export default function ArenaScene(props: Props) {
     onFailure,
     running,
   } = props;
+  const [deskSection, setDeskSection] = useState("about");
   const topSkills = useMemo(() => skillsData[0].skills.map((s) => s.name), []);
   return (
     <ArenaWorld
@@ -258,13 +261,15 @@ export default function ArenaScene(props: Props) {
       <ProjectDisplay
         journey={journey}
         visible={chapter === 2}
+        offset={journey.current.mobile ? 0 : -4}
         selected={selected}
         onSelect={onSelect}
         onRead={onRead}
       />
+      {!journey.current.mobile && <ProjectDisplay journey={journey} visible={chapter === 2} offset={4} selected={(selected + 1) % projectsData.length} onSelect={onSelect} onRead={onRead} />}
       <Desk x={8} />
       <PhysicalScreen
-        p={[8, 2.35, 1.1]}
+        p={[8, 2.95, 1.1]}
         size={[4.2, 2.6]}
         rotation={[-0.12, 0.12, 0]}
         visible={chapter === 3}
@@ -274,7 +279,8 @@ export default function ArenaScene(props: Props) {
             <span>PRODUCTION DESK / PROFILE</span>
             <span className="on-air">● ON AIR</span>
           </div>
-          <div className="console-columns">
+          <nav className="console-tabs" aria-label="Portfolio sections">{["about", "skills", "experience", "education"].map(section => <button key={section} aria-pressed={deskSection === section} onClick={() => setDeskSection(section)}>{section}</button>)}</nav>
+          {deskSection === "about" ? <div className="console-columns">
             <div>
               <p className="screen-category">THE PERSON BEHIND THE WORK</p>
               <h2>
@@ -300,12 +306,17 @@ export default function ArenaScene(props: Props) {
                 Explore all skills ↗
               </button>
             </div>
-          </div>
+          </div> : <div className="console-section-detail">
+            <p className="screen-category">TANISHQ TIWARI / {deskSection.toUpperCase()}</p>
+            <button onClick={() => onRead(deskSection)}>Read full {deskSection}</button>
+            <h2>{deskSection === "skills" ? "ABOUT & SKILLS" : deskSection === "education" ? "EDUCATION" : "EXPERIENCE"}</h2>
+            {deskSection === "skills" ? <div className="console-skill-grid">{skillsData.map(category => <div key={category.category}><h3>{category.category}</h3><p>{category.skills.map(skill => skill.name).join(" / ")}</p></div>)}</div> : deskSection === "education" ? <div className="console-credentials"><p><strong>2024–2026 / MBA</strong><br />Information Technology / Naraina College of Engineering & Technology</p><p><strong>2021–2024 / BBA</strong><br />Naraina College of Management</p><p>Full Stack Web Development / Coding Ninjas</p></div> : <div className="console-credentials"><p><strong>INDEPENDENT DEVELOPMENT</strong><br />Building web projects with React, Next.js and JavaScript.</p><p><strong>CODING NINJAS</strong><br />Full Stack Web Development Bootcamp graduate.</p></div>}
+          </div>}
         </div>
       </PhysicalScreen>
       <Desk x={-8} />
       <PhysicalScreen
-        p={[-8, 2.35, 1.1]}
+        p={[-8, 2.95, 1.1]}
         size={[4.2, 2.6]}
         rotation={[-0.12, 0, 0]}
         visible={chapter === 4}

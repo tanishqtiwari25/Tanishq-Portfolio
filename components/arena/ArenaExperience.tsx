@@ -428,7 +428,7 @@ export default function ArenaExperience() {
               <button onClick={() => read("about")}>
                 Biography & experience
               </button>
-              <button onClick={() => read("skills")}>All skills</button>
+              <button onClick={() => read("skills")}>All skills</button><button onClick={() => read("education")}>Education & certifications</button><button onClick={() => read("experience")}>Experience</button>
               <button onClick={() => read("contact")}>Contact form</button>
               <a href="/avatar-review">Avatar & reference review ↗</a>
             </div>

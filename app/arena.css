@@ -1176,3 +1176,7 @@
   }
 }
 @media(max-width:767px){.arena-chapter-nav button{min-width:44px;justify-content:center}.arena-icon-control{width:44px;height:44px}.arena-pause{min-width:44px;justify-content:center}}
+
+.console-tabs{display:flex;gap:10px;padding:16px 0;margin-bottom:18px;border-bottom:1px solid #414955}.console-tabs button{text-transform:uppercase;min-height:44px;padding:10px 18px;font-size:16px}.console-tabs button[aria-pressed="true"]{background:#c71834;border-color:#ff4760;color:#fff}.console-section-detail h2{margin:10px 0 20px;font-size:48px}.console-skill-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.console-skill-grid h3{color:#fff;margin:0 0 8px;font-size:20px}.console-skill-grid p,.console-credentials p{font-size:18px;line-height:1.55;margin:0 0 16px}.console-credentials strong{color:#fff}.arena-menu{max-height:90svh;overflow-y:auto}
+
+@media(max-width:767px){.console-tabs{gap:6px}.console-tabs button{padding:10px 12px}.console-skill-grid{gap:10px}}

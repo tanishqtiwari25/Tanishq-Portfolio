@@ -56,7 +56,7 @@ export default function ArenaReader({ section, onClose, project }) {
               ? "The contact desk"
               : section === "skills"
                 ? "Technical profile"
-                : "Behind the work"}
+                : section === "education" ? "Education & certifications" : section === "experience" ? "Development experience" : "Behind the work"}
           </h2>
           <button onClick={onClose} aria-label="Close portfolio reader">
             Close ×
@@ -67,7 +67,7 @@ export default function ArenaReader({ section, onClose, project }) {
             <Contact />
           ) : section === "skills" ? (
             <Skills />
-          ) : (
+          ) : section === "education" ? (<EducationCertifications />) : section === "experience" ? (<Experience />) : (
             <>
               <About />
               <Experience />
