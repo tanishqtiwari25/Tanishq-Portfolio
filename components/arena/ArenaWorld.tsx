@@ -661,16 +661,20 @@ function MovingFixture({
   reduced,
   phase = 0,
   illuminate = false,
+  color = "#dce7ff",
 }: {
   p: V;
   reduced: boolean;
   phase?: number;
   illuminate?: boolean;
+  color?: string;
 }) {
   const group = useRef<T.Group>(null),
     target = useMemo(() => new T.Object3D(), []);
   const light = useRef<T.SpotLight>(null),
     direction = useMemo(() => new T.Vector3(), []);
+  const origin = useMemo(() => new T.Vector3(...p), [p]);
+  const beamUniforms = useMemo(() => ({ beamColor: { value: new T.Color(color) } }), [color]);
   useFrame(({ clock }) => {
     const t = reduced ? 0 : clock.elapsedTime;
     target.position.set(
@@ -681,7 +685,7 @@ function MovingFixture({
     target.updateMatrixWorld();
     direction
       .copy(target.position)
-      .sub(new T.Vector3(...p))
+      .sub(origin)
       .normalize();
     group.current?.quaternion.setFromUnitVectors(
       new T.Vector3(0, -1, 0),
@@ -694,11 +698,11 @@ function MovingFixture({
       <group position={p} ref={group}>
         <Box p={[0, 0.12, 0]} s={[0.65, 0.4, 0.65]} />
         <mesh position={[0, -6, 0]}>
-          <coneGeometry args={[2.2, 12, 12, 1, true]} />
+          <coneGeometry args={[1.65, 12, 24, 1, true]} />
           <shaderMaterial
-            uniforms={{ beamColor: { value: new T.Color(phase % 2 ? "#dce7ff" : RED) } }}
+            uniforms={beamUniforms}
             vertexShader={`varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){beamUv=uv;vec4 p=modelViewMatrix*vec4(position,1.);beamView=-p.xyz;beamNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*p;}`}
-            fragmentShader={`uniform vec3 beamColor; varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){float soft=pow(abs(dot(normalize(beamNormal),normalize(beamView))),2.);float ends=smoothstep(0.,.18,beamUv.y)*smoothstep(1.,.45,beamUv.y);gl_FragColor=vec4(beamColor,.045*soft*ends);}`}
+            fragmentShader={`uniform vec3 beamColor; varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){float soft=pow(abs(dot(normalize(beamNormal),normalize(beamView))),.7);float ends=smoothstep(0.,.22,beamUv.y)*smoothstep(1.,.72,beamUv.y);gl_FragColor=vec4(beamColor,.095*soft*ends);}`}
             transparent depthWrite={false} side={T.DoubleSide} blending={T.AdditiveBlending}
           />
         </mesh>
@@ -712,17 +716,17 @@ function MovingFixture({
           ref={light}
           position={p}
           target={target}
-          angle={0.3}
-          penumbra={0.7}
-          intensity={150}
+          angle={0.137}
+          penumbra={0.35}
+          intensity={1400}
           distance={48}
-          color="#d8e4ff"
+          color={color}
         />
       )}
     </group>
   );
 }
-function MovingLights({ reduced }: { reduced: boolean }) {
+function MovingLights({ reduced, mobile }: { reduced: boolean; mobile: boolean }) {
   const target = useMemo(() => {
     const object = new T.Object3D();
     object.position.set(0, 0.4, -24);
@@ -730,15 +734,15 @@ function MovingLights({ reduced }: { reduced: boolean }) {
   }, []);
   return (
     <group>
-      <ambientLight intensity={1.1} />
-      <hemisphereLight args={["#d5dfef", "#4b3540", 1.65]} />
+      <ambientLight intensity={0.55} />
+      <hemisphereLight args={["#d5dfef", "#24151b", 0.8]} />
       <primitive object={target} />
       <spotLight
         position={[-6, 12, -25]}
         target={target}
         angle={0.55}
         penumbra={0.6}
-        intensity={380}
+        intensity={1100}
         distance={60}
         color="#e7edff"
         castShadow
@@ -753,7 +757,7 @@ function MovingLights({ reduced }: { reduced: boolean }) {
       />
       <pointLight
         position={[0, 6, 0]}
-        intensity={220}
+        intensity={360}
         distance={22}
         color="#e8eefa"
       />
@@ -763,8 +767,9 @@ function MovingLights({ reduced }: { reduced: boolean }) {
             key={side + "," + i}
             p={[side * (6 + i * 2), 12, -35 + i * 10]}
             phase={i + side * 0.7}
+            color={(i + (side === 1 ? 1 : 0)) % 3 === 0 ? "#ff1532" : "#dce7ff"}
             reduced={reduced}
-            illuminate={i === 1 && side === 1}
+            illuminate={mobile ? i === 1 && side === 1 : (i === 0 && side === -1) || i === 2}
           />
         )),
       )}
@@ -1014,7 +1019,7 @@ export default function ArenaWorld({
         <ArenaDecor mobile={mobile} reduced={journey.current.reduced} />
         <Ring progress={journey} />
         <Crowd mobile={mobile} reduced={journey.current.reduced} />
-        <MovingLights reduced={journey.current.reduced} />
+        <MovingLights reduced={journey.current.reduced} mobile={mobile} />
         <TemporaryAvatar journey={journey} />
         {children}
         <Ready onReady={onReady} onFailure={onFailure} />
