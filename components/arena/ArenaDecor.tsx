@@ -7,6 +7,7 @@ import {
   MeshReflectorMaterial,
 } from "@react-three/drei";
 import * as T from "three";
+import { brushedMetal } from "./arenaMaterials";
 /** Procedural artwork/materials, not a backdrop photograph. */
 function makeHaze() {
   const c = document.createElement("canvas");
@@ -52,7 +53,7 @@ function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
       const size = 1.3 + age * 4.5;
       s.scale.set(size, size * .8, 1);
       const material = (s as T.Sprite).material;
-      material.opacity = Math.sin(Math.PI * age) * .29;
+      material.opacity = Math.sin(Math.PI * age) * .42;
       material.rotation = i * 1.7 + age * (i % 2 ? .55 : -.55);
     });
   });
@@ -201,28 +202,41 @@ function PhoneFlashes({
   );
 }
 export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
+  const surface = useMemo(brushedMetal, []);
+  useEffect(() => {
+    surface.roughnessMap.repeat.set(3, 12);
+    return () => { surface.map.dispose(); surface.roughnessMap.dispose(); };
+  }, [surface]);
   return (
     <mesh
       position={[0, 0.625, -21.5]}
       rotation={[-Math.PI / 2 + Math.atan(1 / 23), 0, 0]}
     >
       <planeGeometry args={[4.12, Math.hypot(23, 1)]} />
+      {Array.from({length:17},(_,i)=><group key={i} position={[0,-10.8+i*1.35,.003]}>
+        <mesh><boxGeometry args={[4.12,.012,.002]} /><meshStandardMaterial color="#171a20" roughness={.65} metalness={.8} /></mesh>
+        {[-1,1].map(side=><mesh key={side} position={[side*1.93,.07,.002]}><circleGeometry args={[.018,6]} /><meshStandardMaterial color="#8d939e" roughness={.28} metalness={1}/></mesh>)}
+      </group>)}
       {mobile ? (
         <meshStandardMaterial
           color="#272b32"
           metalness={0.7}
           roughness={0.32}
+          roughnessMap={surface.roughnessMap}
         />
       ) : (
         <MeshReflectorMaterial
           resolution={512}
           mixBlur={1}
-          mixStrength={2.4}
-          blur={[24, 8]}
+          mixStrength={1.8}
+          blur={[10, 4]}
           mirror={0.85}
-          color="#626873"
+          color="#363b44"
           metalness={0.25}
-          roughness={0.14}
+          roughness={0.22}
+          roughnessMap={surface.roughnessMap}
+          bumpMap={surface.roughnessMap}
+          bumpScale={.0012}
           depthScale={0.4}
           minDepthThreshold={0.2}
           maxDepthThreshold={1.3}
@@ -240,7 +254,7 @@ export default function ArenaDecor({
 }) {
   return (
     <group>
-      <Environment resolution={mobile ? 64 : 128} frames={1} environmentIntensity={.7}>
+      <Environment resolution={mobile ? 64 : 128} frames={1} environmentIntensity={1}>
         <Lightformer
           position={[0, 13, -24]}
           rotation={[Math.PI / 2, 0, 0]}

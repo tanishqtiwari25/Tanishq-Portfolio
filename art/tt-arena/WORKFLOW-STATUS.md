@@ -69,3 +69,28 @@ the reference's photographic quality. The hooded garment is a development asset,
 not the owner's approved likeness. A validated likeness head/body asset and final
 performance are still missing. Do not label this implementation exact,
 photorealistic, complete or ready for final delivery merely because tests pass.
+
+## Lighting revision after visual feedback
+
+The web renderer now uses a restrained desktop bloom pass followed by Three.js
+OutputPass, with a one-pixel-ratio compositor. Mobile does not mount this pipeline.
+Ambient fill was reduced in favour of red stage lights and a cool entrance key;
+the existing environment reveals metal truss reflections. Audience impostors now
+use Lambert lighting rather than unlit materials, with position/height variation.
+They are still four repeated atlas subjects, not finished 3D crowd models.
+
+The procedural LED wall has denser distressed red signal artwork and text wear.
+The runway has shared roughness/bump detail, panel seams and fasteners. Reflection
+strength and bloom were reduced after screenshot review to avoid a pink/white
+washed-out runway. Spotlight cones are narrower and more transparent.
+
+Physical HTML screens use their existing world-space transforms without blending
+occlusion: the bloom pipeline otherwise darkened the alpha-cutout display regions.
+Their text and buttons remain separate crisp DOM content; screen imagery is not
+affected by scene bloom. They are visible only in their corresponding chapter.
+
+`lighting-revision/` contains desktop entrance, projects, mobile and a before/after
+comparison captured in the actual website. No Blender source or exported mesh was
+modified during this rendering pass; previous static mesh QA has the same scope.
+This improves the lighting/material treatment but does not finish avatar likeness,
+crowd diversity, physical volumetric smoke or the outstanding animation work.

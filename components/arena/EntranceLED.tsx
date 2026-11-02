@@ -12,11 +12,18 @@ export default function EntranceLED({ intro }: { intro: boolean }) {
     let seed = 4317;
     const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
     // Original irregular red signal artwork; no full-scene image backdrop.
-    for (let i = 0; i < 70; i++) {
-      ctx.strokeStyle = `rgba(196,12,32,${.08 + random() * .3})`;
+    const glow = ctx.createRadialGradient(1060, 440, 40, 1060, 440, 1150);
+    glow.addColorStop(0, "#48101a"); glow.addColorStop(.55, "#1d080e"); glow.addColorStop(1, "#07080b");
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, 2048, 688);
+    for (let i = 0; i < 1250; i++) {
+      ctx.strokeStyle = `rgba(235,16,43,${.07 + random() * .55})`;
       const x = random() * 2048, y = random() * 688;
-      ctx.lineWidth = 1 + random() * 6;
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + random() * 240 - 120, y + random() * 32 - 16); ctx.stroke();
+      ctx.lineWidth = .5 + random() * 3;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + random() * 380 - 190, y + random() * 110 - 55); ctx.stroke();
+    }
+    for (let i=0;i<9000;i++) {
+      ctx.fillStyle = random()>.18 ? `rgba(255,32,53,${random()*.45})` : "#f3b2b566";
+      ctx.fillRect(random()*2048,random()*688,1+random()*8,1+random()*3);
     }
     ctx.font = '900 300px Impact, "Arial Narrow", sans-serif';
     const first = "TANISHQ ", second = "TIWARI";
@@ -32,8 +39,8 @@ export default function EntranceLED({ intro }: { intro: boolean }) {
     ctx.fillStyle = "#efebea";
     for (const letter of subtitle) { ctx.fillText(letter, x, 438); x += ctx.measureText(letter).width + spacing; }
     // Fine wear and LED pitch remain below the text's readability threshold.
-    for (let i = 0; i < 1400; i++) {
-      ctx.fillStyle = `rgba(7,7,9,${random() * .22})`;
+    for (let i = 0; i < 6500; i++) {
+      ctx.fillStyle = `rgba(7,7,9,${random() * .55})`;
       ctx.fillRect(random() * 2048, 150 + random() * 210, 1 + random() * 10, 1 + random() * 2);
     }
     ctx.fillStyle = "#00000022";

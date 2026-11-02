@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, useGLTF } from "@react-three/drei";
 import * as T from "three";
 import ArenaDecor from "./ArenaDecor";
+import ArenaLook from "./ArenaLook";
 import SpectatorLOD from "./SpectatorLOD";
 import StageRigging, { ArenaBanner } from "./StageRigging";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
@@ -776,11 +777,11 @@ function MovingFixture({
       <group position={p} ref={group}>
         <Box p={[0, 0.12, 0]} s={[0.65, 0.4, 0.65]} />
         <mesh position={[0, -6, 0]}>
-          <coneGeometry args={[1.65, 12, 24, 1, true]} />
+          <coneGeometry args={[1.05, 12, 24, 1, true]} />
           <shaderMaterial
             uniforms={beamUniforms}
             vertexShader={`varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){beamUv=uv;vec4 p=modelViewMatrix*vec4(position,1.);beamView=-p.xyz;beamNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*p;}`}
-            fragmentShader={`uniform vec3 beamColor; varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){float soft=pow(abs(dot(normalize(beamNormal),normalize(beamView))),.7);float ends=smoothstep(0.,.22,beamUv.y)*smoothstep(1.,.72,beamUv.y);gl_FragColor=vec4(beamColor,.095*soft*ends);}`}
+            fragmentShader={`uniform vec3 beamColor; varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){float soft=pow(abs(dot(normalize(beamNormal),normalize(beamView))),.7);float ends=smoothstep(0.,.22,beamUv.y)*smoothstep(1.,.72,beamUv.y);gl_FragColor=vec4(beamColor,.065*soft*ends);}`}
             transparent depthWrite={false} side={T.DoubleSide} blending={T.AdditiveBlending}
           />
         </mesh>
@@ -812,15 +813,18 @@ function MovingLights({ reduced, mobile }: { reduced: boolean; mobile: boolean }
   }, []);
   return (
     <group>
-      <ambientLight intensity={0.55} />
-      <hemisphereLight args={["#d5dfef", "#24151b", 0.8]} />
+      <ambientLight intensity={0.23} />
+      <hemisphereLight args={["#bdcee9", "#20080e", 0.55]} />
+      <pointLight position={[-8, 6, -35]} intensity={480} distance={30} color="#ff1837" />
+      <pointLight position={[8, 6, -35]} intensity={480} distance={30} color="#ff1837" />
+      <pointLight position={[0, 8, -41]} intensity={700} distance={25} color="#dce8ff" />
       <primitive object={target} />
       <spotLight
         position={[-6, 12, -25]}
         target={target}
         angle={0.55}
         penumbra={0.6}
-        intensity={1100}
+        intensity={1700}
         distance={60}
         color="#e7edff"
         castShadow
@@ -1027,7 +1031,7 @@ export function PhysicalScreen({
       {visible && (
         <Html
           transform
-          occlude="blending"
+          occlude={false}
           position={[0, 0, 0.075]}
           distanceFactor={(size[0] * 400) / 900}
           zIndexRange={[15, 1]}
@@ -1098,6 +1102,7 @@ export default function ArenaWorld({
       dpr={mobile ? 1 : [1, 1.4]}
       camera={{ position: [0, 4.5, -23], near: 0.1, far: 180, fov: 45 }}
       gl={{ antialias: !mobile, powerPreference: "high-performance" }}
+      onCreated={({ gl }) => { gl.toneMappingExposure = 1.15; }}
     >
       <color attach="background" args={["#080b11"]} />
       <fog attach="fog" args={["#11151d", 40, 115]} />
@@ -1113,6 +1118,7 @@ export default function ArenaWorld({
         <TemporaryAvatar journey={journey} />
         {children}
         <Ready onReady={onReady} onFailure={onFailure} />
+        {!mobile && <ArenaLook />}
       </Suspense>
       </MetalMaps.Provider>
     </Canvas>

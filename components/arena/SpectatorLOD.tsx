@@ -34,23 +34,25 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
       }
       y = tier * 2.4;
     }
-    return { x, y, z, scale: .91 + (i % 9) * .018, phase: i * 1.813 };
+    x += Math.sin(i * 12.9898) * .12;
+    z += Math.cos(i * 7.233) * .17;
+    return { x, y, z, scale: .84 + (i % 13) * .019, phase: i * 1.813 };
   }), [count, mobile]);
   const geometry = useMemo(() => {
-    const g = new T.PlaneGeometry(.72, 2.2); g.translate(0, 1.1, 0);
+    const g = new T.PlaneGeometry(.7, 2.05); g.translate(0, 1.025, 0);
     g.setAttribute("atlasCell", new T.InstancedBufferAttribute(Float32Array.from({ length: count }, (_, i) => ((Math.imul(i + 1, 1103515245) >>> 16) % 4)), 1));
     return g;
   }, [count]);
   const material = useMemo(() => {
     atlas.colorSpace = T.SRGBColorSpace;
-    const m = new T.MeshBasicMaterial({ map: atlas, color: "#a0a7b2", alphaTest: .5, side: T.DoubleSide });
+    const m = new T.MeshLambertMaterial({ map: atlas, color: "#e0d8d3", alphaTest: .5, side: T.DoubleSide });
     m.onBeforeCompile = shader => {
       shader.vertexShader = "attribute float atlasCell;\n" + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace("#include <uv_vertex>", `#include <uv_vertex>
         vMapUv.x = (vMapUv.x * .992 + .004 + atlasCell) * .25;
         vMapUv.y = .105 + vMapUv.y * .875;`);
     };
-    m.customProgramCacheKey = () => "tt-spectator-atlas-v1";
+    m.customProgramCacheKey = () => "tt-spectator-lit-atlas-v2";
     return m;
   }, [atlas]);
   useEffect(() => () => { geometry.dispose(); material.dispose(); }, [geometry, material]);
