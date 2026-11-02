@@ -11,5 +11,14 @@
   ],
   "units": "metres",
   "coordinate_system": "Y-up glTF",
-  "status": "architecture pass, likeness not complete"
+  "status": "editable six-scene review, faithful likeness pending",
+  "chapter_frames": [
+    1,
+    100,
+    300,
+    480,
+    610,
+    720
+  ],
+  "review_scene": true
 }

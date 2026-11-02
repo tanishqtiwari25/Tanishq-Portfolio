@@ -173,7 +173,7 @@ for matname,(verts,faces) in batches.items():
     if matname not in (red.name,white.name,concrete.name):
         bevel=obj.modifiers.new('Manufactured bevelled edges','BEVEL');bevel.width=.015;bevel.segments=2;bevel.limit_method='ANGLE';bevel.angle_limit=.65
 # Review cameras use the same six compositions as the live journey.
-CAMERAS=[('01 Entrance',(0,2.5,-17),(0,4.6,-40)),('02 Intro',(-8,2.8,-25),(0,5.2,-40)),('03 Walk',(-1.2,2.1,-17),(0,2.2,-6)),('04 Projects',(0,5.3,20),(0,5.3,1.2)),('05 Skills',(8.7,3.1,7.5),(8,2.7,1)),('06 Contact',(-8,3.1,7.5),(-8,2.7,1))]
+CAMERAS=[('01 Entrance',(0,2.5,-17),(0,4.6,-40)),('02 Intro',(-8,2.8,-25),(0,5.2,-40)),('03 Walk',(-1.2,2.5,-22),(0,1.6,-6)),('04 Projects',(0,5.3,20),(0,5.3,1.2)),('05 Skills',(8.7,3.1,7.5),(8,2.7,1)),('06 Contact',(-8,3.1,7.5),(-8,2.7,1))]
 for name,p,target in CAMERAS:
     cam=bpy.data.cameras.new(name);obj=bpy.data.objects.new(name,cam);bpy.context.collection.objects.link(obj);obj.location=world(p);obj.rotation_euler=(Vector(world(target))-obj.location).to_track_quat('-Z','Y').to_euler();cam.lens=30
     if name.startswith('01'):bpy.context.scene.camera=obj
@@ -201,7 +201,8 @@ if rigpath.exists():
     scene.frame_end=720;scene.render.fps=30
     for obj in imported:
         if obj.type=='ARMATURE':obj['animation_note']='Imported original walk, idle, pose and turn clips. Root path requires final retargeting for a finished performance.'
+exec(compile((ROOT/'scripts'/'blender'/'complete_review.py').read_text(encoding='utf-8-sig'), 'complete_review.py', 'exec'))
 scene.frame_set(1)
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'tt-arena.blend'))
-(OUT/'build-manifest.json').write_text(json.dumps({'source':'tt-arena.blend','asset':'/models/tt-arena-architecture.glb','cameras':[c[0] for c in CAMERAS],'units':'metres','coordinate_system':'Y-up glTF','status':'architecture pass, likeness not complete'},indent=2))
+(OUT/'build-manifest.json').write_text(json.dumps({'source':'tt-arena.blend','asset':'/models/tt-arena-architecture.glb','cameras':[c[0] for c in CAMERAS],'units':'metres','coordinate_system':'Y-up glTF','status':'editable six-scene review, faithful likeness pending','chapter_frames':[1,100,300,480,610,720],'review_scene':True},indent=2))
 print('TT_ARENA_BUILD_COMPLETE',flush=True)
