@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 function Model() {
-  const gltf = useGLTF("/models/tt-temporary.glb");
+  const gltf = useGLTF("/models/tt-entrance-performer.glb", false, true);
   const scene = useMemo(() => clone(gltf.scene), [gltf.scene]);
   return <primitive object={scene} />;
 }
@@ -13,26 +13,26 @@ export default function AvatarReview() {
   return (
     <main className="avatar-review">
       <a href="/">← Return to TT Arena</a>
-      <span className="arena-eyebrow">ASSET REVIEW / DEVELOPMENT STAND-IN</span>
-      <h1>A rig. Not a likeness.</h1>
+      <span className="arena-eyebrow">ASSET REVIEW / ENTRANCE OUTFIT STUDY</span>
+      <h1>The entrance performer.</h1>
       <p>
-        This is a textured, skinned development model with a skeleton and
-        animation clips. It is deliberately faceless and does not reproduce
-        Tanishq’s identity. The supplied photos remain the identity references.
-        No final facial model has been approved.
+        An original hooded garment study with cuffs, trouser folds, hands and
+        layered sneakers. The 13,824-triangle mesh retains the 13-bone rig and
+        four animation clips in a 534 KB GLB. It has no reconstructed facial
+        likeness; the supplied photos remain the identity references.
       </p>
       <div className="avatar-review-layout">
         <div>
           <div
             className="avatar-viewer"
-            aria-label="Interactive temporary avatar preview"
+            aria-label="Interactive entrance outfit preview"
           >
             <Canvas
               key={angle}
               camera={{
                 position: [
-                  [0, 1.15, 3.4],
-                  [2.4, 1.15, 2.4],
+                  [0, 1.15, -3.4],
+                  [2.4, 1.15, -2.4],
                   [3.4, 1.15, 0],
                 ][angle] as [number, number, number],
                 fov: 38,
@@ -57,7 +57,7 @@ export default function AvatarReview() {
             </Canvas>
           </div>
           <div className="avatar-angle-buttons">
-            {["Front", "Three-quarter", "Side"].map((label, i) => (
+            {["Rear", "Three-quarter", "Side"].map((label, i) => (
               <button
                 key={label}
                 onClick={() => setAngle(i)}
@@ -67,8 +67,8 @@ export default function AvatarReview() {
               </button>
             ))}
           </div>
-          <a href="/models/tt-temporary.glb" download>
-            Download temporary GLB ↗
+          <a href="/models/tt-entrance-performer.glb" download>
+            Download outfit study GLB ↗
           </a>
         </div>
         <div>
@@ -89,11 +89,10 @@ export default function AvatarReview() {
           </div>
           <h2>Required to finish your avatar</h2>
           <p>
-            A character artist must reconstruct and validate the face in Blender
-            or an equivalent character workflow, texture it against the supplied
-            images, fit the black TT outfit, rig and skin the model, and deliver
-            an optimized GLB with grounded walk, turn, pose, idle and
-            stair/rope-entry clips.
+            Remaining work includes a validated facial reconstruction, refined
+            garment tailoring and skin textures, deformation review and a
+            grounded stair/rope-entry performance. The current outfit is a
+            composition asset, not an approved final character.
           </p>
           <p>
             Front, three-quarter and side views of that likeness model must be

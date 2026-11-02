@@ -1,0 +1,11 @@
+import sharp from "sharp";
+import path from "node:path";
+const root=process.cwd();
+const output=path.join(root,"art/tt-arena/entrance-pass");
+const reference=process.argv[2];
+if(!reference) throw new Error("Provide the original six-frame reference path.");
+const meta=await sharp(reference).metadata();
+const source=await sharp(reference).extract({left:0,top:0,width:Math.floor(meta.width/2)-3,height:Math.floor(meta.height/3)-3}).resize(960,430,{fit:"contain",background:"#08090c"}).png().toBuffer();
+const current=await sharp(path.join(output,"entrance-wide.png")).resize(960,430,{fit:"contain",background:"#08090c"}).png().toBuffer();
+const labels=Buffer.from('<svg width="1920" height="36"><rect width="1920" height="36" fill="#11151c"/><g fill="#e5e9ee" font-family="Arial" font-size="16"><text x="20" y="24">REFERENCE / ENTRANCE</text><text x="980" y="24">CURRENT / LIVE WEBGL — COMPOSITION STUDY</text></g></svg>');
+await sharp({create:{width:1920,height:466,channels:4,background:"#08090c"}}).composite([{input:source,left:0,top:0},{input:current,left:960,top:0},{input:labels,left:0,top:430}]).png().toFile(path.join(output,"reference-comparison.png"));

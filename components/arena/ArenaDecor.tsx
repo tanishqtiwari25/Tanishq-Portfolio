@@ -18,6 +18,24 @@ function makeHaze() {
   g.addColorStop(1, "rgba(100,110,130,0)");
   x.fillStyle = g;
   x.fillRect(0, 0, 128, 128);
+  const data = x.getImageData(0, 0, 128, 128);
+  const hash = (a: number, b: number) => {
+    const n = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+    return n - Math.floor(n);
+  };
+  const noise = (a: number, b: number) => {
+    const i = Math.floor(a), j = Math.floor(b), u = a - i, v = b - j;
+    const sx = u * u * (3 - 2 * u), sy = v * v * (3 - 2 * v);
+    return T.MathUtils.lerp(T.MathUtils.lerp(hash(i,j),hash(i+1,j),sx),T.MathUtils.lerp(hash(i,j+1),hash(i+1,j+1),sx),sy);
+  };
+  for (let py = 0; py < 128; py++) for (let px = 0; px < 128; px++) {
+    const k = (py * 128 + px) * 4;
+    const billow = noise(px/23,py/23)*.6 + noise(px/9,py/9)*.28 + noise(px/3,py/3)*.12;
+    const radial = Math.max(0,1-Math.hypot((px-64)/65,(py-64)/64));
+    data.data[k] = data.data[k+1] = data.data[k+2] = 225;
+    data.data[k+3] = Math.min(255, Math.max(0,billow-.3) * 650 * Math.pow(radial,.75));
+  }
+  x.putImageData(data,0,0);
   return new T.CanvasTexture(c);
 }
 function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
@@ -31,7 +49,7 @@ function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
         (i % 2 ? -1 : 1) * (2.2 + (i % 4) * 2.1) +
         Math.sin(clock.elapsedTime * 0.16 + i) * 0.45;
       s.position.y =
-        0.8 + (i % 3) * 0.45 + Math.sin(clock.elapsedTime * 0.12 + i) * 0.18;
+        1.6 + (i % 3) * 0.55 + Math.sin(clock.elapsedTime * 0.12 + i) * 0.18;
     });
   });
   return (
@@ -41,17 +59,17 @@ function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
           key={i}
           position={[
             (i % 2 ? -1 : 1) * (2.2 + (i % 4) * 2.1),
-            0.8 + (i % 3) * 0.45,
+            1.6 + (i % 3) * 0.55,
             -33 - (i % 3) * 1.2,
           ]}
-          scale={[4.5, 2.2, 1]}
+          scale={[4.5, 4.2, 1]}
         >
           <spriteMaterial
             map={map}
             transparent
-            opacity={0.46}
+            opacity={0.65}
             depthWrite={false}
-            color={i % 3 ? "#afbdcf" : "#ad2741"}
+            color={i % 3 ? "#d8e1ed" : "#c32a42"}
           />
         </sprite>
       ))}
@@ -181,8 +199,8 @@ function PhoneFlashes({
 export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
   return (
     <mesh
-      position={[0, 0.607, -21.5]}
-      rotation={[-Math.PI / 2 - Math.atan(1 / 23), 0, 0]}
+      position={[0, 0.625, -21.5]}
+      rotation={[-Math.PI / 2 + Math.atan(1 / 23), 0, 0]}
     >
       <planeGeometry args={[4.12, Math.hypot(23, 1)]} />
       {mobile ? (
@@ -195,12 +213,12 @@ export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
         <MeshReflectorMaterial
           resolution={512}
           mixBlur={1}
-          mixStrength={1.2}
-          blur={[64, 16]}
-          mirror={0.6}
-          color="#272b32"
-          metalness={0.65}
-          roughness={0.19}
+          mixStrength={2.4}
+          blur={[24, 8]}
+          mirror={0.85}
+          color="#626873"
+          metalness={0.25}
+          roughness={0.14}
           depthScale={0.4}
           minDepthThreshold={0.2}
           maxDepthThreshold={1.3}

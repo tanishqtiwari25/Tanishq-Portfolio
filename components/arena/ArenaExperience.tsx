@@ -184,6 +184,7 @@ export default function ArenaExperience() {
     onFailure = useCallback(() => setFailed(true), []);
   return (
     <main className="tt-arena">
+      <h1 className="sr-only">Tanishq Tiwari — developer portfolio</h1>
       <a
         className="arena-skip"
         href="#arena-content"

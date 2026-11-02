@@ -5,6 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, useGLTF } from "@react-three/drei";
 import * as T from "three";
 import ArenaDecor from "./ArenaDecor";
+import SpectatorLOD from "./SpectatorLOD";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { sampleJourney, ENTRY } from "@/lib/arena/journey.mjs";
 import type { MutableRefObject, ReactNode } from "react";
@@ -174,8 +175,37 @@ function Sign({
   );
 }
 function BlenderArchitecture() {
+  const textures = useContext(MetalMaps);
   const { scene } = useGLTF("/models/tt-arena-architecture.glb", false, true);
-  const architecture = useMemo(() => scene.clone(true), [scene]);
+  const architecture = useMemo(() => {
+    const copy = scene.clone(true);
+    // The source kit batches steel by material. Refit only the LED facade's
+    // bounded vertices; the entrance portal and load-bearing towers stay put.
+    copy.traverse(object => {
+      if (!(object instanceof T.Mesh)) return;
+      const geometry = object.geometry.clone();
+      const position = geometry.attributes.position;
+      let moved = false;
+      for (let i = 0; i < position.count; i++) {
+        const x = position.getX(i), y = position.getY(i), z = position.getZ(i);
+        if (Math.abs(x) < 10.85 && z < -40.45 && z > -41.5 && y > .8 && y < 10.5) {
+          position.setY(i, 9.2 + (y - 5.7) * .8);
+          moved = true;
+        }
+      }
+      if (moved) { position.needsUpdate = true; geometry.computeVertexNormals(); }
+      geometry.computeBoundingBox(); geometry.computeBoundingSphere();
+      object.geometry = geometry;
+      object.material = Array.isArray(object.material) ? object.material.map(material => material.clone()) : object.material.clone();
+    });
+    return copy;
+  }, [scene]);
+  useEffect(() => () => architecture.traverse(object => {
+    if (object instanceof T.Mesh) {
+      object.geometry.dispose();
+      (Array.isArray(object.material) ? object.material : [object.material]).forEach(material => material.dispose());
+    }
+  }), [architecture]);
   useEffect(() => {
     architecture.traverse(object => {
       if (object instanceof T.Mesh) {
@@ -183,12 +213,21 @@ function BlenderArchitecture() {
         const materials = Array.isArray(object.material) ? object.material : [object.material];
         for (const material of materials) if (material instanceof T.MeshStandardMaterial) {
           if (material.name.includes("LED")) { material.toneMapped = false;material.emissiveIntensity = 1.3; }
-          else material.envMapIntensity = 1.7;
+          else {
+            material.envMapIntensity = 1.7;
+            if (/steel|aluminium|coated black/i.test(material.name) && textures) {
+              material.roughnessMap = textures.roughnessMap;
+              material.bumpMap = textures.roughnessMap;
+              material.bumpScale = .0007;
+              material.roughness = /black/i.test(material.name) ? .9 : .75;
+              material.needsUpdate = true;
+            }
+          }
         }
         object.castShadow = object.name !== "Charcoal_concrete" && !object.name.includes("concrete");
       }
     });
-  }, [architecture]);
+  }, [architecture, textures]);
   return <group><primitive object={architecture} />{[-1,1].map(side => <group key={side}><pointLight position={[side*12,9,-31]} color="#ff2447" intensity={170} distance={25}/><pointLight position={[side*16,8,7]} color="#e9efff" intensity={180} distance={35}/></group>)}</group>;
 }
 function Stage() {
@@ -265,6 +304,22 @@ function Stage() {
       ))}
     </group>
   );
+}
+function EntranceProduction({ mobile }: { mobile: boolean }) {
+  return <group>
+    {[-1, 1].map(side => <group key={side}>
+      <Box p={[side * 7.8, 3.15, -40.45]} s={[13.1, 4.1, .34]} c="#121419" />
+      <Sign p={[side * 13, 5, -38.6]} s={[2.15, 6.7]} lines={["TT"]} color="#f51b35" />
+      {[3.1, 7.8, 10.8].slice(0, mobile ? 2 : 3).map(x => <group key={x}>
+        {[-.17, .17].map(edge => <Bar key={edge} a={[side*x+edge,1.1,-40.1]} b={[side*x+edge,5.35,-40.1]} r={.045} />)}
+        {Array.from({length:6},(_,i)=><Bar key={i} a={[side*x-.17,1.1+i*.7,-40.1]} b={[side*x+.17,1.8+i*.7,-40.1]} r={.025} />)}
+      </group>)}
+      {[4.5, 6, 9.4].map(x=><Box key={x} p={[side*x,3.1,-40.2]} s={[.055,3.7,.06]} c="#cf1029" emissive />)}
+      {!mobile && [0,1].map(i=><Sign key={i} p={[side*(4.2+i*.45),2.25,-21-i*7]} s={[.75,1]} rotation={[0,side*-.25,side*.1]} lines={i ? ["CODE","BUILD","CREATE"] : ["TT"]} color={i ? "#ededeb" : "#ed1734"} />)}
+    </group>)}
+    <Box p={[0,4.75,-40.45]} s={[2.5,1.05,.34]} c="#121419" />
+    <mesh position={[0,2.6,-40.5]}><planeGeometry args={[2.35,2.95]} /><meshBasicMaterial color="#c7dbf0" toneMapped={false} /></mesh>
+  </group>;
 }
 function EntryRope({
   progress,
@@ -460,7 +515,7 @@ function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
           const side = i % 2 ? -1 : 1,
             row = Math.floor(i / 2) % 4,
             n = Math.floor(i / 8);
-          x = side * (6.2 + row * 1.25);
+          x = side * (3.9 + row * 0.7);
           z = -31 + n * (18 / Math.ceil(floorCount / 8));
           y = 0;
         } else {
@@ -781,7 +836,7 @@ function TemporaryAvatar({
 }: {
   journey: MutableRefObject<JourneyState>;
 }) {
-  const gltf = useGLTF("/models/tt-temporary.glb");
+  const gltf = useGLTF("/models/tt-entrance-performer.glb", false, true);
   const model = useMemo(() => clone(gltf.scene), [gltf.scene]);
   const root = useRef<T.Group>(null),
     last = useRef(new T.Vector3(0, 1.1, -39));
@@ -820,16 +875,14 @@ function TemporaryAvatar({
     if (!root.current) return;
     const j = journey.current,
       sample = sampleJourney(j.current);
-    const entering = j.current < 0.001;
     pos.set(...(sample.avatar as V));
-    if (entering) pos.set(0, 1.1, -39 + j.intro * 4);
     const walking =
       pos.distanceToSquared(last.current) > 0.0000002 && !j.reduced;
     last.current.copy(pos);
     root.current.position.copy(pos);
     if (walk) {
       walk.weight = walking ? 1 : 0;
-      const metres = entering ? j.intro * 4 : sample.distance + 4;
+      const metres = sample.distance;
       walk.time =
         ((((metres / 1.28) % 1) + 1) % 1) * (actions.walk?.duration ?? 1.2);
     }
@@ -838,7 +891,8 @@ function TemporaryAvatar({
       idle.time += j.reduced ? 0 : Math.min(delta, 0.05);
     }
     mixer.update(0);
-    const yaw = entering ? 0 : sample.avatarYaw;
+    // The entrance is deliberately a held rear view, matching the storyboard.
+    const yaw = j.current < 0.13 ? Math.PI : sample.avatarYaw;
     const difference =
       T.MathUtils.euclideanModulo(
         yaw - root.current.rotation.y + Math.PI,
@@ -850,7 +904,6 @@ function TemporaryAvatar({
   return (
     <group ref={root}>
       <primitive object={model} />
-      <Sign p={[0, 2.15, 0]} s={[1.6, 0.32]} lines={["TEMPORARY RIG"]} />
     </group>
   );
 }
@@ -872,12 +925,18 @@ function CameraRig({ journey }: { journey: MutableRefObject<JourneyState> }) {
     look.set(...(sample.look as V));
     const perspective = camera as T.PerspectiveCamera;
     let fov = 45;
+    if (!j.mobile && sample.chapter <= 1) {
+      // Keep the whole production stage in frame at different desktop aspects.
+      const wide = T.MathUtils.radToDeg(2 * Math.atan(43 / (2 * pos.distanceTo(look) * (size.width / size.height))));
+      const transition = T.MathUtils.smoothstep(j.current, .13, .21);
+      fov = T.MathUtils.lerp(T.MathUtils.clamp(wide, 45, 76), 45, transition);
+    }
     if (j.mobile) {
       // Widen the lens rather than dollying through the ring to frame the stage.
       const aspect = size.width / size.height;
       const width =
         sample.chapter <= 1
-          ? 12.8
+          ? 22.5
           : sample.chapter === 3
             ? 9.8
             : sample.chapter >= 4
@@ -1016,9 +1075,10 @@ export default function ArenaWorld({
       <Suspense fallback={null}>
         <CameraRig journey={journey} />
         <BlenderArchitecture />
+        <EntranceProduction mobile={mobile} />
         <ArenaDecor mobile={mobile} reduced={journey.current.reduced} />
         <Ring progress={journey} />
-        <Crowd mobile={mobile} reduced={journey.current.reduced} />
+        <SpectatorLOD mobile={mobile} reduced={journey.current.reduced} />
         <MovingLights reduced={journey.current.reduced} mobile={mobile} />
         <TemporaryAvatar journey={journey} />
         {children}

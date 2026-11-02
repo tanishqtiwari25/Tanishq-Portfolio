@@ -1191,6 +1191,24 @@
 .contact-console h2{font-size:68px!important}.contact-console h2 em{font-style:normal;color:#ff2648}
 @media(max-width:767px){.stage-led-content h1{font-size:94px}.arena-chapter-nav{gap:2px}.arena-chapter-nav button{min-width:42px}}
 
+/* Entrance composition pass: raised broadcast wall and restrained screen graphics. */
+.stage-led-content {
+  justify-content:center;
+  padding:36px 32px;
+  background:radial-gradient(ellipse at 15% 110%,#b608235c,transparent 57%),radial-gradient(ellipse at 88% 0%,#77121a44,transparent 55%),repeating-linear-gradient(0deg,#09090c 0 2px,#151318 3px 4px);
+}
+.stage-led-content h1 {font-size:112px;line-height:1.04;letter-spacing:-.025em;transform:none;text-shadow:1px 2px 0 #777;}
+.stage-led-content h1 em {color:#f01932;text-shadow:1px 2px 0 #7d1123;}
+.stage-led-content .led-role {font-size:17px;letter-spacing:.65em;margin:16px 0 0;color:#ede9e8;}
+.stage-led-content:before {display:none;}
+@media(min-width:768px){
+  .arena-chapter-copy{bottom:92px;max-width:260px;}
+  .arena-chapter-copy p{font-size:16px;}
+  .arena-entry-actions{bottom:96px;gap:8px;}
+  .arena-entry-actions button{padding:12px 16px;font-size:12px;}
+  .arena-side-caption{opacity:.5;}
+}
+
 .console-skill-grid{grid-template-columns:repeat(3,1fr);gap:18px}.console-skill-grid>div{padding:15px;border:1px solid #61697555;background:#11151a66}.console-tech-tiles{display:grid;grid-template-columns:1fr 1fr;gap:15px}.console-tech-tile{display:flex;flex-direction:column;align-items:center;gap:7px}.console-tech-tile b{display:grid;place-items:center;width:66px;height:62px;border-radius:4px;font-size:34px;font-family:Arial,sans-serif;font-weight:900;background:#333b47;color:white}.console-tech-tile span{font-size:13px;text-align:center;color:#d4d9e0}.tile-0-0 b{background:#e95624;clip-path:polygon(0 0,100% 0,90% 88%,50% 100%,10% 88%)}.tile-0-1 b{background:#226dcb;clip-path:polygon(0 0,100% 0,90% 88%,50% 100%,10% 88%)}.tile-0-2 b{background:#f4d238;color:#12151a}.tile-0-3 b{background:none;color:#59dbff;font-size:64px}.tile-1-0 b,.tile-1-1 b{color:#8cc75d;background:#1a2d1d}.tile-1-3 b{background:#1b513b}.tile-2-0 b{background:#ed563f}.tile-2-2 b{color:#31b9fc;background:#162a3d}
 
 .console-tech-tiles{gap:10px}.console-tech-tile b{width:56px;height:48px;font-size:29px}.console-tech-tile span{font-size:12px}.tile-0-3 b{font-size:48px}.console-section-detail h2{margin:10px 0!important}.console-skill-grid>div{padding:12px}

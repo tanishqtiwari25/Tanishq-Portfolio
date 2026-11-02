@@ -6,6 +6,7 @@ import * as T from "three";
 import ArenaWorld, { PhysicalScreen, type JourneyState } from "./ArenaWorld";
 import { projectsData } from "@/data/projectsData";
 import { skillsData } from "@/data/skillsData";
+import EntranceLED from "./EntranceLED";
 type Project = {
   id: string;
   title: string;
@@ -240,29 +241,18 @@ export default function ArenaScene(props: Props) {
       running={running}
     >
       <PhysicalScreen
-        p={[0, 5.7, -40.62]}
-        size={[20.4, 8.6]}
-        visible={chapter <= 1}
+        p={[0, 9.2, -40.62]}
+        size={[20.4, 6.88]}
+        visible={false}
       >
         <div className="stage-led-content">
-          <div className="led-overline">
-            TT ARENA <span>INDEPENDENT DEVELOPER / INDIA</span>
-          </div>
-          <p className="led-role">DEVELOPER PORTFOLIO</p>
           <h1>
             <span>TANISHQ</span> <em>TIWARI</em>
           </h1>
-          <p className="led-description">
-            CODE. BUILD. CREATE.
-            <br />
-            React, Next.js & JavaScript.
-          </p>
-          <div className="led-bottom">
-            <span>KANPUR, INDIA</span>
-            <span>WELCOME TO MY CORNER.</span>
-          </div>
+          <p className="led-role">{chapter === 0 ? "DEVELOPER PORTFOLIO" : "CODE. BUILD. CREATE."}</p>
         </div>
       </PhysicalScreen>
+      {chapter <= 1 && <EntranceLED intro={chapter === 1} />}
       <ProjectDisplay
         journey={journey}
         visible={chapter === 3}
