@@ -1,6 +1,7 @@
 "use client";
 import ArenaProduction from "./ArenaProduction";
-import { useMemo, useRef, useEffect, Suspense } from "react";
+import { brushedMetal, spectatorHead, spectatorTorso } from "./arenaMaterials";
+import { useMemo, useRef, useEffect, useContext, createContext, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, useGLTF } from "@react-three/drei";
 import * as T from "three";
@@ -20,6 +21,7 @@ type V = [number, number, number];
 const STEEL = "#3b424c",
   DARK = "#15181e",
   RED = "#c71535";
+const MetalMaps = createContext<ReturnType<typeof brushedMetal> | null>(null);
 function Box({
   p,
   s,
@@ -31,11 +33,16 @@ function Box({
   c?: string;
   emissive?: boolean;
 }) {
+  const textures = useContext(MetalMaps);
   return (
     <mesh position={p} castShadow receiveShadow>
       <boxGeometry args={s} />
       <meshStandardMaterial
         color={c}
+        map={emissive ? undefined : textures?.map}
+        roughnessMap={emissive ? undefined : textures?.roughnessMap}
+        bumpMap={emissive ? undefined : textures?.roughnessMap}
+        bumpScale={0.014}
         roughness={0.65}
         metalness={0.55}
         emissive={emissive ? c : "#000000"}
@@ -149,14 +156,16 @@ function Sign({
   p,
   s = [6, 3],
   rotation = [0, 0, 0],
+  color = "#e9ebef",
 }: {
+  color?: string;
   lines: string[];
   p: V;
   s?: [number, number];
   rotation?: V;
 }) {
   const label = lines.join("|");
-  const map = useMemo(() => textureLabel(label.split("|")), [label]);
+  const map = useMemo(() => textureLabel(label.split("|"), color), [label, color]);
   useEffect(() => () => map.dispose(), [map]);
   return (
     <mesh position={p} rotation={rotation}>
@@ -417,6 +426,9 @@ function Ring({ progress }: { progress: MutableRefObject<JourneyState> }) {
   );
 }
 function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
+  const headGeometry = useMemo(spectatorHead, []);
+  const torsoGeometry = useMemo(spectatorTorso, []);
+  useEffect(() => () => { headGeometry.dispose();torsoGeometry.dispose(); },[headGeometry,torsoGeometry]);
   const body = useRef<T.InstancedMesh>(null),
     head = useRef<T.InstancedMesh>(null),
     arms = useRef<T.InstancedMesh>(null),
@@ -532,7 +544,7 @@ function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
         args={[undefined, undefined, count]}
         frustumCulled={false}
       >
-        <capsuleGeometry args={[0.5, 0.3, 2, 5]} />
+        <primitive object={torsoGeometry} attach="geometry" />
         <meshStandardMaterial roughness={1} />
       </instancedMesh>
       <instancedMesh
@@ -540,8 +552,8 @@ function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
         args={[undefined, undefined, count]}
         frustumCulled={false}
       >
-        <sphereGeometry args={[1, 8, 6]} />
-        <meshStandardMaterial roughness={1} />
+        <primitive object={headGeometry} attach="geometry" />
+        <meshStandardMaterial roughness={.85} vertexColors />
       </instancedMesh>
       <instancedMesh
         ref={arms}
@@ -613,7 +625,7 @@ function Stadium() {
       ))}
       <group position={[0, 11, 0]}>
         <mesh><cylinderGeometry args={[3.4, 3.4, 2.6, 8]} /><meshStandardMaterial color="#252b34" metalness={0.8} roughness={0.3} /></mesh>
-        {[0, Math.PI / 2, Math.PI, -Math.PI / 2].map(angle => <group key={angle} rotation={[0, angle, 0]}><Sign p={[0, 0, 3.17]} s={[2.5, 2.1]} lines={["TT", "CODE. BUILD. CREATE."]} /></group>)}
+        {[0, Math.PI / 2, Math.PI, -Math.PI / 2].map(angle => <group key={angle} rotation={[0, angle, 0]}><Sign p={[0, 0, 3.45]} s={[2.5, 2.1]} color="#ff2445" lines={["TT", "CODE. BUILD. CREATE."]} /></group>)}
         {[-1.4, 1.4].map(y => <mesh key={y} position={[0,y,0]} rotation={[Math.PI/2,0,0]}><torusGeometry args={[3.4,0.06,6,32]} /><meshStandardMaterial color="#e01739" emissive="#e01739" emissiveIntensity={1.5} /></mesh>)}
         <Sign
           p={[0, 0, 2.01]}
@@ -966,6 +978,8 @@ export default function ArenaWorld({
   running?: boolean;
 }) {
   const mobile = journey.current.mobile;
+  const textures = useMemo(brushedMetal, []);
+  useEffect(() => () => {textures.map.dispose();textures.roughnessMap.dispose();}, [textures]);
   return (
     <Canvas
       frameloop={running ? "always" : "never"}
@@ -976,6 +990,7 @@ export default function ArenaWorld({
     >
       <color attach="background" args={["#080b11"]} />
       <fog attach="fog" args={["#11151d", 40, 115]} />
+      <MetalMaps.Provider value={textures}>
       <Suspense fallback={null}>
         <CameraRig journey={journey} />
         <Stadium />
@@ -989,6 +1004,7 @@ export default function ArenaWorld({
         {children}
         <Ready onReady={onReady} onFailure={onFailure} />
       </Suspense>
+      </MetalMaps.Provider>
     </Canvas>
   );
 }

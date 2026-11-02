@@ -109,3 +109,6 @@ Desktop project station now uses two suspended displays showing adjacent real pr
 
 ## Six-scene visual revision
 Journey navigation now follows Entrance, Intro Reveal, Walk to the Ring, Explore Projects, About & Skills, and Connect. Added a batched steel lattice roof/stage rig and crowd barriers, multi-row denser instanced audiences (4,200 desktop / 900 mobile), brighter venue fill, stronger stage haze, reflective ramp material, industrial screen bezels and console equipment. Fixed unused lighting instances being drawn at the world origin. The scene remains real-time geometry and interactive physical displays; the reference image is not used as a backdrop. Exact photorealistic reconstruction and facial likeness remain incomplete.
+
+## Material and spectator detail pass
+Arena metal housings share deterministic 512px brushed-grain, roughness and bump textures. Generic spectators now use shaped torsos, ears, noses, hair and eyes; they are not scans or the owner's likeness. Entrance and ramp cameras are lower to emphasize the runway and human-scale scene. Exact photorealism remains unverified and the personal avatar remains a development rig.
