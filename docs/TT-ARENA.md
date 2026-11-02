@@ -112,3 +112,6 @@ Journey navigation now follows Entrance, Intro Reveal, Walk to the Ring, Explore
 
 ## Material and spectator detail pass
 Arena metal housings share deterministic 512px brushed-grain, roughness and bump textures. Generic spectators now use shaped torsos, ears, noses, hair and eyes; they are not scans or the owner's likeness. Entrance and ramp cameras are lower to emphasize the runway and human-scale scene. Exact photorealism remains unverified and the personal avatar remains a development rig.
+
+## Blender architecture pipeline
+Blender 5.2.3 is available as a verified workspace-local runtime. The Windows Installer service was busy, so the checksum-verified official MSI was extracted with the verified official lessmsi portable utility instead of changing the unrelated installer process. The model generator is scripts/blender/build_tt_arena.py. The editable source is art/tt-arena/tt-arena.blend, including six review cameras and the imported temporary character/root path. The web architecture asset is public/models/tt-arena-architecture.glb (about 3.4 MB, Meshopt compressed, 109,768 triangles and 12 mesh primitives). The website uses its bundled Meshopt decoder and retains dynamic screens, crowds, ropes and contact functionality. The Blender file models architecture; it is not a completed likeness sculpt or an exact photographic reconstruction.

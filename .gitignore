@@ -6,3 +6,6 @@ out/
 .npm-cache/
 
 *.tsbuildinfo
+
+*.blend1
+*.blend2

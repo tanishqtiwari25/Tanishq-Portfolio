@@ -246,10 +246,10 @@ export default function ArenaDecor({
       <PhoneFlashes mobile={mobile} reduced={reduced} />
       {[0, 1, 2, 3, 4, 5].map((i) => (
         <group key={i}>
-          <EllipseRail radius={18 + i * 3.3} y={i * 1.35 + 0.8} />
+          <EllipseRail radius={18 + i * 3.3} y={i * 2.4 + 0.8} />
           <EllipseRail
             radius={18 + i * 3.3}
-            y={i * 1.35 + 0.12}
+            y={i * 2.4 + 0.12}
             color="#d31b3f"
           />
         </group>

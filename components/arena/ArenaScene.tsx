@@ -272,7 +272,6 @@ export default function ArenaScene(props: Props) {
         onRead={onRead}
       />
       {!journey.current.mobile && <ProjectDisplay journey={journey} visible={chapter === 3} offset={4} selected={(selected + 1) % projectsData.length} onSelect={onSelect} onRead={onRead} />}
-      <Desk x={8} />
       <PhysicalScreen
         p={[8, 2.65, 1.65]}
         size={[4.2, 2.6]}
@@ -319,7 +318,6 @@ export default function ArenaScene(props: Props) {
           </div>}
         </div>
       </PhysicalScreen>
-      <Desk x={-8} />
       <PhysicalScreen
         p={[-8, 2.65, 1.65]}
         size={[4.2, 2.6]}

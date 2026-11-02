@@ -1,5 +1,4 @@
 "use client";
-import ArenaProduction from "./ArenaProduction";
 import { brushedMetal, spectatorHead, spectatorTorso } from "./arenaMaterials";
 import { useMemo, useRef, useEffect, useContext, createContext, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -173,6 +172,24 @@ function Sign({
       <meshBasicMaterial map={map} toneMapped={false} />
     </mesh>
   );
+}
+function BlenderArchitecture() {
+  const { scene } = useGLTF("/models/tt-arena-architecture.glb", false, true);
+  const architecture = useMemo(() => scene.clone(true), [scene]);
+  useEffect(() => {
+    architecture.traverse(object => {
+      if (object instanceof T.Mesh) {
+        object.receiveShadow = true;
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        for (const material of materials) if (material instanceof T.MeshStandardMaterial) {
+          if (material.name.includes("LED")) { material.toneMapped = false;material.emissiveIntensity = 1.3; }
+          else material.envMapIntensity = 1.7;
+        }
+        object.castShadow = object.name !== "Charcoal_concrete" && !object.name.includes("concrete");
+      }
+    });
+  }, [architecture]);
+  return <group><primitive object={architecture} />{[-1,1].map(side => <group key={side}><pointLight position={[side*12,9,-31]} color="#ff2447" intensity={170} distance={25}/><pointLight position={[side*16,8,7]} color="#e9efff" intensity={180} distance={35}/></group>)}</group>;
 }
 function Stage() {
   return (
@@ -461,7 +478,7 @@ function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
             x = Math.cos(angle) * radius;
             z = Math.sin(angle) * radius * 2 - 17;
           }
-          y = tier * 1.35;
+          y = tier * 2.4;
         }
         return {
           x,
@@ -993,10 +1010,8 @@ export default function ArenaWorld({
       <MetalMaps.Provider value={textures}>
       <Suspense fallback={null}>
         <CameraRig journey={journey} />
-        <Stadium />
+        <BlenderArchitecture />
         <ArenaDecor mobile={mobile} reduced={journey.current.reduced} />
-        <ArenaProduction mobile={mobile} />
-        <Stage />
         <Ring progress={journey} />
         <Crowd mobile={mobile} reduced={journey.current.reduced} />
         <MovingLights reduced={journey.current.reduced} />

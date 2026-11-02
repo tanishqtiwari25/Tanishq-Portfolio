@@ -1,0 +1,15 @@
+{
+  "source": "tt-arena.blend",
+  "asset": "/models/tt-arena-architecture.glb",
+  "cameras": [
+    "01 Entrance",
+    "02 Intro",
+    "03 Walk",
+    "04 Projects",
+    "05 Skills",
+    "06 Contact"
+  ],
+  "units": "metres",
+  "coordinate_system": "Y-up glTF",
+  "status": "architecture pass, likeness not complete"
+}
