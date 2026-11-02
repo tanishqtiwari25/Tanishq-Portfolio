@@ -1,4 +1,5 @@
 "use client";
+import ArenaProduction from "./ArenaProduction";
 import { useMemo, useRef, useEffect, Suspense } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, useGLTF } from "@react-three/drei";
@@ -420,7 +421,7 @@ function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
     head = useRef<T.InstancedMesh>(null),
     arms = useRef<T.InstancedMesh>(null),
     legs = useRef<T.InstancedMesh>(null);
-  const count = mobile ? 360 : 1120;
+  const count = mobile ? 900 : 4200;
   const people = useMemo(
     () =>
       Array.from({ length: count }, (_, i) => {
@@ -436,7 +437,8 @@ function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
         } else {
           const n = i - floorCount,
             tier = Math.floor(n / ((count - floorCount) / 5)),
-            radius = 18 + tier * 3.3;
+            row = Math.floor(n / 5) % 4,
+            radius = 18 + tier * 3.3 + row * 0.55;
           let angle = n * 2.39996;
           x = Math.cos(angle) * radius;
           z = Math.sin(angle) * radius * 2 - 17;
@@ -482,7 +484,7 @@ function Crowd({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
   useFrame(({ clock }) => {
     const t = reduced ? 0 : clock.elapsedTime;
     if (reduced && lastUpdate.current === 0) return;
-    if (mobile && t - lastUpdate.current < 1 / 24) return;
+    if (t - lastUpdate.current < 1 / (mobile ? 20 : 30)) return;
     lastUpdate.current = t;
     people.forEach((p, i) => {
       const sway = Math.sin(t * (1.1 + (i % 5) * 0.13) + p.phase) * 0.025,
@@ -664,13 +666,11 @@ function MovingFixture({
         <Box p={[0, 0.12, 0]} s={[0.65, 0.4, 0.65]} />
         <mesh position={[0, -6, 0]}>
           <coneGeometry args={[2.2, 12, 12, 1, true]} />
-          <meshBasicMaterial
-            color={phase % 2 ? "#bac9ea" : RED}
-            transparent
-            opacity={0.018}
-            depthWrite={false}
-            side={T.DoubleSide}
-            blending={T.AdditiveBlending}
+          <shaderMaterial
+            uniforms={{ beamColor: { value: new T.Color(phase % 2 ? "#dce7ff" : RED) } }}
+            vertexShader={`varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){beamUv=uv;vec4 p=modelViewMatrix*vec4(position,1.);beamView=-p.xyz;beamNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*p;}`}
+            fragmentShader={`uniform vec3 beamColor; varying vec2 beamUv; varying vec3 beamNormal; varying vec3 beamView; void main(){float soft=pow(abs(dot(normalize(beamNormal),normalize(beamView))),2.);float ends=smoothstep(0.,.18,beamUv.y)*smoothstep(1.,.45,beamUv.y);gl_FragColor=vec4(beamColor,.045*soft*ends);}`}
+            transparent depthWrite={false} side={T.DoubleSide} blending={T.AdditiveBlending}
           />
         </mesh>
         <mesh position={[0, -0.15, 0]} rotation={[-Math.PI / 2, 0, 0]}>
@@ -701,8 +701,8 @@ function MovingLights({ reduced }: { reduced: boolean }) {
   }, []);
   return (
     <group>
-      <ambientLight intensity={0.65} />
-      <hemisphereLight args={["#b8c7e3", "#252025", 1.2]} />
+      <ambientLight intensity={1.1} />
+      <hemisphereLight args={["#d5dfef", "#4b3540", 1.65]} />
       <primitive object={target} />
       <spotLight
         position={[-6, 12, -25]}
@@ -724,7 +724,7 @@ function MovingLights({ reduced }: { reduced: boolean }) {
       />
       <pointLight
         position={[0, 6, 0]}
-        intensity={100}
+        intensity={220}
         distance={22}
         color="#e8eefa"
       />
@@ -842,11 +842,11 @@ function CameraRig({ journey }: { journey: MutableRefObject<JourneyState> }) {
       // Widen the lens rather than dollying through the ring to frame the stage.
       const aspect = size.width / size.height;
       const width =
-        sample.chapter === 0
+        sample.chapter <= 1
           ? 12.8
-          : sample.chapter === 2
+          : sample.chapter === 3
             ? 9.8
-            : sample.chapter >= 3
+            : sample.chapter >= 4
               ? 4.8
               : Math.max(8, pos.distanceTo(look) * 0.65);
       fov = T.MathUtils.clamp(
@@ -886,6 +886,11 @@ export function PhysicalScreen({
         s={[size[0] + 0.28, size[1] + 0.28, 0.32]}
         c="#363c46"
       />
+      {[-1, 1].map(side => <group key={"bezel"+side}>
+        <Box p={[side*(size[0]/2+.08),0,.08]} s={[.13,size[1]+.3,.18]} c="#8c9097" />
+        <Box p={[0,side*(size[1]/2+.08),.08]} s={[size[0]+.3,.13,.18]} c="#686e77" />
+        {[-1,0,1].map(y=><mesh key={y} position={[side*(size[0]/2+.08),y*size[1]*.48,.19]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.045,.045,.025,6]} /><meshStandardMaterial color="#b6b9bf" metalness={1} roughness={.3}/></mesh>)}
+      </group>)}
       <Box p={[0, 0, 0.035]} s={[size[0], size[1], 0.04]} c="#080b10" />
       {[-1, 1].map((s) => (
         <Box
@@ -975,6 +980,7 @@ export default function ArenaWorld({
         <CameraRig journey={journey} />
         <Stadium />
         <ArenaDecor mobile={mobile} reduced={journey.current.reduced} />
+        <ArenaProduction mobile={mobile} />
         <Stage />
         <Ring progress={journey} />
         <Crowd mobile={mobile} reduced={journey.current.reduced} />

@@ -53,6 +53,11 @@ function Mount({ offset = 0 }: { offset?: number }) {
 function Desk({ x }: { x: number }) {
   return (
     <group>
+      {[-1,1].map(side=><group key={side}>
+        <mesh position={[x+side*2.55,1.6,1.5]} rotation={[-.38,0,0]}><boxGeometry args={[.45,1.8,.55]}/><meshStandardMaterial color="#40454d" metalness={.85} roughness={.3}/></mesh>
+        {Array.from({length:8},(_,i)=><mesh key={i} position={[x+side*2.55,1.1+i*.15,1.95]} rotation={[Math.PI/2,0,0]}><cylinderGeometry args={[.055,.055,.07,8]}/><meshStandardMaterial color={i%3 ? "#8c969f":"#ee173b"} metalness={.7} roughness={.3}/></mesh>)}
+        <mesh position={[x+side*2.1,.55,2.1]}><boxGeometry args={[.2,1.1,.4]}/><meshStandardMaterial color="#9da3aa" metalness={.9} roughness={.35}/></mesh>
+      </group>)}
       <mesh position={[x, 0.7, 1]}>
         <boxGeometry args={[4.7, 1.4, 1.8]} />
         <meshStandardMaterial color="#292f39" metalness={0.7} roughness={0.5} />
@@ -117,7 +122,7 @@ function ProjectDisplay({
       mount.current.position.y = T.MathUtils.lerp(
         7.5,
         0,
-        T.MathUtils.smoothstep(journey.current.current, 0.59, 0.64),
+        T.MathUtils.smoothstep(journey.current.current, 0.59, 0.64) * (1 - T.MathUtils.smoothstep(journey.current.current, 0.76, 0.81)),
       );
   });
   return (
@@ -225,7 +230,7 @@ export default function ArenaScene(props: Props) {
     onFailure,
     running,
   } = props;
-  const [deskSection, setDeskSection] = useState("about");
+  const [deskSection, setDeskSection] = useState("skills");
   const topSkills = useMemo(() => skillsData[0].skills.map((s) => s.name), []);
   return (
     <ArenaWorld
@@ -237,18 +242,18 @@ export default function ArenaScene(props: Props) {
       <PhysicalScreen
         p={[0, 5.7, -40.62]}
         size={[20.4, 8.6]}
-        visible={chapter === 0}
+        visible={chapter <= 1}
       >
         <div className="stage-led-content">
           <div className="led-overline">
             TT ARENA <span>INDEPENDENT DEVELOPER / INDIA</span>
           </div>
-          <p className="led-role">FRONTEND DEVELOPER</p>
+          <p className="led-role">DEVELOPER PORTFOLIO</p>
           <h1>
             <span>TANISHQ</span> <em>TIWARI</em>
           </h1>
           <p className="led-description">
-            Business thinking. Thoughtful code.
+            CODE. BUILD. CREATE.
             <br />
             React, Next.js & JavaScript.
           </p>
@@ -260,19 +265,19 @@ export default function ArenaScene(props: Props) {
       </PhysicalScreen>
       <ProjectDisplay
         journey={journey}
-        visible={chapter === 2}
+        visible={chapter === 3}
         offset={journey.current.mobile ? 0 : -4}
         selected={selected}
         onSelect={onSelect}
         onRead={onRead}
       />
-      {!journey.current.mobile && <ProjectDisplay journey={journey} visible={chapter === 2} offset={4} selected={(selected + 1) % projectsData.length} onSelect={onSelect} onRead={onRead} />}
+      {!journey.current.mobile && <ProjectDisplay journey={journey} visible={chapter === 3} offset={4} selected={(selected + 1) % projectsData.length} onSelect={onSelect} onRead={onRead} />}
       <Desk x={8} />
       <PhysicalScreen
-        p={[8, 2.95, 1.1]}
+        p={[8, 2.65, 1.65]}
         size={[4.2, 2.6]}
-        rotation={[-0.12, 0.12, 0]}
-        visible={chapter === 3}
+        rotation={[-0.38, 0.12, 0]}
+        visible={chapter === 4}
       >
         <div className="console-content">
           <div className="screen-kicker">
@@ -310,16 +315,16 @@ export default function ArenaScene(props: Props) {
             <p className="screen-category">TANISHQ TIWARI / {deskSection.toUpperCase()}</p>
             <button onClick={() => onRead(deskSection)}>Read full {deskSection}</button>
             <h2>{deskSection === "skills" ? "ABOUT & SKILLS" : deskSection === "education" ? "EDUCATION" : "EXPERIENCE"}</h2>
-            {deskSection === "skills" ? <div className="console-skill-grid">{skillsData.map(category => <div key={category.category}><h3>{category.category}</h3><p>{category.skills.map(skill => skill.name).join(" / ")}</p></div>)}</div> : deskSection === "education" ? <div className="console-credentials"><p><strong>2024–2026 / MBA</strong><br />Information Technology / Naraina College of Engineering & Technology</p><p><strong>2021–2024 / BBA</strong><br />Naraina College of Management</p><p>Full Stack Web Development / Coding Ninjas</p></div> : <div className="console-credentials"><p><strong>INDEPENDENT DEVELOPMENT</strong><br />Building web projects with React, Next.js and JavaScript.</p><p><strong>CODING NINJAS</strong><br />Full Stack Web Development Bootcamp graduate.</p></div>}
+            {deskSection === "skills" ? <div className="console-skill-grid">{skillsData.slice(0,3).map((category,index) => <div key={category.category}><h3>{["FRONTEND", "BACKEND", "TOOLS"][index]}</h3><div className="console-tech-tiles">{category.skills.slice(0,4).map((skill,i) => <div key={skill.name} className={"console-tech-tile tile-"+index+"-"+i}><b aria-hidden="true">{[["5","3","JS","⚛"],["API","JS","EX","DB"],["Git","GH","VS","DEV"]][index][i]}</b><span>{skill.name}</span></div>)}</div></div>)}</div> : deskSection === "education" ? <div className="console-credentials"><p><strong>2024–2026 / MBA</strong><br />Information Technology / Naraina College of Engineering & Technology</p><p><strong>2021–2024 / BBA</strong><br />Naraina College of Management</p><p>Full Stack Web Development / Coding Ninjas</p></div> : <div className="console-credentials"><p><strong>INDEPENDENT DEVELOPMENT</strong><br />Building web projects with React, Next.js and JavaScript.</p><p><strong>CODING NINJAS</strong><br />Full Stack Web Development Bootcamp graduate.</p></div>}
           </div>}
         </div>
       </PhysicalScreen>
       <Desk x={-8} />
       <PhysicalScreen
-        p={[-8, 2.95, 1.1]}
+        p={[-8, 2.65, 1.65]}
         size={[4.2, 2.6]}
-        rotation={[-0.12, 0, 0]}
-        visible={chapter === 4}
+        rotation={[-0.38, 0, 0]}
+        visible={chapter === 5}
       >
         <div className="console-content contact-console">
           <div className="screen-kicker">

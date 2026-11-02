@@ -49,7 +49,7 @@ function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
           <spriteMaterial
             map={map}
             transparent
-            opacity={0.24}
+            opacity={0.46}
             depthWrite={false}
             color={i % 3 ? "#afbdcf" : "#ad2741"}
           />
@@ -103,6 +103,7 @@ function LightGrid({ mobile }: { mobile: boolean }) {
   const count = mobile ? 48 : 100;
   useEffect(() => {
     const d = new T.Object3D();
+    const hidden = new T.Matrix4().makeScale(0,0,0);
     for (let i = 0; i < count; i++) {
       const side = i % 2 ? 1 : -1;
       const col = Math.floor(i / 2) % 10,
@@ -111,6 +112,7 @@ function LightGrid({ mobile }: { mobile: boolean }) {
       d.rotation.x = Math.PI / 2;
       d.updateMatrix();
       (i % 3 ? white : red).current?.setMatrixAt(i, d.matrix);
+      (i % 3 ? red : white).current?.setMatrixAt(i, hidden);
     }
     for (const ref of [white, red])
       if (ref.current) ref.current.instanceMatrix.needsUpdate = true;
@@ -191,14 +193,14 @@ export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
         />
       ) : (
         <MeshReflectorMaterial
-          resolution={256}
+          resolution={512}
           mixBlur={1}
-          mixStrength={0.65}
+          mixStrength={1.2}
           blur={[64, 16]}
-          mirror={0.25}
+          mirror={0.6}
           color="#272b32"
           metalness={0.65}
-          roughness={0.3}
+          roughness={0.19}
           depthScale={0.4}
           minDepthThreshold={0.2}
           maxDepthThreshold={1.3}

@@ -236,14 +236,14 @@ export default function ArenaExperience() {
           <button
             className="arena-text-control"
             onClick={() => {
-              if (chapter === 2) {
+              if (chapter === 3) {
                 void import("@/data/projectsData").then((m) =>
                   read("project", m.projectsData[selected]),
                 );
-              } else read(chapter === 4 ? "contact" : "about");
+              } else read(chapter === 5 ? "contact" : "about");
             }}
           >
-            {chapter >= 2 ? "Read this display" : "View portfolio"}{" "}
+            {chapter >= 3 ? "Read this display" : "View portfolio"}{" "}
             <ArrowUpRight size={14} />
           </button>
           <button
@@ -325,12 +325,13 @@ export default function ArenaExperience() {
           </aside>
           <div className="arena-chapter-copy" aria-live="polite">
             <span className="arena-eyebrow">
-              CHAPTER {String(chapter + 1).padStart(2, "0")} / 05
+              CHAPTER {String(chapter + 1).padStart(2, "0")} / 06
             </span>
             <p>
               {
                 [
                   "Every story has an entrance.",
+                  "CODE. BUILD. CREATE.",
                   "The work is worth the walk.",
                   "Step into the work.",
                   "The person behind the build.",
@@ -354,7 +355,7 @@ export default function ArenaExperience() {
             <div className="arena-scroll-cue">
               <ArrowDown size={16} />
               <span>
-                SCROLL TO {chapter === 4 ? "RETRACE" : "EXPLORE"}
+                SCROLL TO {chapter === 5 ? "RETRACE" : "EXPLORE"}
                 <small>ONE ARENA. YOUR PACE.</small>
               </span>
             </div>

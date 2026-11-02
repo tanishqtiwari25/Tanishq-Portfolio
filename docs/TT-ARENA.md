@@ -106,3 +106,6 @@ This is a working procedural 3D implementation, not a photorealistic reproductio
 
 ## Portfolio display refinement
 Desktop project station now uses two suspended displays showing adjacent real projects. Mobile presents a single display. The physical production console includes About, Skills, Experience and Education controls, with independent readable Education and Experience dialogs. The arena menu exposes these details directly. The overhead scoreboard has a metal octagonal body, four branded faces and illuminated trim. These remain procedural assets; the supplied photographic storyboard and exact facial likeness are not reproduced.
+
+## Six-scene visual revision
+Journey navigation now follows Entrance, Intro Reveal, Walk to the Ring, Explore Projects, About & Skills, and Connect. Added a batched steel lattice roof/stage rig and crowd barriers, multi-row denser instanced audiences (4,200 desktop / 900 mobile), brighter venue fill, stronger stage haze, reflective ramp material, industrial screen bezels and console equipment. Fixed unused lighting instances being drawn at the world origin. The scene remains real-time geometry and interactive physical displays; the reference image is not used as a backdrop. Exact photorealistic reconstruction and facial likeness remain incomplete.
