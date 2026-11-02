@@ -20,7 +20,7 @@ export default function ProjectModal({ project, onClose }) {
   useEffect(() => {
     const previous = document.activeElement;
     const overflow = document.body.style.overflow;
-    dialog.current?.querySelector("button")?.focus();
+    dialog.current?.querySelector("button")?.focus({ preventScroll: true });
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
       if (e.key === "Tab") {
@@ -29,10 +29,10 @@ export default function ProjectModal({ project, onClose }) {
           last = items[items.length - 1];
         if (e.shiftKey && document.activeElement === first) {
           e.preventDefault();
-          last.focus();
+          last.focus({ preventScroll: true });
         } else if (!e.shiftKey && document.activeElement === last) {
           e.preventDefault();
-          first.focus();
+          first.focus({ preventScroll: true });
         }
       }
     };
@@ -45,7 +45,7 @@ export default function ProjectModal({ project, onClose }) {
       window.dispatchEvent(
         new CustomEvent("portfolio-modal", { detail: false }),
       );
-      previous?.focus();
+      previous?.focus({ preventScroll: true });
     };
   }, [onClose]);
 

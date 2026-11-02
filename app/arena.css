@@ -17,7 +17,9 @@
   margin: 0;
   background: #080b11;
   color: #f1f3f7;
+  overflow-anchor: none;
 }
+.arena-active, .arena-viewport { overflow-anchor: none; }
 .arena-active body:before {
   display: none;
 }
@@ -1214,3 +1216,21 @@
 .console-tech-tiles{gap:10px}.console-tech-tile b{width:56px;height:48px;font-size:29px}.console-tech-tile span{font-size:12px}.tile-0-3 b{font-size:48px}.console-section-detail h2{margin:10px 0!important}.console-skill-grid>div{padding:12px}
 
 .contact-console{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}.contact-console>.screen-kicker{align-self:stretch;margin-bottom:10px}.contact-console h2{font-size:90px!important;line-height:.98;margin:6px 0!important}.contact-console>p{font-size:19px;margin:12px 0}.contact-console .console-contact-button{font-size:23px;padding:16px 35px;min-height:58px}.console-socials{display:flex;gap:16px;justify-content:center;margin-top:8px}.console-socials a{padding:12px 22px;border:1px solid #8994a177;font-size:18px}
+
+/* Leave the production surface unobstructed by journey chrome. */
+@media(min-width:768px){
+  .arena-bottom{bottom:12px;padding-top:10px;}
+  .tt-arena[data-chapter="4"] .arena-chapter-copy,
+  .tt-arena[data-chapter="5"] .arena-chapter-copy{top:105px;bottom:auto;max-width:180px;}
+  .tt-arena[data-chapter="4"] .arena-chapter-copy p,
+  .tt-arena[data-chapter="5"] .arena-chapter-copy p{font-size:16px;}
+}
+@media(min-width:768px){
+  .screen-project-layout{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:14px;padding:15px 0;min-height:0;}
+  .screen-project-layout h2{font-size:48px;margin:6px 0!important;}
+  .screen-project-layout p{max-width:none;font-size:16px;line-height:1.3;}
+  .screen-project-layout .screen-tech{display:none;}
+  .screen-project-layout .screen-identity{min-height:0;background:#080a0e;}
+  .screen-project-layout .screen-capture{object-fit:contain;}
+  .screen-actions a,.screen-actions button{font-size:18px;padding:12px 18px;}
+}

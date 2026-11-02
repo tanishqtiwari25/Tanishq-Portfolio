@@ -6,6 +6,8 @@ import { Html, useGLTF } from "@react-three/drei";
 import * as T from "three";
 import ArenaDecor from "./ArenaDecor";
 import ArenaLook from "./ArenaLook";
+import { EquipmentLibrary, Equipment } from "./ArenaEquipment";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import SpectatorLOD from "./SpectatorLOD";
 import StageRigging, { ArenaBanner } from "./StageRigging";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
@@ -36,9 +38,11 @@ function Box({
   emissive?: boolean;
 }) {
   const textures = useContext(MetalMaps);
+  const [width,height,depth]=s;
+  const geometry = useMemo(() => new RoundedBoxGeometry(width,height,depth,1,Math.min(.035,width*.15,height*.15,depth*.15)), [width,height,depth]);
+  useEffect(() => () => geometry.dispose(), [geometry]);
   return (
-    <mesh position={p} castShadow receiveShadow>
-      <boxGeometry args={s} />
+    <mesh position={p} geometry={geometry} castShadow receiveShadow>
       <meshStandardMaterial
         color={c}
         map={emissive ? undefined : textures?.map}
@@ -179,9 +183,8 @@ function Sign({
 function BlenderArchitecture({ journey }: { journey: MutableRefObject<JourneyState> }) {
   const textures = useContext(MetalMaps);
   const { scene } = useGLTF("/models/tt-arena-architecture.glb", false, true);
-  const { architecture, consoleKit } = useMemo(() => {
+  const architecture = useMemo(() => {
     const copy = scene.clone(true);
-    const consoleKit = new T.Group();
     // The source kit batches steel by material. Refit only the LED facade's
     // bounded vertices; the entrance portal and load-bearing towers stay put.
     copy.traverse(object => {
@@ -189,20 +192,11 @@ function BlenderArchitecture({ journey }: { journey: MutableRefObject<JourneySta
       const geometry = object.geometry.clone();
       const position = geometry.attributes.position;
       const indices = geometry.index?.array ?? Array.from({length:position.count},(_,i)=>i);
-      const retained: number[] = [], leftDesk: number[] = [];
+      const retained: number[] = [];
       const consoleVertex = (i: number) => Math.abs(position.getX(i)) > 5.1 && Math.abs(position.getX(i)) < 10.95 && position.getY(i) < 4.5 && position.getY(i) > -.1 && position.getZ(i) > -.1 && position.getZ(i) < 3.5;
       for (let i=0;i<indices.length;i+=3) {
         const face = [indices[i],indices[i+1],indices[i+2]];
-        if (face.every(consoleVertex)) { if(position.getX(face[0]) < 0) leftDesk.push(...face); }
-        else retained.push(...face);
-      }
-      if (leftDesk.length) {
-        const deskGeometry=geometry.clone(); deskGeometry.setIndex(leftDesk);
-        const p=deskGeometry.attributes.position;
-        for(let i=0;i<p.count;i++)p.setXYZ(i,(p.getX(i)+8)*.8,p.getY(i)*.8,(p.getZ(i)-1.65)*.8+7.32);
-        p.needsUpdate=true;deskGeometry.computeBoundingSphere();
-        const deskMaterial=Array.isArray(object.material)?object.material.map(m=>m.clone()):object.material.clone();
-        const desk=new T.Mesh(deskGeometry,deskMaterial);desk.receiveShadow=true;consoleKit.add(desk);
+        if (!face.every(consoleVertex)) retained.push(...face);
       }
       geometry.setIndex(retained);
       let moved = false;
@@ -218,26 +212,27 @@ function BlenderArchitecture({ journey }: { journey: MutableRefObject<JourneySta
       object.geometry = geometry;
       object.material = Array.isArray(object.material) ? object.material.map(material => material.clone()) : object.material.clone();
     });
-    return { architecture:copy, consoleKit };
+    return copy;
   }, [scene]);
-  useFrame(() => { consoleKit.visible = sampleJourney(journey.current.current).chapter >= 4; });
   useEffect(() => () => architecture.traverse(object => {
     if (object instanceof T.Mesh) {
       object.geometry.dispose();
       (Array.isArray(object.material) ? object.material : [object.material]).forEach(material => material.dispose());
     }
   }), [architecture]);
-  useEffect(() => () => consoleKit.traverse(object => {if(object instanceof T.Mesh){object.geometry.dispose();(Array.isArray(object.material)?object.material:[object.material]).forEach(m=>m.dispose());}}),[consoleKit]);
-  useEffect(() => {consoleKit.traverse(object=>{if(object instanceof T.Mesh){for(const m of (Array.isArray(object.material)?object.material:[object.material]))if(m instanceof T.MeshStandardMaterial){m.roughness=.62;m.envMapIntensity=.65;if(textures){m.roughnessMap=textures.roughnessMap;m.bumpMap=textures.roughnessMap;m.bumpScale=.0007;m.needsUpdate=true;}}}});},[consoleKit,textures]);
   useEffect(() => {
     architecture.traverse(object => {
       if (object instanceof T.Mesh) {
         object.receiveShadow = true;
         const materials = Array.isArray(object.material) ? object.material : [object.material];
         for (const material of materials) if (material instanceof T.MeshStandardMaterial) {
-          if (material.name.includes("LED")) { material.toneMapped = false;material.emissiveIntensity = 1.3; }
+          if (material.name.includes("LED")) { material.toneMapped = false;material.emissiveIntensity = .35; }
           else {
             material.envMapIntensity = 1.7;
+            if (/concrete/i.test(material.name)) {
+              material.color.set('#101216'); material.metalness=0;
+              material.roughness=.96; material.envMapIntensity=.35;
+            }
             if (/steel|aluminium|coated black/i.test(material.name) && textures) {
               material.roughnessMap = textures.roughnessMap;
               material.bumpMap = textures.roughnessMap;
@@ -251,7 +246,7 @@ function BlenderArchitecture({ journey }: { journey: MutableRefObject<JourneySta
       }
     });
   }, [architecture, textures]);
-  return <group><primitive object={architecture} /><primitive object={consoleKit} />{[-1,1].map(side => <group key={side}><pointLight position={[side*12,9,-31]} color="#ff2447" intensity={170} distance={25}/><pointLight position={[side*16,8,7]} color="#e9efff" intensity={180} distance={35}/></group>)}</group>;
+  return <group><primitive object={architecture} />{[-1,1].map(side => <group key={side}><pointLight position={[side*12,9,-31]} color="#ff2447" intensity={170} distance={25}/><pointLight position={[side*16,8,7]} color="#e9efff" intensity={180} distance={35}/></group>)}</group>;
 }
 function Stage() {
   return (
@@ -342,7 +337,15 @@ function EntranceProduction({ mobile }: { mobile: boolean }) {
       {!mobile && [0,1].map(i=><Sign key={i} p={[side*(4.2+i*.45),2.25,-21-i*7]} s={[.75,1]} rotation={[0,side*-.25,side*.1]} lines={i ? ["CODE","BUILD","CREATE"] : ["TT"]} color={i ? "#ededeb" : "#ed1734"} />)}
     </group>)}
     <Box p={[0,4.75,-40.45]} s={[2.5,1.05,.34]} c="#121419" />
-    <mesh position={[0,2.6,-40.5]}><planeGeometry args={[2.35,2.95]} /><meshBasicMaterial color="#c7dbf0" toneMapped={false} /></mesh>
+    {[-1,1].map(side=><group key={'array'+side}>
+      {Array.from({length:mobile?4:6},(_,i)=><Equipment key={i} kind="speaker" position={[side*11.85,10.25-i*.65,-36.7+i*.035]} rotation={[-i*.025,side*-.1,0]} />)}
+      <Bar a={[side*11.85,10.75,-36.7]} b={[side*11.85,13.6,-36.7]} r={.025}/>
+    </group>)}
+    <Box p={[-1.22,2.6,-41.4]} s={[.12,3.05,2.3]} c="#25282f" />
+    <Box p={[1.22,2.6,-41.4]} s={[.12,3.05,2.3]} c="#25282f" />
+    <Box p={[0,4.13,-41.4]} s={[2.5,.12,2.3]} c="#25282f" />
+    <Box p={[0,1.12,-41.4]} s={[2.5,.06,2.3]} c="#454953" />
+    <mesh position={[0,2.6,-42.5]}><planeGeometry args={[2.35,2.95]} /><meshBasicMaterial color="#d7e8f9" toneMapped={false} /></mesh>
   </group>;
 }
 function EntryRope({
@@ -864,7 +867,23 @@ function TemporaryAvatar({
   journey: MutableRefObject<JourneyState>;
 }) {
   const gltf = useGLTF(journey.current.mobile ? "/models/tt-entrance-refined.glb" : "/models/tt-entrance-curvature-web.glb", false, true);
-  const model = useMemo(() => clone(gltf.scene), [gltf.scene]);
+  const model = useMemo(() => {
+    const copy=clone(gltf.scene);
+    copy.traverse(object=>{
+      if(object instanceof T.Mesh) {
+        const tune=(source:T.Material)=>{
+          const material=source.clone();
+          if(material instanceof T.MeshStandardMaterial && /cotton/i.test(material.name)) material.envMapIntensity=.2;
+          return material;
+        };
+        object.material=Array.isArray(object.material)?object.material.map(tune):tune(object.material);
+      }
+    });
+    return copy;
+  }, [gltf.scene]);
+  useEffect(()=>()=>model.traverse(object=>{
+    if(object instanceof T.Mesh) (Array.isArray(object.material)?object.material:[object.material]).forEach(m=>m.dispose());
+  }),[model]);
   const salute = useMemo(() => {
     const arm=model.getObjectByName("RightArm");
     return {arm,rest:arm?.quaternion.clone(),rotation:new T.Quaternion(),axis:new T.Vector3(0,0,1)};
@@ -907,9 +926,10 @@ function TemporaryAvatar({
     const j = journey.current,
       sample = sampleJourney(j.current);
     pos.set(...(sample.avatar as V));
+    const introPose = j.current > .09 && j.current < .22;
     const walking =
-      pos.distanceToSquared(last.current) > 0.0000002 && !j.reduced;
-    const entranceStride = j.current < .13;
+      pos.distanceToSquared(last.current) > 0.0000002 && !j.reduced && !introPose;
+    const entranceStride = j.current < .085;
     last.current.copy(pos);
     root.current.position.copy(pos);
     if (walk) {
@@ -944,7 +964,9 @@ function TemporaryAvatar({
 function CameraRig({ journey }: { journey: MutableRefObject<JourneyState> }) {
   const { camera, size } = useThree();
   const look = useMemo(() => new T.Vector3(), []),
-    pos = useMemo(() => new T.Vector3(), []);
+    pos = useMemo(() => new T.Vector3(), []),
+    mobileDeskPosition=useMemo(()=>new T.Vector3(.2,4.8,17.8),[]),
+    mobileDeskLook=useMemo(()=>new T.Vector3(0,1.4,11.5),[]);
   useFrame((_, delta) => {
     const j = journey.current;
     if (!j.paused)
@@ -968,13 +990,16 @@ function CameraRig({ journey }: { journey: MutableRefObject<JourneyState> }) {
     if (j.mobile) {
       // Widen the lens rather than dollying through the ring to frame the stage.
       const aspect = size.width / size.height;
+      const consoleBlend=T.MathUtils.smoothstep(j.current,.76,.83);
+      pos.lerp(mobileDeskPosition,consoleBlend);
+      look.lerp(mobileDeskLook,consoleBlend);
       const width =
         sample.chapter <= 1
           ? 22.5
           : sample.chapter === 3
             ? 9.8
             : sample.chapter >= 4
-              ? 4.8
+              ? 7.8
               : Math.max(8, pos.distanceTo(look) * 0.65);
       fov = T.MathUtils.clamp(
         T.MathUtils.radToDeg(
@@ -1031,7 +1056,7 @@ export function PhysicalScreen({
       {visible && (
         <Html
           transform
-          occlude={false}
+          occlude
           position={[0, 0, 0.075]}
           distanceFactor={(size[0] * 400) / 900}
           zIndexRange={[15, 1]}
@@ -1107,6 +1132,7 @@ export default function ArenaWorld({
       <color attach="background" args={["#080b11"]} />
       <fog attach="fog" args={["#11151d", 40, 115]} />
       <MetalMaps.Provider value={textures}>
+      <EquipmentLibrary mobile={mobile}>
       <Suspense fallback={null}>
         <CameraRig journey={journey} />
         <BlenderArchitecture journey={journey} />
@@ -1120,6 +1146,7 @@ export default function ArenaWorld({
         <Ready onReady={onReady} onFailure={onFailure} />
         {!mobile && <ArenaLook />}
       </Suspense>
+      </EquipmentLibrary>
       </MetalMaps.Provider>
     </Canvas>
   );

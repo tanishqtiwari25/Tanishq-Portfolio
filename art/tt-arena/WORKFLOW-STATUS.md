@@ -1,5 +1,10 @@
 # TT Arena coordinated workflow — 2026-11-02
 
+**Superseded visual status:** see [3 November reference correction](reference-correction/README.md)
+and its [verification record](reference-correction/verification.md) for the current
+web equipment, crowd atlas, physical desk, cameras and browser captures. The
+Blender garment QA and export figures below remain unchanged.
+
 ## Verified environment
 
 Blender 5.2.3 LTS (e13b728c6880) is present in the workspace-local portable runtime.

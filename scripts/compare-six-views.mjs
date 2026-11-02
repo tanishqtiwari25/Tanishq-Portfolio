@@ -3,7 +3,7 @@ import sharp from 'sharp';
 import path from 'node:path';
 const reference = process.argv[2];
 if (!reference) throw new Error('Supply the original six-frame storyboard path.');
-const directory = path.resolve('art/tt-arena/six-view-pass');
+const directory = path.resolve(process.argv[3] || 'art/tt-arena/six-view-pass');
 const files = ['01-entrance.png','02-intro.png','03-walk.png','04-projects.png','05-skills.png','06-contact.png'];
 const labels = ['ENTRANCE','INTRO REVEAL','WALK TO THE RING','PROJECTS','ABOUT &amp; SKILLS','CONTACT'];
 const {width,height} = await sharp(reference).metadata();

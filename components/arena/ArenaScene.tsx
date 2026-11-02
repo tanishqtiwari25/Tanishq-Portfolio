@@ -7,6 +7,7 @@ import ArenaWorld, { PhysicalScreen, type JourneyState } from "./ArenaWorld";
 import { projectsData } from "@/data/projectsData";
 import { skillsData } from "@/data/skillsData";
 import EntranceLED from "./EntranceLED";
+import { Equipment, ProductionDesk } from "./ArenaEquipment";
 type Project = {
   id: string;
   title: string;
@@ -32,26 +33,7 @@ type Props = {
   running: boolean;
 };
 function Mount({ offset = 0 }: { offset?: number }) {
-  return (
-    <group>
-      {[-3.6, 3.6].map((x) => (
-        <group key={x} position={[offset, 0, 0]}>
-          <mesh position={[x, 9.1, 0.7]}>
-            <cylinderGeometry args={[0.1, 0.1, 7.2, 8]} />
-            <meshStandardMaterial
-              color="#5d6774"
-              metalness={0.85}
-              roughness={0.3}
-            />
-          </mesh>
-          <mesh position={[x, 12.8, 0.7]}>
-            <boxGeometry args={[0.5, 0.4, 0.8]} />
-            <meshStandardMaterial color="#313842" />
-          </mesh>
-        </group>
-      ))}
-    </group>
-  );
+  return <Equipment kind="mount" position={[offset,9.1,.7]} />;
 }
 function Desk({ x }: { x: number }) {
   return (
@@ -132,7 +114,7 @@ function ProjectDisplay({
     <group visible={visible}>
       <Mount offset={offset} />
       <group ref={mount}>
-        <PhysicalScreen p={[offset, 5.3, 1.2]} rotation={[0, offset > 0 ? -0.2 : 0.2, offset > 0 ? .035 : -.035]} size={[7.2, 4.3]} visible={visible}>
+        <PhysicalScreen p={[offset, 5.3, 1.2]} rotation={[0, offset > 0 ? -0.2 : 0.2, offset > 0 ? .035 : -.035]} size={[6.4, 4.7]} visible={visible}>
           <div className="project-screen-content">
             <div className="screen-kicker">
               <span>RINGSIDE / SELECTED WORK</span>
@@ -264,11 +246,12 @@ export default function ArenaScene(props: Props) {
         onRead={onRead}
       />
       {!journey.current.mobile && <ProjectDisplay journey={journey} visible={chapter === 3} offset={4} selected={(selected + 1) % projectsData.length} onSelect={onSelect} onRead={onRead} />}
-      {chapter === 4 && <group position={[-6.4, 0, 6]} scale={.8}>
+      {chapter >= 4 && <ProductionDesk />}
+      {chapter === 4 && <group>
       <PhysicalScreen
-        p={[8, 2.65, 1.65]}
+        p={[0, 1.4, 11.5]}
         size={[4.2, 2.6]}
-        rotation={[-0.38, 0, 0]}
+        rotation={[-0.9, 0, 0]}
         visible={chapter === 4}
       >
         <div className="console-content">
@@ -312,11 +295,11 @@ export default function ArenaScene(props: Props) {
         </div>
       </PhysicalScreen>
       </group>}
-      {chapter === 5 && <group position={[6.4, 0, 6]} scale={.8}>
+      {chapter === 5 && <group>
       <PhysicalScreen
-        p={[-8, 2.65, 1.65]}
+        p={[0, 1.4, 11.5]}
         size={[4.2, 2.6]}
-        rotation={[-0.38, 0, 0]}
+        rotation={[-0.9, 0, 0]}
         visible={chapter === 5}
       >
         <div className="console-content contact-console">

@@ -6,7 +6,7 @@ import * as T from "three";
 
 /** Stadium crowd impostors: one alpha-tested draw call, not a scene backdrop. */
 export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
-  const atlas = useTexture("/textures/spectators-atlas.webp");
+  const atlas = useTexture("/textures/spectators-atlas-v2.webp");
   const count = mobile ? 1000 : 4480;
   const mesh = useRef<T.InstancedMesh>(null);
   const people = useMemo(() => Array.from({ length: count }, (_, i) => {
@@ -39,8 +39,8 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
     return { x, y, z, scale: .84 + (i % 13) * .019, phase: i * 1.813 };
   }), [count, mobile]);
   const geometry = useMemo(() => {
-    const g = new T.PlaneGeometry(.7, 2.05); g.translate(0, 1.025, 0);
-    g.setAttribute("atlasCell", new T.InstancedBufferAttribute(Float32Array.from({ length: count }, (_, i) => ((Math.imul(i + 1, 1103515245) >>> 16) % 4)), 1));
+    const g = new T.PlaneGeometry(1.025, 2.05); g.translate(0, .97, 0);
+    g.setAttribute("atlasCell", new T.InstancedBufferAttribute(Float32Array.from({ length: count }, (_, i) => (i * 7 + Math.floor(i / 12) * 5) % 12), 1));
     return g;
   }, [count]);
   const material = useMemo(() => {
@@ -49,10 +49,10 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
     m.onBeforeCompile = shader => {
       shader.vertexShader = "attribute float atlasCell;\n" + shader.vertexShader;
       shader.vertexShader = shader.vertexShader.replace("#include <uv_vertex>", `#include <uv_vertex>
-        vMapUv.x = (vMapUv.x * .992 + .004 + atlasCell) * .25;
-        vMapUv.y = .105 + vMapUv.y * .875;`);
+        vMapUv.x = (vMapUv.x * .992 + .004 + mod(atlasCell,4.)) * .25;
+        vMapUv.y = (vMapUv.y * .992 + .004 + floor(atlasCell/4.)) / 3.;`);
     };
-    m.customProgramCacheKey = () => "tt-spectator-lit-atlas-v2";
+    m.customProgramCacheKey = () => "tt-spectator-lit-atlas-v3-12-subjects";
     return m;
   }, [atlas]);
   useEffect(() => () => { geometry.dispose(); material.dispose(); }, [geometry, material]);

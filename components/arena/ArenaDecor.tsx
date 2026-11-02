@@ -49,11 +49,11 @@ function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
       const age = (clock.elapsedTime * (.105 + (i % 3) * .009) + i * .618034) % 1;
       const side = i % 2 ? -1 : 1;
       s.position.set(side * (2.6 + (i % 3) * 2.35) + Math.sin(age * 4 + i) * age * 1.4,
-        1.15 + age * 3.7, -36 + (i % 3) * .9 + age * 1.4);
-      const size = 1.3 + age * 4.5;
-      s.scale.set(size, size * .8, 1);
+        1.15 + age * 2.1, -36 + (i % 3) * .9 + age * 1.4);
+      const size = 1.3 + age * 3.8;
+      s.scale.set(size, size * .6, 1);
       const material = (s as T.Sprite).material;
-      material.opacity = Math.sin(Math.PI * age) * .42;
+      material.opacity = Math.sin(Math.PI * age) * .32;
       material.rotation = i * 1.7 + age * (i % 2 ? .55 : -.55);
     });
   });
@@ -228,12 +228,12 @@ export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
         <MeshReflectorMaterial
           resolution={512}
           mixBlur={1}
-          mixStrength={1.8}
+          mixStrength={1.1}
           blur={[10, 4]}
-          mirror={0.85}
+          mirror={0.65}
           color="#363b44"
           metalness={0.25}
-          roughness={0.22}
+          roughness={0.32}
           roughnessMap={surface.roughnessMap}
           bumpMap={surface.roughnessMap}
           bumpScale={.0012}
