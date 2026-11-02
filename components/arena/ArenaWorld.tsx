@@ -6,6 +6,8 @@ import { Html, useGLTF } from "@react-three/drei";
 import * as T from "three";
 import ArenaDecor from "./ArenaDecor";
 import SpectatorLOD from "./SpectatorLOD";
+import StageRigging, { ArenaBanner } from "./StageRigging";
+import ArenaReflections from "./ArenaReflections";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { sampleJourney, ENTRY } from "@/lib/arena/journey.mjs";
 import type { MutableRefObject, ReactNode } from "react";
@@ -307,9 +309,10 @@ function Stage() {
 }
 function EntranceProduction({ mobile }: { mobile: boolean }) {
   return <group>
+    <StageRigging mobile={mobile} />
     {[-1, 1].map(side => <group key={side}>
       <Box p={[side * 7.8, 3.15, -40.45]} s={[13.1, 4.1, .34]} c="#121419" />
-      <Sign p={[side * 13, 5, -38.6]} s={[2.15, 6.7]} lines={["TT"]} color="#f51b35" />
+      <ArenaBanner side={side} />
       {[3.1, 7.8, 10.8].slice(0, mobile ? 2 : 3).map(x => <group key={x}>
         {[-.17, .17].map(edge => <Bar key={edge} a={[side*x+edge,1.1,-40.1]} b={[side*x+edge,5.35,-40.1]} r={.045} />)}
         {Array.from({length:6},(_,i)=><Bar key={i} a={[side*x-.17,1.1+i*.7,-40.1]} b={[side*x+.17,1.8+i*.7,-40.1]} r={.025} />)}
@@ -836,7 +839,7 @@ function TemporaryAvatar({
 }: {
   journey: MutableRefObject<JourneyState>;
 }) {
-  const gltf = useGLTF("/models/tt-entrance-performer.glb", false, true);
+  const gltf = useGLTF("/models/tt-entrance-refined.glb", false, true);
   const model = useMemo(() => clone(gltf.scene), [gltf.scene]);
   const root = useRef<T.Group>(null),
     last = useRef(new T.Vector3(0, 1.1, -39));
@@ -878,16 +881,16 @@ function TemporaryAvatar({
     pos.set(...(sample.avatar as V));
     const walking =
       pos.distanceToSquared(last.current) > 0.0000002 && !j.reduced;
+    const entranceStride = j.current < .13;
     last.current.copy(pos);
     root.current.position.copy(pos);
     if (walk) {
-      walk.weight = walking ? 1 : 0;
+      walk.weight = walking || entranceStride ? 1 : 0;
       const metres = sample.distance;
-      walk.time =
-        ((((metres / 1.28) % 1) + 1) % 1) * (actions.walk?.duration ?? 1.2);
+      walk.time = (entranceStride ? .18 : (((metres / 1.28) % 1) + 1) % 1) * (actions.walk?.duration ?? 1.2);
     }
     if (idle) {
-      idle.weight = walking ? 0 : 1;
+      idle.weight = walking || entranceStride ? 0 : 1;
       idle.time += j.reduced ? 0 : Math.min(delta, 0.05);
     }
     mixer.update(0);
@@ -1073,6 +1076,7 @@ export default function ArenaWorld({
       <fog attach="fog" args={["#11151d", 40, 115]} />
       <MetalMaps.Provider value={textures}>
       <Suspense fallback={null}>
+        <ArenaReflections mobile={mobile} />
         <CameraRig journey={journey} />
         <BlenderArchitecture />
         <EntranceProduction mobile={mobile} />

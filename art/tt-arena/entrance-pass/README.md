@@ -22,3 +22,13 @@ This is **not** a finished photorealistic likeness. The hood hides an unmodelled
 ## Comparison and validation
 
 The browser capture is `entrance-wide.png`; `scripts/compare-entrance.mjs` assembles `reference-comparison.png` from the supplied storyboard and that live capture. Remaining visual gaps include detailed roof rigging, unique crowd poses and close-up geometry, physically detailed garment sculpting and richer venue textures. Camera animations were not expanded beyond the existing journey while those art gaps remain.
+
+## Subsequent garment and rigging pass
+
+The active avatar now uses `tt-entrance-refined.glb`, a sibling export preserving the baseline. `refine_entrance_garment.py` narrows the hood neck, flattens its crown, insets its inner surface, and adds broad waist/back tension folds without changing connectivity or weights. The entrance holds an existing walk-cycle phase instead of a parallel-legged idle stance. This remains a generic garment study, not an anatomical sculpt or facial reconstruction.
+
+The Blender CLI evidence plan is `../evidence/garment-refinement.json`. Selected routes are mesh/vertex/polygon data access, blend save and glTF exchange. Recorded source contracts include `MeshVertex.co`, `Mesh.vertices`, `Mesh.polygons`, `MeshPolygon.vertices`, `Mesh.update`, `wm.save_as_mainfile` and `export_scene.gltf`. Blender 5.2.3 executed the sealed script. Numeric checks found unchanged 7,000-vertex / 13,824-triangle topology, zero boundary/non-manifold edges, finite coordinates and minimum triangle area 0.000003085 m². The baseline full QA is historical; the refinement's numeric check is narrower, and must not be represented as a fresh full intersection/deformation audit. Tiled UV overlap remains intentional. Material and wireframe screenshots are in `../performer/refined/`.
+
+The web scene adds merged four-chord overhead/tower trusses, corrected portrait-aspect TT banners and a one-time desktop PMREM light-card capture for specular response. Mobile omits that capture and uses fewer truss rows. These additions are procedural web geometry, not newly exported Blender architecture. No frame-rate or memory benchmark was performed.
+
+Production compilation, current-source lint and TypeScript checks passed; all 20 existing contact/journey tests passed. Browser checks verified the Wealth Pilot live link, contact dialog fields, no console errors and no horizontal overflow at a 390px viewport. No live email was sent. The reference's photorealism, unique detailed crowd assets, anatomical character and all six final compositions remain unfinished.

@@ -1,15 +1,41 @@
 "use client";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
-function Model() {
-  const gltf = useGLTF("/models/tt-entrance-performer.glb", false, true);
-  const scene = useMemo(() => clone(gltf.scene), [gltf.scene]);
+import * as T from "three";
+function Model({ wire }: { wire: boolean }) {
+  const gltf = useGLTF("/models/tt-entrance-refined.glb", false, true);
+  const scene = useMemo(() => {
+    const copy = clone(gltf.scene);
+    copy.traverse(object => {
+      if (object instanceof T.Mesh) {
+        object.frustumCulled = false;
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        const copies = materials.map(material => {
+          const next = material.clone();
+          if (next instanceof T.MeshStandardMaterial) next.wireframe = wire;
+          return next;
+        });
+        object.material = Array.isArray(object.material) ? copies : copies[0];
+      }
+    });
+    const idle = gltf.animations.find(clip => clip.name === "Idle");
+    if (idle) {
+      const mixer = new T.AnimationMixer(copy);
+      mixer.clipAction(idle).play(); mixer.setTime(0);
+    }
+    copy.updateMatrixWorld(true);
+    return copy;
+  }, [gltf.scene, gltf.animations, wire]);
+  useEffect(() => () => scene.traverse(object => {
+    if (object instanceof T.Mesh) (Array.isArray(object.material) ? object.material : [object.material]).forEach(material => material.dispose());
+  }), [scene]);
   return <primitive object={scene} />;
 }
 export default function AvatarReview() {
   const [angle, setAngle] = useState(0);
+  const [wire, setWire] = useState(false);
   return (
     <main className="avatar-review">
       <a href="/">← Return to TT Arena</a>
@@ -18,7 +44,7 @@ export default function AvatarReview() {
       <p>
         An original hooded garment study with cuffs, trouser folds, hands and
         layered sneakers. The 13,824-triangle mesh retains the 13-bone rig and
-        four animation clips in a 534 KB GLB. It has no reconstructed facial
+        four animation clips in a compressed GLB. It has no reconstructed facial
         likeness; the supplied photos remain the identity references.
       </p>
       <div className="avatar-review-layout">
@@ -42,7 +68,7 @@ export default function AvatarReview() {
               <ambientLight intensity={1.6} />
               <directionalLight position={[3, 4, 4]} intensity={3} />
               <Suspense fallback={null}>
-                <Model />
+                <Model wire={wire} />
                 <OrbitControls
                   target={[0, 0.9, 0]}
                   enablePan={false}
@@ -66,8 +92,9 @@ export default function AvatarReview() {
                 {label}
               </button>
             ))}
+            <button onClick={() => setWire(!wire)} aria-pressed={wire}>Wireframe</button>
           </div>
-          <a href="/models/tt-entrance-performer.glb" download>
+          <a href="/models/tt-entrance-refined.glb" download>
             Download outfit study GLB ↗
           </a>
         </div>
