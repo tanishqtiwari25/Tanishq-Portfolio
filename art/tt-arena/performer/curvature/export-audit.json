@@ -1,0 +1,36 @@
+{
+  "path": "public/models/tt-entrance-curvature-web.glb",
+  "bytes": 1501440,
+  "vertices_with_uv_splits": 41771,
+  "triangles": 58464,
+  "materials": 5,
+  "bones": 13,
+  "clips": [
+    "ConfidentPose",
+    "EntranceWalk",
+    "Idle",
+    "Turn"
+  ],
+  "bounds": [
+    [
+      -0.34440046548843384,
+      0.00020719843450933695,
+      -0.18237991631031036
+    ],
+    [
+      0.343494176864624,
+      1.7648831605911255,
+      0.21656641364097595
+    ]
+  ],
+  "minimum_triangle_area": 5.402827743302172e-7,
+  "invalid": 0,
+  "degenerate": 0,
+  "badWeights": 0,
+  "boundaryEdges": 0,
+  "nonmanifoldEdges": 0,
+  "inconsistentEdges": 0,
+  "islands": 44,
+  "invertedIslands": 0,
+  "limitations": "Export geometry and weight audit after welding coincident UV-split positions at 1e-7 m. Does not certify intersections, facial likeness or visual quality."
+}

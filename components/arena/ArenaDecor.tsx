@@ -45,16 +45,20 @@ function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
   useFrame(({ clock }) => {
     if (!root.current || reduced) return;
     root.current.children.forEach((s, i) => {
-      s.position.x =
-        (i % 2 ? -1 : 1) * (2.2 + (i % 4) * 2.1) +
-        Math.sin(clock.elapsedTime * 0.16 + i) * 0.45;
-      s.position.y =
-        1.6 + (i % 3) * 0.55 + Math.sin(clock.elapsedTime * 0.12 + i) * 0.18;
+      const age = (clock.elapsedTime * (.105 + (i % 3) * .009) + i * .618034) % 1;
+      const side = i % 2 ? -1 : 1;
+      s.position.set(side * (2.6 + (i % 3) * 2.35) + Math.sin(age * 4 + i) * age * 1.4,
+        1.15 + age * 3.7, -36 + (i % 3) * .9 + age * 1.4);
+      const size = 1.3 + age * 4.5;
+      s.scale.set(size, size * .8, 1);
+      const material = (s as T.Sprite).material;
+      material.opacity = Math.sin(Math.PI * age) * .29;
+      material.rotation = i * 1.7 + age * (i % 2 ? .55 : -.55);
     });
   });
   return (
     <group ref={root}>
-      {Array.from({ length: mobile ? 6 : 14 }, (_, i) => (
+      {Array.from({ length: mobile ? 12 : 36 }, (_, i) => (
         <sprite
           key={i}
           position={[
@@ -236,7 +240,7 @@ export default function ArenaDecor({
 }) {
   return (
     <group>
-      <Environment resolution={64}>
+      <Environment resolution={mobile ? 64 : 128} frames={1} environmentIntensity={.7}>
         <Lightformer
           position={[0, 13, -24]}
           rotation={[Math.PI / 2, 0, 0]}

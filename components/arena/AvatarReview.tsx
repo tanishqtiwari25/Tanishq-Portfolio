@@ -5,7 +5,7 @@ import { OrbitControls, useGLTF } from "@react-three/drei";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import * as T from "three";
 function Model({ wire }: { wire: boolean }) {
-  const gltf = useGLTF("/models/tt-entrance-refined.glb", false, true);
+  const gltf = useGLTF("/models/tt-entrance-curvature-web.glb", false, true);
   const scene = useMemo(() => {
     const copy = clone(gltf.scene);
     copy.traverse(object => {
@@ -43,7 +43,7 @@ export default function AvatarReview() {
       <h1>The entrance performer.</h1>
       <p>
         An original hooded garment study with cuffs, trouser folds, hands and
-        layered sneakers. The 13,824-triangle mesh retains the 13-bone rig and
+        layered sneakers. The 58,464-triangle desktop mesh retains the 13-bone rig and
         four animation clips in a compressed GLB. It has no reconstructed facial
         likeness; the supplied photos remain the identity references.
       </p>
@@ -94,7 +94,7 @@ export default function AvatarReview() {
             ))}
             <button onClick={() => setWire(!wire)} aria-pressed={wire}>Wireframe</button>
           </div>
-          <a href="/models/tt-entrance-refined.glb" download>
+          <a href="/models/tt-entrance-curvature-web.glb" download>
             Download outfit study GLB ↗
           </a>
         </div>

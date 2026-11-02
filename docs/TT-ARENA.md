@@ -118,3 +118,27 @@ Blender 5.2.3 is available as a verified workspace-local runtime. The Windows In
 
 ## Complete editable review layout
 The Blender source now includes review-only ring geometry, generic batched spectators, packed real project captures, stage typography, Skills/Contact panels and an animated camera with six timeline chapter markers. Project review displays retract above the console scenes. Camera focus/depth of field, homogeneous haze and actual offline spot sources support render review. Imported walk cycles are scheduled by root travel distance, followed by Idle in the ring; final stair-climb retargeting and faithful likeness remain incomplete. scripts/blender/render_review.py validates the camera/markers, active seven-strip walk/idle schedule and display retraction before rendering all six chapters. Review images are in art/tt-arena/review. These are editable Blender review outputs; the web architecture GLB is unchanged by the review-only additions.
+
+## Coordinated workflow checkpoint — 2026-11-02
+
+The current stage-by-stage status and limitations are recorded in
+`art/tt-arena/WORKFLOW-STATUS.md`; this supersedes the historical counts and
+single-display descriptions above. Desktop uses a 58,464-triangle curvature
+garment, losslessly compressed to 1,501,440 bytes; mobile retains 13,824 triangles.
+The fresh Blender asset QA passes with documented tiling-UV and enclosed
+hood-opening warnings. Neither report certifies a facial likeness or final poses.
+
+Camera framing, a central physical production console, a web greeting pose,
+rising/fading smoke plumes and a single reflection environment were revised.
+The audience now uses four anonymous image-atlas subjects, with visible repetition;
+it is not a crowd of individually rigged photorealistic people. The six-view
+reference comparison is in `art/tt-arena/six-view-pass/reference-comparison.png`.
+The storyboard is never used as the live scene's background.
+
+The header reader follows the selected Skills/Education/Experience console tab,
+and reader focus preserves the chapter's scroll position. Browser checks covered
+390px mobile entrance/console/education reader, desktop project links and contact
+form opening, normal-mode moving lights/smoke, and the exported model's rear,
+three-quarter, side and wireframe views. No browser console errors were reported
+during this review. Production build and all 20 tests passed; inbox delivery and
+mobile frame rate were not measured in this pass. There is no new deployment.

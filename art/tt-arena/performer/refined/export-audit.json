@@ -1,0 +1,36 @@
+{
+  "path": "public/models/tt-entrance-refined.glb",
+  "bytes": 533940,
+  "vertices_with_uv_splits": 9630,
+  "triangles": 13824,
+  "materials": 5,
+  "bones": 13,
+  "clips": [
+    "ConfidentPose",
+    "EntranceWalk",
+    "Idle",
+    "Turn"
+  ],
+  "bounds": [
+    [
+      -0.349609375,
+      0,
+      -0.1826171875
+    ],
+    [
+      0.3486328125,
+      1.7646484375,
+      0.219970703125
+    ]
+  ],
+  "minimum_triangle_area": 0.0000020230487285229138,
+  "invalid": 0,
+  "degenerate": 0,
+  "badWeights": 0,
+  "boundaryEdges": 0,
+  "nonmanifoldEdges": 0,
+  "inconsistentEdges": 0,
+  "islands": 34,
+  "invertedIslands": 0,
+  "limitations": "Export geometry and weight audit after welding coincident UV-split positions at 1e-7 m. Does not certify intersections, facial likeness or visual quality."
+}

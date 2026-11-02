@@ -51,7 +51,8 @@ export default function ArenaExperience() {
     [ready, setReady] = useState(false),
     [failed, setFailed] = useState(false),
     [chapter, setChapter] = useState(0),
-    [selected, setSelected] = useState(0),
+    [selected, setSelected] = useState(1),
+    [deskSection, setDeskSection] = useState("skills"),
     [paused, setPaused] = useState(false),
     [menu, setMenu] = useState(false),
     [visible, setVisible] = useState(true),
@@ -176,6 +177,7 @@ export default function ArenaExperience() {
     });
   }, []);
   const read = useCallback((section: string, project?: any) => {
+    journey.current.paused = true;
     setReader({ section, project });
     setMenu(false);
   }, []);
@@ -205,6 +207,8 @@ export default function ArenaExperience() {
               journey={journey}
               chapter={chapter}
               selected={selected}
+              deskSection={deskSection}
+              onDeskSection={setDeskSection}
               onSelect={setSelected}
               onRead={read}
               onReady={onReady}
@@ -241,7 +245,7 @@ export default function ArenaExperience() {
                 void import("@/data/projectsData").then((m) =>
                   read("project", m.projectsData[selected]),
                 );
-              } else read(chapter === 5 ? "contact" : "about");
+              } else read(chapter === 5 ? "contact" : chapter === 4 ? deskSection : "about");
             }}
           >
             {chapter >= 3 ? "Read this display" : "View portfolio"}{" "}

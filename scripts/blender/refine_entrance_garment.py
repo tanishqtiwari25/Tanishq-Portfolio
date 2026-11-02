@@ -37,7 +37,7 @@ for i, vertex in enumerate(mesh.vertices):
         depth += crease * math.sin(angle)
     elif 1408 <= i < 1770:
         x *= .8
-        depth = -.1 + (depth + .135) * .6
+        depth = -.075 + (depth + .135) * .6
         height = 1.61 + (height - 1.61) * .8
     elif i < 290:
         # Broad oblique tension folds, strongest at the lower back and waist.
@@ -47,6 +47,19 @@ for i, vertex in enumerate(mesh.vertices):
         fold = .009 * envelope * math.sin(t * 19 + angle * 2.4)
         x += fold * math.cos(angle)
         depth += fold * math.sin(angle)
+    # Reduce the box-like shoulder span while keeping hand/sleeve alignment.
+    if i < 420:
+        x *= .9
+    for start, side in ((1868, -1), (4286, 1)):
+        if start <= i < start + 912:
+            x = side * .25 + (x - side * .28) * .9
+    # Offset hidden upper trouser caps from the pelvis ring at exactly .94m.
+    # Keep the closed surfaces and skin weights; avoid coplanar layer contacts.
+    if i > 1770 and abs(before[i][2] - .94) < .00001:
+        height += .03
+    # Give the raised back mark physical clearance from the cloth surface.
+    if i > 6500 and 1.2 < height < 1.31 and depth > .14:
+        depth += .012
     vertex.co = (x, depth, height)
 mesh.update()
 

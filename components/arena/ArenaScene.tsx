@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import type { MutableRefObject } from "react";
 import * as T from "three";
@@ -23,6 +23,8 @@ type Props = {
   journey: MutableRefObject<JourneyState>;
   chapter: number;
   selected: number;
+  deskSection: string;
+  onDeskSection: (section: string) => void;
   onSelect: (n: number) => void;
   onRead: (section: string, project?: Project) => void;
   onReady: () => void;
@@ -127,10 +129,10 @@ function ProjectDisplay({
       );
   });
   return (
-    <group>
+    <group visible={visible}>
       <Mount offset={offset} />
       <group ref={mount}>
-        <PhysicalScreen p={[offset, 5.3, 1.2]} rotation={[0, offset > 0 ? -0.12 : 0.12, 0]} size={[7.2, 4.3]} visible={visible}>
+        <PhysicalScreen p={[offset, 5.3, 1.2]} rotation={[0, offset > 0 ? -0.2 : 0.2, offset > 0 ? .035 : -.035]} size={[7.2, 4.3]} visible={visible}>
           <div className="project-screen-content">
             <div className="screen-kicker">
               <span>RINGSIDE / SELECTED WORK</span>
@@ -231,7 +233,7 @@ export default function ArenaScene(props: Props) {
     onFailure,
     running,
   } = props;
-  const [deskSection, setDeskSection] = useState("skills");
+  const { deskSection, onDeskSection: setDeskSection } = props;
   const topSkills = useMemo(() => skillsData[0].skills.map((s) => s.name), []);
   return (
     <ArenaWorld
@@ -252,7 +254,7 @@ export default function ArenaScene(props: Props) {
           <p className="led-role">{chapter === 0 ? "DEVELOPER PORTFOLIO" : "CODE. BUILD. CREATE."}</p>
         </div>
       </PhysicalScreen>
-      {chapter <= 1 && <EntranceLED intro={chapter === 1} />}
+      <EntranceLED intro={chapter === 1} />
       <ProjectDisplay
         journey={journey}
         visible={chapter === 3}
@@ -262,10 +264,11 @@ export default function ArenaScene(props: Props) {
         onRead={onRead}
       />
       {!journey.current.mobile && <ProjectDisplay journey={journey} visible={chapter === 3} offset={4} selected={(selected + 1) % projectsData.length} onSelect={onSelect} onRead={onRead} />}
+      {chapter === 4 && <group position={[-6.4, 0, 6]} scale={.8}>
       <PhysicalScreen
         p={[8, 2.65, 1.65]}
         size={[4.2, 2.6]}
-        rotation={[-0.38, 0.12, 0]}
+        rotation={[-0.38, 0, 0]}
         visible={chapter === 4}
       >
         <div className="console-content">
@@ -308,6 +311,8 @@ export default function ArenaScene(props: Props) {
           </div>}
         </div>
       </PhysicalScreen>
+      </group>}
+      {chapter === 5 && <group position={[6.4, 0, 6]} scale={.8}>
       <PhysicalScreen
         p={[-8, 2.65, 1.65]}
         size={[4.2, 2.6]}
@@ -350,6 +355,7 @@ export default function ArenaScene(props: Props) {
           </div>
         </div>
       </PhysicalScreen>
+      </group>}
     </ArenaWorld>
   );
 }

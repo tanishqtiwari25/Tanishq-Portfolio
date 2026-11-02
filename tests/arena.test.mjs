@@ -22,6 +22,7 @@ test("camera and avatar have no discontinuity at frame or stair boundaries", () 
   for (let n = 1; n <= 10000; n++) {
     const now = sampleJourney(n / 10000);
     assert.ok(length(now.camera, old.camera) < 0.1, "camera jump");
+    assert.ok(Math.abs(now.fov - old.fov) < 0.04, "lens jump");
     assert.ok(length(now.avatar, old.avatar) < 0.06, "avatar jump");
     assert.ok(now.camera.every(Number.isFinite));
     assert.ok(

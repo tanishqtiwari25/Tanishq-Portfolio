@@ -13,7 +13,7 @@ export default function ArenaReader({ section, onClose, project }) {
     const previous = document.activeElement;
     const old = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    root.current?.querySelector("button")?.focus();
+    root.current?.querySelector("button")?.focus({ preventScroll: true });
     const key = (e) => {
       if (e.key === "Escape") onClose();
       if (e.key === "Tab") {
@@ -37,7 +37,7 @@ export default function ArenaReader({ section, onClose, project }) {
     return () => {
       window.removeEventListener("keydown", key);
       document.body.style.overflow = old;
-      previous?.focus();
+      previous?.focus({ preventScroll: true });
     };
   }, [onClose, project]);
   if (project) return <ProjectModal project={project} onClose={onClose} />;

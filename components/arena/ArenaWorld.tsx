@@ -7,7 +7,6 @@ import * as T from "three";
 import ArenaDecor from "./ArenaDecor";
 import SpectatorLOD from "./SpectatorLOD";
 import StageRigging, { ArenaBanner } from "./StageRigging";
-import ArenaReflections from "./ArenaReflections";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { sampleJourney, ENTRY } from "@/lib/arena/journey.mjs";
 import type { MutableRefObject, ReactNode } from "react";
@@ -176,17 +175,35 @@ function Sign({
     </mesh>
   );
 }
-function BlenderArchitecture() {
+function BlenderArchitecture({ journey }: { journey: MutableRefObject<JourneyState> }) {
   const textures = useContext(MetalMaps);
   const { scene } = useGLTF("/models/tt-arena-architecture.glb", false, true);
-  const architecture = useMemo(() => {
+  const { architecture, consoleKit } = useMemo(() => {
     const copy = scene.clone(true);
+    const consoleKit = new T.Group();
     // The source kit batches steel by material. Refit only the LED facade's
     // bounded vertices; the entrance portal and load-bearing towers stay put.
     copy.traverse(object => {
       if (!(object instanceof T.Mesh)) return;
       const geometry = object.geometry.clone();
       const position = geometry.attributes.position;
+      const indices = geometry.index?.array ?? Array.from({length:position.count},(_,i)=>i);
+      const retained: number[] = [], leftDesk: number[] = [];
+      const consoleVertex = (i: number) => Math.abs(position.getX(i)) > 5.1 && Math.abs(position.getX(i)) < 10.95 && position.getY(i) < 4.5 && position.getY(i) > -.1 && position.getZ(i) > -.1 && position.getZ(i) < 3.5;
+      for (let i=0;i<indices.length;i+=3) {
+        const face = [indices[i],indices[i+1],indices[i+2]];
+        if (face.every(consoleVertex)) { if(position.getX(face[0]) < 0) leftDesk.push(...face); }
+        else retained.push(...face);
+      }
+      if (leftDesk.length) {
+        const deskGeometry=geometry.clone(); deskGeometry.setIndex(leftDesk);
+        const p=deskGeometry.attributes.position;
+        for(let i=0;i<p.count;i++)p.setXYZ(i,(p.getX(i)+8)*.8,p.getY(i)*.8,(p.getZ(i)-1.65)*.8+7.32);
+        p.needsUpdate=true;deskGeometry.computeBoundingSphere();
+        const deskMaterial=Array.isArray(object.material)?object.material.map(m=>m.clone()):object.material.clone();
+        const desk=new T.Mesh(deskGeometry,deskMaterial);desk.receiveShadow=true;consoleKit.add(desk);
+      }
+      geometry.setIndex(retained);
       let moved = false;
       for (let i = 0; i < position.count; i++) {
         const x = position.getX(i), y = position.getY(i), z = position.getZ(i);
@@ -200,14 +217,17 @@ function BlenderArchitecture() {
       object.geometry = geometry;
       object.material = Array.isArray(object.material) ? object.material.map(material => material.clone()) : object.material.clone();
     });
-    return copy;
+    return { architecture:copy, consoleKit };
   }, [scene]);
+  useFrame(() => { consoleKit.visible = sampleJourney(journey.current.current).chapter >= 4; });
   useEffect(() => () => architecture.traverse(object => {
     if (object instanceof T.Mesh) {
       object.geometry.dispose();
       (Array.isArray(object.material) ? object.material : [object.material]).forEach(material => material.dispose());
     }
   }), [architecture]);
+  useEffect(() => () => consoleKit.traverse(object => {if(object instanceof T.Mesh){object.geometry.dispose();(Array.isArray(object.material)?object.material:[object.material]).forEach(m=>m.dispose());}}),[consoleKit]);
+  useEffect(() => {consoleKit.traverse(object=>{if(object instanceof T.Mesh){for(const m of (Array.isArray(object.material)?object.material:[object.material]))if(m instanceof T.MeshStandardMaterial){m.roughness=.62;m.envMapIntensity=.65;if(textures){m.roughnessMap=textures.roughnessMap;m.bumpMap=textures.roughnessMap;m.bumpScale=.0007;m.needsUpdate=true;}}}});},[consoleKit,textures]);
   useEffect(() => {
     architecture.traverse(object => {
       if (object instanceof T.Mesh) {
@@ -230,7 +250,7 @@ function BlenderArchitecture() {
       }
     });
   }, [architecture, textures]);
-  return <group><primitive object={architecture} />{[-1,1].map(side => <group key={side}><pointLight position={[side*12,9,-31]} color="#ff2447" intensity={170} distance={25}/><pointLight position={[side*16,8,7]} color="#e9efff" intensity={180} distance={35}/></group>)}</group>;
+  return <group><primitive object={architecture} /><primitive object={consoleKit} />{[-1,1].map(side => <group key={side}><pointLight position={[side*12,9,-31]} color="#ff2447" intensity={170} distance={25}/><pointLight position={[side*16,8,7]} color="#e9efff" intensity={180} distance={35}/></group>)}</group>;
 }
 function Stage() {
   return (
@@ -839,8 +859,12 @@ function TemporaryAvatar({
 }: {
   journey: MutableRefObject<JourneyState>;
 }) {
-  const gltf = useGLTF("/models/tt-entrance-refined.glb", false, true);
+  const gltf = useGLTF(journey.current.mobile ? "/models/tt-entrance-refined.glb" : "/models/tt-entrance-curvature-web.glb", false, true);
   const model = useMemo(() => clone(gltf.scene), [gltf.scene]);
+  const salute = useMemo(() => {
+    const arm=model.getObjectByName("RightArm");
+    return {arm,rest:arm?.quaternion.clone(),rotation:new T.Quaternion(),axis:new T.Vector3(0,0,1)};
+  },[model]);
   const root = useRef<T.Group>(null),
     last = useRef(new T.Vector3(0, 1.1, -39));
   const mixer = useMemo(() => new T.AnimationMixer(model), [model]);
@@ -893,9 +917,12 @@ function TemporaryAvatar({
       idle.weight = walking || entranceStride ? 0 : 1;
       idle.time += j.reduced ? 0 : Math.min(delta, 0.05);
     }
+    if(salute.arm && salute.rest)salute.arm.quaternion.copy(salute.rest);
     mixer.update(0);
+    const greeting=T.MathUtils.smoothstep(j.current,.095,.125)*(1-T.MathUtils.smoothstep(j.current,.17,.22));
+    if(salute.arm && greeting>0)salute.arm.quaternion.multiply(salute.rotation.setFromAxisAngle(salute.axis,2.2*greeting));
     // The entrance is deliberately a held rear view, matching the storyboard.
-    const yaw = j.current < 0.13 ? Math.PI : sample.avatarYaw;
+    const yaw = j.current < 0.21 ? Math.PI : sample.avatarYaw;
     const difference =
       T.MathUtils.euclideanModulo(
         yaw - root.current.rotation.y + Math.PI,
@@ -927,7 +954,7 @@ function CameraRig({ journey }: { journey: MutableRefObject<JourneyState> }) {
     pos.set(...(sample.camera as V));
     look.set(...(sample.look as V));
     const perspective = camera as T.PerspectiveCamera;
-    let fov = 45;
+    let fov = sample.fov;
     if (!j.mobile && sample.chapter <= 1) {
       // Keep the whole production stage in frame at different desktop aspects.
       const wide = T.MathUtils.radToDeg(2 * Math.atan(43 / (2 * pos.distanceTo(look) * (size.width / size.height))));
@@ -1076,9 +1103,8 @@ export default function ArenaWorld({
       <fog attach="fog" args={["#11151d", 40, 115]} />
       <MetalMaps.Provider value={textures}>
       <Suspense fallback={null}>
-        <ArenaReflections mobile={mobile} />
         <CameraRig journey={journey} />
-        <BlenderArchitecture />
+        <BlenderArchitecture journey={journey} />
         <EntranceProduction mobile={mobile} />
         <ArenaDecor mobile={mobile} reduced={journey.current.reduced} />
         <Ring progress={journey} />

@@ -11,14 +11,21 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
   const mesh = useRef<T.InstancedMesh>(null);
   const people = useMemo(() => Array.from({ length: count }, (_, i) => {
     const floor = mobile ? 100 : 280;
+    const ringside = mobile ? 80 : 360;
     let x: number, y: number, z: number;
     if (i < floor) {
       const row = Math.floor(i / 2) % 4;
       x = (i % 2 ? -1 : 1) * (3.9 + row * .7);
       z = -32 + Math.floor(i / 8) * (19 / Math.ceil(floor / 8));
       y = 0;
+    } else if (i < floor + ringside) {
+      const n=i-floor, side=n%2 ? -1:1, row=Math.floor(n/2)%3;
+      const along=Math.floor(n/6);
+      if (n < ringside*.55) {x=side*(5.7+row*.72);z=-7.5+along*.44;}
+      else {x=side*(3.9+(along%22)*.57);z=-7.2-row*.65;}
+      y=0;
     } else {
-      const n = i - floor, tier = Math.min(4, Math.floor(n / ((count - floor) / 5)));
+      const n = i - floor - ringside, tier = Math.min(4, Math.floor(n / ((count - floor - ringside) / 5)));
       const radius = 18 + tier * 3.3 + (Math.floor(n / 5) % 4) * .55;
       let a = n * 2.39996;
       x = Math.cos(a) * radius; z = Math.sin(a) * radius * 2 - 17;
