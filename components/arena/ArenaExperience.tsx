@@ -68,6 +68,7 @@ export default function ArenaExperience() {
     document.documentElement.classList.add("arena-active");
     const motion = matchMedia("(prefers-reduced-motion:reduce)");
     const params = new URLSearchParams(location.search);
+    journey.current.metrics=params.get('metrics')==='1';
     const forceReduced = params.get("motion") === "reduce";
     if (params.get("view") === "readable") setFailed(true);
     const resize = () => {
@@ -402,6 +403,7 @@ export default function ArenaExperience() {
         <div ref={progress} />
       </div>
       <div className="arena-scrollspace" aria-hidden="true" />
+      {mounted && journey.current.metrics && <output id="arena-render-metrics" style={{position:'fixed',top:0,left:0,zIndex:100,padding:'8px',background:'#080b11',color:'white',font:'12px monospace',pointerEvents:'none'}}>Collecting rendered frames…</output>}
       {menu && (
         <div className="arena-menu-backdrop">
           <div

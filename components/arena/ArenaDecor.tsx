@@ -41,12 +41,14 @@ function makeHaze() {
 }
 function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
   const root = useRef<T.Group>(null);
+  const initialized=useRef(false);
   const map = useMemo(makeHaze, []);
   useEffect(() => () => map.dispose(), [map]);
   useFrame(({ clock }) => {
-    if (!root.current || reduced) return;
+    if (!root.current || (reduced && initialized.current)) return;
+    initialized.current=true;
     root.current.children.forEach((s, i) => {
-      const age = (clock.elapsedTime * (.105 + (i % 3) * .009) + i * .618034) % 1;
+      const age = ((reduced ? 8 : clock.elapsedTime) * (.105 + (i % 3) * .009) + i * .618034) % 1;
       const side = i % 2 ? -1 : 1;
       s.position.set(side * (2.6 + (i % 3) * 2.35) + Math.sin(age * 4 + i) * age * 1.4,
         1.15 + age * 2.1, -36 + (i % 3) * .9 + age * 1.4);
@@ -72,7 +74,7 @@ function Haze({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
           <spriteMaterial
             map={map}
             transparent
-            opacity={0.65}
+            opacity={0.16}
             depthWrite={false}
             color={i % 3 ? "#d8e1ed" : "#c32a42"}
           />
@@ -280,16 +282,6 @@ export default function ArenaDecor({
       <ReflectiveRamp mobile={mobile} />
       <LightGrid mobile={mobile} />
       <PhoneFlashes mobile={mobile} reduced={reduced} />
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <group key={i}>
-          <EllipseRail radius={18 + i * 3.3} y={i * 2.4 + 0.8} />
-          <EllipseRail
-            radius={18 + i * 3.3}
-            y={i * 2.4 + 0.12}
-            color="#d31b3f"
-          />
-        </group>
-      ))}
     </group>
   );
 }

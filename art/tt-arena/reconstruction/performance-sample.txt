@@ -1,0 +1,1 @@
+26 frames | median 60.0 ms (17 FPS) | p95 62.6 ms | 416 calls | 755,641 tris incl. extra passes

@@ -52,6 +52,6 @@ const boundaryEdges=[...edges.values()].filter(e=>e.count===1).length;
 const nonmanifoldEdges=[...edges.values()].filter(e=>e.count>2).length;
 const inconsistentEdges=[...edges.values()].filter(e=>e.count===2&&e.balance!==0).length;
 const invertedIslands=[...volumes.values()].filter(v=>v< -1e-10).length;
-const report={path,bytes:bytes.length,vertices_with_uv_splits:vertices,triangles,materials:gltf.materials.length,bones:gltf.skins[0].joints.length,clips:gltf.animations.map(a=>a.name),bounds,minimum_triangle_area:minArea,invalid,degenerate,badWeights,boundaryEdges,nonmanifoldEdges,inconsistentEdges,islands:volumes.size,invertedIslands,limitations:'Export geometry and weight audit after welding coincident UV-split positions at 1e-7 m. Does not certify intersections, facial likeness or visual quality.'};
+const report={path,bytes:bytes.length,vertices_with_uv_splits:vertices,triangles,materials:gltf.materials.length,bones:gltf.skins?.[0]?.joints.length ?? 0,clips:(gltf.animations || []).map(a=>a.name),bounds,minimum_triangle_area:minArea,invalid,degenerate,badWeights,boundaryEdges,nonmanifoldEdges,inconsistentEdges,islands:volumes.size,invertedIslands,limitations:'Export geometry and weight audit after welding coincident UV-split positions at 1e-7 m. Does not certify intersections, facial likeness or visual quality.'};
 console.log(JSON.stringify(report,null,2));
 if(invalid||degenerate||badWeights||boundaryEdges||nonmanifoldEdges||inconsistentEdges||invertedIslands)process.exitCode=1;

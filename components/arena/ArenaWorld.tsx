@@ -6,6 +6,8 @@ import { Html, useGLTF } from "@react-three/drei";
 import * as T from "three";
 import ArenaDecor from "./ArenaDecor";
 import ArenaLook from "./ArenaLook";
+import ArenaMetrics from "./ArenaMetrics";
+import ArenaVenue from "./ArenaVenue";
 import { EquipmentLibrary, Equipment } from "./ArenaEquipment";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import SpectatorLOD from "./SpectatorLOD";
@@ -20,6 +22,7 @@ export type JourneyState = {
   paused: boolean;
   reduced: boolean;
   mobile: boolean;
+  metrics?: boolean;
 };
 type V = [number, number, number];
 const STEEL = "#3b424c",
@@ -144,14 +147,14 @@ function textureLabel(lines: string[], color = "#e9ebef", bg = "#0c0e12") {
   ctx.lineWidth = 6;
   ctx.strokeRect(15, 15, 994, 482);
   lines.forEach((line, i) => {
-    let size = i === 0 ? 130 : 36;
+    let size = line === "TT" && lines.length === 1 ? 390 : i === 0 ? 130 : 36;
     do {
       ctx.font = `${i === 0 ? "bold " : ""}${size}px Arial`;
       size -= 2;
     } while (ctx.measureText(line).width > 920 && size > 20);
     ctx.textAlign = "center";
     ctx.fillStyle = i === 0 ? color : "#b0b7c4";
-    ctx.fillText(line, 512, lines.length === 1 ? 295 : 220 + i * 90);
+    ctx.fillText(line, 512, lines.length === 1 ? (line === "TT" ? 395 : 295) : 220 + i * 90);
   });
   const tex = new T.CanvasTexture(canvas);
   tex.colorSpace = T.SRGBColorSpace;
@@ -189,6 +192,7 @@ function BlenderArchitecture({ journey }: { journey: MutableRefObject<JourneySta
     // bounded vertices; the entrance portal and load-bearing towers stay put.
     copy.traverse(object => {
       if (!(object instanceof T.Mesh)) return;
+      if (/scoreboard/i.test(object.name)) object.visible=false;
       const geometry = object.geometry.clone();
       const position = geometry.attributes.position;
       const indices = geometry.index?.array ?? Array.from({length:position.count},(_,i)=>i);
@@ -196,7 +200,13 @@ function BlenderArchitecture({ journey }: { journey: MutableRefObject<JourneySta
       const consoleVertex = (i: number) => Math.abs(position.getX(i)) > 5.1 && Math.abs(position.getX(i)) < 10.95 && position.getY(i) < 4.5 && position.getY(i) > -.1 && position.getZ(i) > -.1 && position.getZ(i) < 3.5;
       for (let i=0;i<indices.length;i+=3) {
         const face = [indices[i],indices[i+1],indices[i+2]];
-        if (!face.every(consoleVertex)) retained.push(...face);
+        const replacedVenue = (v:number) => {
+          const x=position.getX(v),y=position.getY(v),z=position.getZ(v);
+          const bowl=y>-.05 && y<12.5 && (Math.abs(x)>16 || z>15) && Math.hypot(x,(z+17)/2)>17.5;
+          const scoreboard=Math.abs(x)<3.9 && Math.abs(z)<3.9 && y>9.4;
+          return bowl || scoreboard;
+        };
+        if (!face.every(consoleVertex) && !face.every(replacedVenue)) retained.push(...face);
       }
       geometry.setIndex(retained);
       let moved = false;
@@ -970,10 +980,10 @@ function CameraRig({ journey }: { journey: MutableRefObject<JourneyState> }) {
   useFrame((_, delta) => {
     const j = journey.current;
     if (!j.paused)
-      j.current = T.MathUtils.damp(
+      j.current = j.reduced ? j.target : T.MathUtils.damp(
         j.current,
         j.target,
-        j.reduced ? 14 : 4,
+        4,
         Math.min(delta, 0.05),
       );
     const sample = sampleJourney(j.current);
@@ -1136,6 +1146,8 @@ export default function ArenaWorld({
       <Suspense fallback={null}>
         <CameraRig journey={journey} />
         <BlenderArchitecture journey={journey} />
+        <ArenaVenue />
+        {[0,1,2,3].map(i=><Sign key={'score'+i} p={[[0,6.8,2.991],[2.991,6.8,0],[0,6.8,-2.991],[-2.991,6.8,0]][i] as V} rotation={[0,i*Math.PI/2,0]} s={[5,2.1]} lines={['TT']} color="#ef2940"/>)}
         <EntranceProduction mobile={mobile} />
         <ArenaDecor mobile={mobile} reduced={journey.current.reduced} />
         <Ring progress={journey} />
@@ -1144,6 +1156,7 @@ export default function ArenaWorld({
         <TemporaryAvatar journey={journey} />
         {children}
         <Ready onReady={onReady} onFailure={onFailure} />
+        {journey.current.metrics && <ArenaMetrics />}
         {!mobile && <ArenaLook />}
       </Suspense>
       </EquipmentLibrary>
