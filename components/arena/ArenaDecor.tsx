@@ -7,6 +7,7 @@ import {
   MeshReflectorMaterial,
 } from "@react-three/drei";
 import * as T from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { brushedMetal } from "./arenaMaterials";
 /** Procedural artwork/materials, not a backdrop photograph. */
 function makeHaze() {
@@ -205,20 +206,37 @@ function PhoneFlashes({
 }
 export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
   const surface = useMemo(brushedMetal, []);
+  const details=useMemo(()=>{
+    const joints:T.BufferGeometry[]=[],bolts:T.BufferGeometry[]=[];
+    for(let i=0;i<17;i++){
+      const y=-10.8+i*1.35;
+      const joint=new T.BoxGeometry(4.12,.012,.002);joint.translate(0,y,.003);joints.push(joint);
+      for(const side of [-1,1]){
+        const bolt=new T.CircleGeometry(.018,6);bolt.translate(side*1.93,y+.07,.005);bolts.push(bolt);
+      }
+    }
+    const result={joints:mergeGeometries(joints)!,bolts:mergeGeometries(bolts)!};
+    [...joints,...bolts].forEach(g=>g.dispose());return result;
+  },[]);
+  const continuation=useMemo(()=>{
+    const g=new T.BufferGeometry();
+    g.setAttribute('position',new T.Float32BufferAttribute([-2.06,.125,-10,2.06,.125,-10,-2.06,.008,-9,2.06,.008,-9,-2.06,.008,-3.8,2.06,.008,-3.8],3));
+    g.setAttribute('uv',new T.Float32BufferAttribute([0,0,1,0,0,.16,1,.16,0,1,1,1],2));
+    g.setIndex([0,2,1,1,2,3,2,4,3,3,4,5]);g.computeVertexNormals();return g;
+  },[]);
+  useEffect(()=>()=>{details.joints.dispose();details.bolts.dispose();continuation.dispose();},[details,continuation]);
   useEffect(() => {
     surface.roughnessMap.repeat.set(3, 12);
     return () => { surface.map.dispose(); surface.roughnessMap.dispose(); };
   }, [surface]);
   return (
-    <mesh
+    <group><mesh geometry={continuation} receiveShadow><meshStandardMaterial color="#9298a2" metalness={.95} roughness={.38} roughnessMap={surface.roughnessMap} bumpMap={surface.roughnessMap} bumpScale={.0006}/></mesh><mesh
       position={[0, 0.625, -21.5]}
       rotation={[-Math.PI / 2 + Math.atan(1 / 23), 0, 0]}
     >
       <planeGeometry args={[4.12, Math.hypot(23, 1)]} />
-      {Array.from({length:17},(_,i)=><group key={i} position={[0,-10.8+i*1.35,.003]}>
-        <mesh><boxGeometry args={[4.12,.012,.002]} /><meshStandardMaterial color="#171a20" roughness={.65} metalness={.8} /></mesh>
-        {[-1,1].map(side=><mesh key={side} position={[side*1.93,.07,.002]}><circleGeometry args={[.018,6]} /><meshStandardMaterial color="#8d939e" roughness={.28} metalness={1}/></mesh>)}
-      </group>)}
+      <mesh geometry={details.joints}><meshStandardMaterial color="#171a20" roughness={.65} metalness={.8}/></mesh>
+      <mesh geometry={details.bolts}><meshStandardMaterial color="#8d939e" roughness={.28} metalness={1}/></mesh>
       {mobile ? (
         <meshStandardMaterial
           color="#272b32"
@@ -230,12 +248,12 @@ export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
         <MeshReflectorMaterial
           resolution={512}
           mixBlur={1}
-          mixStrength={1.1}
+          mixStrength={1.65}
           blur={[10, 4]}
-          mirror={0.65}
-          color="#363b44"
-          metalness={0.25}
-          roughness={0.32}
+          mirror={0.82}
+          color="#8f949c"
+          metalness={0.85}
+          roughness={0.24}
           roughnessMap={surface.roughnessMap}
           bumpMap={surface.roughnessMap}
           bumpScale={.0012}
@@ -244,7 +262,7 @@ export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
           maxDepthThreshold={1.3}
         />
       )}
-    </mesh>
+    </mesh></group>
   );
 }
 export default function ArenaDecor({

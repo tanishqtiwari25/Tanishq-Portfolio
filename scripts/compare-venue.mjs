@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-const root='art/tt-arena/reconstruction';
+const root=process.argv[2] || 'art/tt-arena/reconstruction';
 const names=['01-entrance','02-intro','03-walk','04-projects','05-skills','06-contact'];
 const panels=[],comparison=[];
 for(let i=0;i<names.length;i++){

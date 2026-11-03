@@ -15,9 +15,9 @@
     "SM_ScoreboardBody: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
     "SM_ScoreboardScreens: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
     "SM_ScoreboardFrame: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
-    "SM_ScoreboardSuspension: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
+    "SM_ScoreboardSuspension: ~72.89% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
     "SM_ScoreboardVent: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
-    "SM_Seat: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
+    "SM_Seat: ~75.98% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
     "SM_StageServicePanels: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
     "SM_StagePanelFasteners: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
     "SM_StageVents: ~100.0% UV overlap (ok only if mirrored/stacked on purpose; bakes break)",
@@ -101,7 +101,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 1.3
+      "uv_coverage_pct": 61.6
     },
     "SM_BalconyFascia": {
       "verts": 1920,
@@ -128,7 +128,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 1.0
+      "uv_coverage_pct": 61.6
     },
     "SM_RibbonLED": {
       "verts": 1920,
@@ -155,7 +155,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 1.0
+      "uv_coverage_pct": 61.6
     },
     "SM_BalconyRails": {
       "verts": 4692,
@@ -182,7 +182,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 71.4
     },
     "SM_BalconyColumns": {
       "verts": 2240,
@@ -209,7 +209,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 69.2
     },
     "SM_RoofStructure": {
       "verts": 26443,
@@ -236,7 +236,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 75.6
     },
     "SM_RoofColumns": {
       "verts": 896,
@@ -263,7 +263,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 87.9
     },
     "SM_ScoreboardBody": {
       "verts": 56,
@@ -290,7 +290,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 85.0
     },
     "SM_ScoreboardScreens": {
       "verts": 224,
@@ -317,7 +317,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 82.1
     },
     "SM_ScoreboardFrame": {
       "verts": 896,
@@ -344,7 +344,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 87.9
     },
     "SM_ScoreboardSuspension": {
       "verts": 72,
@@ -370,8 +370,8 @@
       "uv_maps": 1,
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
-      "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_overlap_pct": 72.89,
+      "uv_coverage_pct": 82.1
     },
     "SM_ScoreboardVent": {
       "verts": 120,
@@ -398,7 +398,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 82.4
     },
     "SM_Seat": {
       "verts": 168,
@@ -424,13 +424,13 @@
       "uv_maps": 1,
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
-      "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_overlap_pct": 75.98,
+      "uv_coverage_pct": 56.9
     },
     "SM_StageServicePanels": {
-      "verts": 96,
-      "faces": 144,
-      "tris": 144,
+      "verts": 672,
+      "faces": 1296,
+      "tris": 1296,
       "ngons": 0,
       "boundary_edges": 0,
       "nonmanifold_edges": 0,
@@ -452,7 +452,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 65.9
     },
     "SM_StagePanelFasteners": {
       "verts": 256,
@@ -479,7 +479,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 73.2
     },
     "SM_StageVents": {
       "verts": 640,
@@ -506,7 +506,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 84.0
     },
     "SM_ArenaFloor": {
       "verts": 56,
@@ -533,7 +533,7 @@
       "uv_oob_pct": 0.0,
       "uv_zero_area_faces": 0,
       "uv_overlap_pct": 100.0,
-      "uv_coverage_pct": 0.0
+      "uv_coverage_pct": 85.0
     }
   },
   "scope": "New closed venue kit only; tiling roughness UVs are intentionally stacked.",

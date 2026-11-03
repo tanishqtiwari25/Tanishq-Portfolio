@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useMemo } from "react";
+import { useFrame } from "@react-three/fiber";
 import * as T from "three";
 
 /** A real scene surface: unlike CSS3D text this appears in the ramp reflection. */
-export default function EntranceLED({ intro }: { intro: boolean }) {
+export default function EntranceLED({ intro, reduced=false }: { intro: boolean; reduced?:boolean }) {
   const texture = useMemo(() => {
     const canvas = document.createElement("canvas");
     canvas.width = 2048; canvas.height = 688;
@@ -15,8 +16,8 @@ export default function EntranceLED({ intro }: { intro: boolean }) {
     const glow = ctx.createRadialGradient(1060, 440, 40, 1060, 440, 1150);
     glow.addColorStop(0, "#48101a"); glow.addColorStop(.55, "#1d080e"); glow.addColorStop(1, "#07080b");
     ctx.fillStyle = glow; ctx.fillRect(0, 0, 2048, 688);
-    for (let i = 0; i < 1250; i++) {
-      ctx.strokeStyle = `rgba(235,16,43,${.07 + random() * .55})`;
+    for (let i = 0; i < 620; i++) {
+      ctx.strokeStyle = `rgba(235,16,43,${.04 + random() * .32})`;
       const x = random() * 2048, y = random() * 688;
       ctx.lineWidth = .5 + random() * 3;
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + random() * 380 - 190, y + random() * 110 - 55); ctx.stroke();
@@ -48,9 +49,23 @@ export default function EntranceLED({ intro }: { intro: boolean }) {
     const map = new T.CanvasTexture(canvas); map.colorSpace = T.SRGBColorSpace;
     map.anisotropy = 4; return map;
   }, [intro]);
+  const uniforms=useMemo(()=>({ledTime:{value:0}}),[]);
+  const material=useMemo(()=>{
+    const m=new T.MeshBasicMaterial({map:texture,toneMapped:false});
+    m.onBeforeCompile=shader=>{
+      shader.uniforms.ledTime=uniforms.ledTime;
+      shader.fragmentShader='uniform float ledTime;\n'+shader.fragmentShader;
+      shader.fragmentShader=shader.fragmentShader.replace('#include <dithering_fragment>',`#include <dithering_fragment>
+        float scan=exp(-pow((fract(vMapUv.y-ledTime*.035)-.5)*18.,2.));
+        gl_FragColor.rgb *= .985+.015*scan;`);
+    };
+    m.customProgramCacheKey=()=> 'tt-led-subtle-scan-v1';
+    return m;
+  },[texture,uniforms]);
+  useFrame(({clock})=>{uniforms.ledTime.value=reduced?0:clock.elapsedTime;});
+  useEffect(()=>()=>material.dispose(),[material]);
   useEffect(() => () => texture.dispose(), [texture]);
-  return <mesh position={[0, 9.2, -40.51]}>
+  return <mesh position={[0, 9.2, -40.51]} material={material}>
     <planeGeometry args={[20.4, 6.88]} />
-    <meshBasicMaterial map={texture} toneMapped={false} />
   </mesh>;
 }

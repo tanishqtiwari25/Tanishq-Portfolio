@@ -22,7 +22,7 @@ export default function ArenaMetrics(){
     const sorted=samples.current.slice().sort((a,b)=>a-b),median=sorted[Math.floor(sorted.length*.5)],p95=sorted[Math.floor(sorted.length*.95)];
     const average=(a:number[])=>Math.round(a.reduce((n,x)=>n+x,0)/a.length);
     const el=document.getElementById('arena-render-metrics');
-    if(el)el.textContent=`${samples.current.length} frames | median ${median.toFixed(1)} ms (${(1000/median).toFixed(0)} FPS) | p95 ${p95.toFixed(1)} ms | ${average(calls.current)} calls | ${average(triangles.current).toLocaleString()} tris incl. extra passes`;
+    if(el)el.textContent=`${samples.current.length} frames | median ${median.toFixed(1)} ms (${(1000/median).toFixed(0)} FPS) | p95 ${p95.toFixed(1)} ms | ${average(calls.current)} calls | ${average(triangles.current).toLocaleString()} tris incl. extra passes | render scale ${el.dataset.renderScale || '1.000'}`;
     samples.current=[];calls.current=[];triangles.current=[];
   });
   return null;

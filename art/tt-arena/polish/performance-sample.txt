@@ -1,0 +1,1 @@
+36 frames | median 41.6 ms (24 FPS) | p95 98.4 ms | 245 calls | 671,963 tris incl. extra passes | render scale 0.750

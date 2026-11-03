@@ -1,8 +1,8 @@
 {
   "path": "public/models/tt-venue-kit-web.glb",
-  "bytes": 3107636,
-  "vertices_with_uv_splits": 92038,
-  "triangles": 94084,
+  "bytes": 3134696,
+  "vertices_with_uv_splits": 92840,
+  "triangles": 95236,
   "materials": 8,
   "bones": 0,
   "clips": [],

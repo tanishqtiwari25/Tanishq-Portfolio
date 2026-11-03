@@ -1,3 +1,5 @@
+> Historical report for commit e4d3b15. Venue source/export paths were subsequently updated by the polish pass; see ../polish/STATUS.md for current statistics.
+
 # TT Arena reconstruction — 2026-11-03
 
 This is a structural improvement pass, not acceptance of a photorealistic final result.

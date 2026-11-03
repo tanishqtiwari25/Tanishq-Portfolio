@@ -3,13 +3,13 @@
   "files": [
     {
       "path": "lib/arena/venueDesign.mjs",
-      "bytes": 7646,
-      "sha256": "68bc20dc14edb830489d677fa35daefcae387a64548a2fdc4d3ea103cf470376"
+      "bytes": 7650,
+      "sha256": "41e86ef7bd25ace955cde8e3a4cd7ee23cb4672a52bfa80fd6f8911d6dd725da"
     },
     {
       "path": "scripts/design-venue-kit.mjs",
-      "bytes": 1832,
-      "sha256": "926f9025f3af9df9ebf0258ba6cc350a2d5008683607bb00e3e837b3622fbc90"
+      "bytes": 2913,
+      "sha256": "6a59a3e5f52141ae8b1b528b3843b1343e9b06619ddb8b6ce66e95b493b72c01"
     },
     {
       "path": "scripts/blender/build_venue_kit.py",
@@ -18,18 +18,18 @@
     },
     {
       "path": "art/tt-arena/reconstruction/venue/design.json",
-      "bytes": 27160506,
-      "sha256": "9ad5daf204489854b6e1e822bc7bf954fdf0059a9a218598d799fc41b1ea58be"
+      "bytes": 30074062,
+      "sha256": "b4072d949eec9941951b56af347ede1d7fdc51c026b76f70c983098b98a8759c"
     },
     {
       "path": "art/tt-arena/reconstruction/venue/tt-venue-kit.blend",
-      "bytes": 2751338,
-      "sha256": "2596f197372793ec961de12e36297bb2124fd16ecf7f2fea727f11b000eb6d3a"
+      "bytes": 2853391,
+      "sha256": "386a193631c4ffcc8549cab0b20287e255cbf520e12a99abd12aaec8e239faca"
     },
     {
       "path": "public/models/tt-venue-kit-web.glb",
-      "bytes": 3107636,
-      "sha256": "30a15c112809f93f4625ac0ba715a664266852da3fe8001ac1359162c7e875e4"
+      "bytes": 3134696,
+      "sha256": "08cba72e8ea3cb39766ef0f45d078feb2cacb8b8ce8d0f12c95a3c56a7eb48b4"
     }
   ]
 }

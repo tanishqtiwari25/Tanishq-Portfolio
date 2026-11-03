@@ -12,12 +12,12 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
   const mesh = useRef<T.InstancedMesh>(null);
   const time=useMemo(()=>({value:0}),[]);
   const people = useMemo(() => Array.from({ length: count }, (_, i) => {
-    const floor = mobile ? 100 : 280;
+    const floor = mobile ? 80 : 160;
     const ringside = mobile ? 80 : 360;
     let x: number, y: number, z: number;
     if (i < floor) {
       const row = Math.floor(i / 2) % 4;
-      x = (i % 2 ? -1 : 1) * (3.9 + row * .7);
+      x = (i % 2 ? -1 : 1) * (3.9 + row * .85);
       z = -32 + Math.floor(i / 8) * (19 / Math.ceil(floor / 8));
       y = 0;
     } else if (i < floor + ringside) {
@@ -37,12 +37,12 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
       }
       y = tier.y + row*tier.rise;
     }
-    x += Math.sin(i * 12.9898) * .12;
-    z += Math.cos(i * 7.233) * .17;
+    x += Math.sin(i * 12.9898) * .04;
+    z += Math.cos(i * 7.233) * .06;
     return { x, y, z, scale: .84 + (i % 13) * .019, phase: i * 1.813 };
   }), [count, mobile]);
   const geometry = useMemo(() => {
-    const g = new T.PlaneGeometry(1.025, 2.05); g.translate(0, .97, 0);
+    const g = new T.PlaneGeometry(1.025, 2.05); g.translate(0, 1.025, 0);
     g.setAttribute("atlasCell", new T.InstancedBufferAttribute(Float32Array.from({ length: count }, (_, i) => (i * 7 + Math.floor(i / 12) * 5) % 12), 1));
     return g;
   }, [count]);
@@ -76,7 +76,7 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
     if (!moved) return;
     lastCamera.current.copy(camera.position);
     people.forEach((p, i) => {
-      dummy.position.set(p.x, p.y - .022, p.z);
+      dummy.position.set(p.x, p.y + .008, p.z);
       dummy.rotation.set(0, Math.atan2(camera.position.x - p.x, camera.position.z - p.z), 0);
       dummy.scale.set((i % 5 === 0 ? -1 : 1) * p.scale, p.scale, p.scale); dummy.updateMatrix(); mesh.current!.setMatrixAt(i, dummy.matrix);
     });

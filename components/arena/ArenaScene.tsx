@@ -236,7 +236,7 @@ export default function ArenaScene(props: Props) {
           <p className="led-role">{chapter === 0 ? "DEVELOPER PORTFOLIO" : "CODE. BUILD. CREATE."}</p>
         </div>
       </PhysicalScreen>
-      <EntranceLED intro={chapter === 1} />
+      <EntranceLED intro={chapter === 1} reduced={journey.current.reduced} />
       <ProjectDisplay
         journey={journey}
         visible={chapter === 3}

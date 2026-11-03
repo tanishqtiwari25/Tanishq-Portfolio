@@ -11,6 +11,8 @@ export function useArenaAudio() {
   } | null>(null);
   const [enabled, setEnabled] = useState(false),
     [error, setError] = useState("");
+  const [mutedPreference,setMutedPreference]=useState(false);
+  useEffect(()=>{try{setMutedPreference(localStorage.getItem('tt-arena-muted')==='1');}catch{/* Storage can be unavailable in private contexts. */}},[]);
   const enable = useCallback(async () => {
     try {
       if (!engine.current) {
@@ -44,6 +46,8 @@ export function useArenaAudio() {
       }
       await engine.current.ctx.resume();
       setEnabled(true);
+      setMutedPreference(false);
+      try{localStorage.setItem('tt-arena-muted','0');}catch{/* Audio remains usable without storage. */}
       setError("");
     } catch {
       setError("Audio unavailable in this browser.");
@@ -53,6 +57,8 @@ export function useArenaAudio() {
     if (enabled) {
       await engine.current?.ctx.suspend();
       setEnabled(false);
+      setMutedPreference(true);
+      try{localStorage.setItem('tt-arena-muted','1');}catch{/* Keep the current session muted. */}
     } else await enable();
   }, [enabled, enable]);
   const mix = useCallback((p: number) => {
@@ -78,5 +84,5 @@ export function useArenaAudio() {
     },
     [],
   );
-  return { enabled, error, enable, toggle, mix };
+  return { enabled, error, enable, toggle, mix, mutedPreference };
 }

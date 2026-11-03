@@ -348,8 +348,8 @@ export default function ArenaExperience() {
           </div>
           {chapter === 0 && (
             <div className="arena-entry-actions">
-              <button onClick={audio.enable}>
-                {audio.enabled ? "Sound enabled" : "Enter with sound"}{" "}
+              <button onClick={()=>audio.mutedPreference ? jump(.13) : void audio.enable()}>
+                {audio.enabled ? "Sound enabled" : audio.mutedPreference ? "Enter arena (muted)" : "Enter with sound"}{" "}
                 <Volume2 size={14} />
               </button>
               <button onClick={() => jump(0.64)}>

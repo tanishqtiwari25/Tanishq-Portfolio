@@ -40,6 +40,7 @@ export function Equipment({kind,...props}:{kind:Kind;position?:[number,number,nu
 }
 export function ProductionDesk() {
   return <group>
+    <pointLight position={[0,5,14.5]} intensity={55} distance={7} color="#dae4f1" />
     <group position={[0,1.4,11.5]} rotation={[-.9,0,0]}>
       <Equipment kind="desk" />
       <Equipment kind="headset" position={[-2.98,.08,.25]} rotation={[0,0,-.25]} />
