@@ -11,8 +11,12 @@ import ArenaVenue from "./ArenaVenue";
 import { EquipmentLibrary, Equipment } from "./ArenaEquipment";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import SpectatorLOD from "./SpectatorLOD";
+import OpeningCrowd from "./OpeningCrowd";
+import OpeningHardware from "./OpeningHardware";
 import StageRigging, { ArenaBanner } from "./StageRigging";
 import { clone } from "three/examples/jsm/utils/SkeletonUtils.js";
+import { ringEntryPose, entryRopePoint } from "@/lib/arena/ringEntry.mjs";
+import { stairFootTargets, placeLeg, createContactRig, resetContactRig, applyRingContacts } from "@/lib/arena/characterPose.mjs";
 import { sampleJourney, ENTRY } from "@/lib/arena/journey.mjs";
 import type { MutableRefObject, ReactNode } from "react";
 export type JourneyState = {
@@ -358,55 +362,36 @@ function EntranceProduction({ mobile }: { mobile: boolean }) {
     <mesh position={[0,2.6,-42.5]}><planeGeometry args={[2.35,2.95]} /><meshBasicMaterial color="#d7e8f9" toneMapped={false} /></mesh>
   </group>;
 }
-function EntryRope({
-  progress,
-  y,
-  index,
-}: {
-  progress: MutableRefObject<JourneyState>;
-  y: number;
-  index: number;
-}) {
-  const first = useRef<T.Mesh>(null),
-    second = useRef<T.Mesh>(null);
-  const a = useMemo(() => new T.Vector3(), []),
-    b = useMemo(() => new T.Vector3(), []),
-    direction = useMemo(() => new T.Vector3(), []),
-    up = useMemo(() => new T.Vector3(0, 1, 0), []);
-  useFrame(() => {
-    const p = progress.current.current;
-    const opening =
-      T.MathUtils.smoothstep(p, 0.52, 0.55) *
-      (1 - T.MathUtils.smoothstep(p, 0.6, 0.625));
-    // Development entry: the ropes visibly separate, never disappear or intersect the rig.
-    const middle = T.MathUtils.lerp(
-      y,
-      index === 0 ? 1.29 : index === 1 ? 3.45 : 3.75,
-      opening,
-    );
-    [first.current, second.current].forEach((mesh, i) => {
-      if (!mesh) return;
-      a.set(-3.25, i === 0 ? y : middle, i === 0 ? -3.25 : ENTRY.z);
-      b.set(-3.25, i === 0 ? middle : y, i === 0 ? ENTRY.z : -1.65);
-      direction.copy(b).sub(a);
-      mesh.position.copy(a).add(b).multiplyScalar(0.5);
-      mesh.quaternion.setFromUnitVectors(up, direction.clone().normalize());
-      mesh.scale.set(0.035, direction.length(), 0.035);
-    });
+function EntryRope({progress,index}: {progress:MutableRefObject<JourneyState>;y:number;index:number}) {
+  const segments=64,sides=8;
+  const geometry=useMemo(()=>{
+    const g=new T.BufferGeometry(),indices=[];
+    g.setAttribute("position",new T.BufferAttribute(new Float32Array((segments+1)*(sides+1)*3),3));
+    for(let i=0;i<segments;i++)for(let j=0;j<sides;j++){
+      const a=i*(sides+1)+j,b=a+sides+1;indices.push(a,b,a+1,a+1,b,b+1);
+    }
+    g.setIndex(indices);return g;
+  },[]);
+  useEffect(()=>()=>geometry.dispose(),[geometry]);
+  const last=useRef(Infinity),tangent=useMemo(()=>new T.Vector3(),[]),u=useMemo(()=>new T.Vector3(),[]),v=useMemo(()=>new T.Vector3(),[]),up=useMemo(()=>new T.Vector3(0,1,0),[]);
+  useFrame(()=>{
+    const p=progress.current.current;if(p===last.current)return;last.current=p;
+    const positions=geometry.attributes.position;
+    for(let i=0;i<=segments;i++){
+      const z=-3.25+6.5*i/segments,point=entryRopePoint(p,index,z);
+      const before=entryRopePoint(p,index,Math.max(-3.25,z-.005)),after=entryRopePoint(p,index,Math.min(3.25,z+.005));
+      tangent.set(after[0]-before[0],after[1]-before[1],after[2]-before[2]).normalize();
+      u.crossVectors(up,tangent).normalize();v.crossVectors(tangent,u);
+      for(let j=0;j<=sides;j++){
+        const angle=j/sides*Math.PI*2,c=Math.cos(angle)*.035,sn=Math.sin(angle)*.035;
+        positions.setXYZ(i*(sides+1)+j,point[0]+u.x*c+v.x*sn,point[1]+u.y*c+v.y*sn,z+u.z*c+v.z*sn);
+      }
+    }
+    positions.needsUpdate=true;geometry.computeVertexNormals();geometry.computeBoundingSphere();
   });
-  return (
-    <group>
-      {[first, second].map((ref, i) => (
-        <mesh ref={ref} key={i}>
-          <cylinderGeometry args={[1, 1, 1, 6]} />
-          <meshStandardMaterial
-            color={index === 1 ? "#dadde0" : RED}
-            roughness={0.7}
-          />
-        </mesh>
-      ))}
-    </group>
-  );
+  return <mesh geometry={geometry} castShadow receiveShadow>
+    <meshStandardMaterial color={index===1?"#dadde0":RED} roughness={.7}/>
+  </mesh>;
 }
 function Ring({ progress }: { progress: MutableRefObject<JourneyState> }) {
   const canvas = useMemo(() => {
@@ -492,12 +477,10 @@ function Ring({ progress }: { progress: MutableRefObject<JourneyState> }) {
                 r={0.035}
                 c={i === 1 ? "#dadde0" : RED}
               />
-              <Bar
-                a={[side * 3.25, y, side === -1 ? -1.65 : -3.25]}
-                b={[side * 3.25, y, 3.25]}
-                r={0.035}
-                c={i === 1 ? "#dadde0" : RED}
-              />
+              {side===1 && <Bar
+                a={[3.25,y,-3.25]} b={[3.25,y,3.25]}
+                r={.035} c={i===1 ? "#dadde0" : RED}
+              />}
             </group>
           ))}
           <EntryRope progress={progress} y={y} index={i} />
@@ -508,12 +491,12 @@ function Ring({ progress }: { progress: MutableRefObject<JourneyState> }) {
         return (
           <group key={i}>
             <Box
-              p={[-5.4 + i * 0.5, rise / 2, ENTRY.z]}
-              s={[0.5, rise, 1.4]}
+              p={[-5.4 + i * 0.5, (rise-.008) / 2, ENTRY.z]}
+              s={[0.5, rise-.008, 1.4]}
               c="#656c77"
             />
             <Box
-              p={[-5.4 + i * 0.5, rise + 0.004, ENTRY.z]}
+              p={[-5.4 + i * 0.5, rise - 0.004, ENTRY.z]}
               s={[0.47, 0.008, 1.32]}
               c="#959ba5"
             />
@@ -521,9 +504,9 @@ function Ring({ progress }: { progress: MutableRefObject<JourneyState> }) {
         );
       })}
       <Sign
-        p={[-4.25, 1.75, -1.73]}
+        p={[-4.25, 1.75, ENTRY.z+.72]}
         s={[2.6, 0.32]}
-        lines={["TEMPORARY ROPE ENTRY"]}
+        lines={["RING ENTRANCE"]}
       />
       <Sign
         p={[0, 1.279, 0]}
@@ -818,7 +801,7 @@ function MovingFixture({
     </group>
   );
 }
-function MovingLights({ reduced, mobile }: { reduced: boolean; mobile: boolean }) {
+function MovingLights({ reduced, mobile, opening = false }: { reduced: boolean; mobile: boolean; opening?: boolean }) {
   const target = useMemo(() => {
     const object = new T.Object3D();
     object.position.set(0, 0.4, -24);
@@ -827,6 +810,7 @@ function MovingLights({ reduced, mobile }: { reduced: boolean; mobile: boolean }
   return (
     <group>
       <ambientLight intensity={0.23} />
+      {opening && !mobile && <spotLight position={[0,6,-18]} target={target} color="#dbe5f2" intensity={110} angle={.85} penumbra={.9} distance={26} />}
       <hemisphereLight args={["#bdcee9", "#20080e", 0.55]} />
       <pointLight position={[-8, 6, -35]} intensity={480} distance={30} color="#ff1837" />
       <pointLight position={[8, 6, -35]} intensity={480} distance={30} color="#ff1837" />
@@ -837,11 +821,11 @@ function MovingLights({ reduced, mobile }: { reduced: boolean; mobile: boolean }
         target={target}
         angle={0.55}
         penumbra={0.6}
-        intensity={1700}
+        intensity={opening ? 1100 : 1700}
         distance={60}
         color="#e7edff"
         castShadow
-        shadow-mapSize={[1024, 1024]}
+        shadow-mapSize={opening && !mobile ? [2048, 2048] : [1024, 1024]}
         shadow-bias={-0.001}
       />
       <pointLight
@@ -871,12 +855,12 @@ function MovingLights({ reduced, mobile }: { reduced: boolean; mobile: boolean }
     </group>
   );
 }
-function TemporaryAvatar({
+function JourneyAvatar({
   journey,
 }: {
   journey: MutableRefObject<JourneyState>;
 }) {
-  const gltf = useGLTF(journey.current.mobile ? "/models/tt-entrance-refined.glb" : "/models/tt-entrance-curvature-web.glb", false, true);
+  const gltf = useGLTF("/models/tt-contact-performer.glb", false, true);
   const model = useMemo(() => {
     const copy=clone(gltf.scene);
     copy.traverse(object=>{
@@ -898,6 +882,7 @@ function TemporaryAvatar({
     const arm=model.getObjectByName("RightArm");
     return {arm,rest:arm?.quaternion.clone(),rotation:new T.Quaternion(),axis:new T.Vector3(0,0,1)};
   },[model]);
+  const rig=useMemo(()=>createContactRig(model),[model]);
   const root = useRef<T.Group>(null),
     last = useRef(new T.Vector3(0, 1.1, -39));
   const mixer = useMemo(() => new T.AnimationMixer(model), [model]);
@@ -905,6 +890,7 @@ function TemporaryAvatar({
     () => ({
       walk: gltf.animations.find((a) => a.name === "EntranceWalk"),
       idle: gltf.animations.find((a) => a.name === "Idle"),
+      entry: gltf.animations.find((a) => a.name === "RingEntry"),
     }),
     [gltf.animations],
   );
@@ -916,10 +902,12 @@ function TemporaryAvatar({
     () => (actions.idle ? mixer.clipAction(actions.idle) : null),
     [mixer, actions],
   );
+  const entry=useMemo(()=>actions.entry?mixer.clipAction(actions.entry):null,[mixer,actions]);
   const pos = useMemo(() => new T.Vector3(), []);
   useEffect(() => {
     walk?.play();
     idle?.play();
+    entry?.play();
     model.traverse((object) => {
       if (object instanceof T.Mesh) {
         object.castShadow = true;
@@ -930,14 +918,15 @@ function TemporaryAvatar({
       mixer.stopAllAction();
       mixer.uncacheRoot(model);
     };
-  }, [walk, idle, mixer, model]);
+  }, [walk, idle, entry, mixer, model]);
   useFrame((_, delta) => {
     if (!root.current) return;
     const j = journey.current,
       sample = sampleJourney(j.current);
     pos.set(...(sample.avatar as V));
     const introPose = j.current > .09 && j.current < .22;
-    const walking =
+    const climbing = !!sample.entryPose, entering=sample.entryPose?.phase==="rope";
+    const walking = !climbing &&
       pos.distanceToSquared(last.current) > 0.0000002 && !j.reduced && !introPose;
     const entranceStride = j.current < .085;
     last.current.copy(pos);
@@ -948,10 +937,14 @@ function TemporaryAvatar({
       walk.time = (entranceStride ? .18 : (((metres / 1.28) % 1) + 1) % 1) * (actions.walk?.duration ?? 1.2);
     }
     if (idle) {
-      idle.weight = walking || entranceStride ? 0 : 1;
-      idle.time += j.reduced ? 0 : Math.min(delta, 0.05);
+      idle.weight = walking || entranceStride || entering ? 0 : 1;
+      idle.time = climbing ? 0 : idle.time+(j.reduced ? 0 : Math.min(delta, 0.05));
     }
-    if(salute.arm && salute.rest)salute.arm.quaternion.copy(salute.rest);
+    if(entry){entry.weight=entering?1:0;entry.time=entering?ringEntryPose(j.current).q*(actions.entry?.duration??6):0;}
+    // The mixer caches unchanged values. Reset only the procedural stair pose;
+    // resetting a held keyed pose here makes it snap back to the mannequin rest.
+    if(climbing && !entering)resetContactRig(rig);
+    if(!entering && salute.arm && salute.rest)salute.arm.quaternion.copy(salute.rest);
     mixer.update(0);
     const greeting=T.MathUtils.smoothstep(j.current,.095,.125)*(1-T.MathUtils.smoothstep(j.current,.17,.22));
     if(salute.arm && greeting>0)salute.arm.quaternion.multiply(salute.rotation.setFromAxisAngle(salute.axis,2.2*greeting));
@@ -962,8 +955,22 @@ function TemporaryAvatar({
         yaw - root.current.rotation.y + Math.PI,
         Math.PI * 2,
       ) - Math.PI;
-    root.current.rotation.y +=
+    root.current.rotation.y += j.reduced || climbing ? difference :
       difference * (1 - Math.exp(-10 * Math.min(delta, 0.05)));
+    if(sample.entryPose && rig.hips && rig.rest) {
+      if(sample.entryPose.phase==="rope"){
+        if(!entry)applyRingContacts(root.current,rig,ringEntryPose(j.current));
+      } else {
+        const feet=stairFootTargets(sample.entryPose,sample.avatar);
+        rig.hips.position.y=rig.rest.y+feet.pelvis;
+        root.current.updateWorldMatrix(true,true);
+        rig.forward.set(0,0,1).applyQuaternion(root.current.quaternion);
+        rig.legs.forEach((leg,i)=>{
+          rig.orientation.copy(root.current!.quaternion).multiply(rig.feet[i]);
+          placeLeg(leg.upper,leg.lower,leg.foot,i===0?feet.left:feet.right,rig.forward,rig.orientation);
+        });
+      }
+    }
   });
   return (
     <group ref={root}>
@@ -1114,18 +1121,31 @@ function Ready({
   }, [gl, invalidate, onReady, onFailure]);
   return null;
 }
+function ScoreboardLabels({ projects }: { projects: boolean }) {
+  const group = useRef<T.Group>(null);
+  useFrame((_, delta) => {
+    if (group.current) group.current.position.y = T.MathUtils.damp(group.current.position.y, projects ? 2.6 : 0, 4, delta);
+  });
+  return <group ref={group}>{[0,1,2,3].map(i => <Sign key={i}
+    p={[[0,6.8,2.991],[2.991,6.8,0],[0,6.8,-2.991],[-2.991,6.8,0]][i] as V}
+    rotation={[0,i*Math.PI/2,0]} s={[5,2.1]} lines={[projects ? 'Projects' : 'TT']} color="#ef2940" />)}</group>;
+}
 export default function ArenaWorld({
   journey,
   children,
   onReady,
   onFailure,
   running = true,
+  opening = false,
+  projects = false,
 }: {
   journey: MutableRefObject<JourneyState>;
   children: ReactNode;
   onReady: () => void;
   onFailure: () => void;
   running?: boolean;
+  opening?: boolean;
+  projects?: boolean;
 }) {
   const mobile = journey.current.mobile;
   const textures = useMemo(brushedMetal, []);
@@ -1146,14 +1166,16 @@ export default function ArenaWorld({
       <Suspense fallback={null}>
         <CameraRig journey={journey} />
         <BlenderArchitecture journey={journey} />
-        <ArenaVenue />
-        {[0,1,2,3].map(i=><Sign key={'score'+i} p={[[0,6.8,2.991],[2.991,6.8,0],[0,6.8,-2.991],[-2.991,6.8,0]][i] as V} rotation={[0,i*Math.PI/2,0]} s={[5,2.1]} lines={['TT']} color="#ef2940"/>)}
+        <ArenaVenue projects={projects} />
+        <ScoreboardLabels projects={projects} />
         <EntranceProduction mobile={mobile} />
-        <ArenaDecor mobile={mobile} reduced={journey.current.reduced} />
+        <ArenaDecor mobile={mobile} reduced={journey.current.reduced} opening={opening} />
         <Ring progress={journey} />
-        <SpectatorLOD mobile={mobile} reduced={journey.current.reduced} />
-        <MovingLights reduced={journey.current.reduced} mobile={mobile} />
-        <TemporaryAvatar journey={journey} />
+        <SpectatorLOD mobile={mobile} reduced={journey.current.reduced} opening={opening && !mobile} />
+        {opening && !mobile && <OpeningCrowd reduced={journey.current.reduced} />}
+        {opening && !mobile && <OpeningHardware />}
+        <MovingLights reduced={journey.current.reduced} mobile={mobile} opening={opening} />
+        <JourneyAvatar journey={journey} />
         {children}
         <Ready onReady={onReady} onFailure={onFailure} />
         {journey.current.metrics && <ArenaMetrics />}

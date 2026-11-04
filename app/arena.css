@@ -968,10 +968,12 @@
 }
 .avatar-angle-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin: 18px 0;
 }
 .avatar-angle-buttons button {
+  min-height: 44px;
   padding: 10px 15px;
   border: 1px solid #73839a66;
   background: #1b293e;
@@ -1234,3 +1236,11 @@
   .screen-project-layout .screen-capture{object-fit:contain;}
   .screen-actions a,.screen-actions button{font-size:18px;padding:12px 18px;}
 }
+.arena-project-picker{position:absolute;z-index:20;right:24px;top:100px;width:min(250px,28vw);padding:14px;background:rgba(8,11,17,.94);border:1px solid #535763;border-radius:8px;pointer-events:auto;max-height:calc(100dvh - 210px);overflow:auto}
+.arena-project-picker strong{display:block;color:#fff;margin-bottom:10px;font-size:18px}
+.arena-project-picker strong span{color:#ff4861;font-size:14px}
+.arena-project-picker>div{display:grid;gap:6px}
+.arena-project-picker button{min-height:44px;text-align:left;padding:8px 10px;border:1px solid #424652;border-radius:4px;background:#171b24;color:#eee;font-size:13px;cursor:pointer}
+.arena-project-picker button:hover,.arena-project-picker button[aria-pressed="true"]{background:#9e1830;border-color:#ff4861}
+.arena-project-picker button:focus-visible{outline:2px solid white;outline-offset:2px}
+@media(max-width:767px){.arena-project-picker{left:12px;right:12px;top:auto;bottom:104px;width:auto;max-height:150px;padding:10px}.arena-project-picker>div{grid-template-columns:repeat(2,minmax(0,1fr))}.arena-project-picker strong{margin-bottom:6px;font-size:15px}}

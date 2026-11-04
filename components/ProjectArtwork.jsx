@@ -4,8 +4,34 @@ import {
   Database,
   ShoppingBag,
   Sparkles,
+  Package,
+  Receipt,
+  MessageCircle,
+  Users,
+  Activity,
+  Clock,
+  TrendingUp,
+  Newspaper,
+  FileText,
 } from "lucide-react";
+
+const productArtwork = {
+  'sole-track': {
+    heading: 'From stock to customer.',
+    features: [[Package, 'Inventory'], [Receipt, 'Invoices'], [MessageCircle, 'WhatsApp']],
+  },
+  'orbit-crm': {
+    heading: 'Every task. In view.',
+    features: [[Users, 'Team'], [Activity, 'Live activity'], [Clock, 'Timelines']],
+  },
+  instock: {
+    heading: 'Connect the market context.',
+    features: [[TrendingUp, 'Markets'], [Newspaper, 'News'], [FileText, 'Reports']],
+  },
+};
+
 export default function ProjectArtwork({ project }) {
+  const product = productArtwork[project.visual];
   return (
     <div
       className={"project-visual visual-" + project.visual}
@@ -17,7 +43,17 @@ export default function ProjectArtwork({ project }) {
         {project.category}
         <span>CONCEPT VISUAL</span>
       </div>
-      {project.visual === "scraper" ? (
+      {product ? (
+        <div className="product-art">
+          <span className="product-art-mark">{project.mark}</span>
+          <strong>{product.heading}</strong>
+          <div className="product-art-features">
+            {product.features.map(([Icon, label]) => (
+              <span key={label}><Icon size={20} /><span>{label}</span></span>
+            ))}
+          </div>
+        </div>
+      ) : project.visual === "scraper" ? (
         <div className="scraper-art">
           <div className="art-window">
             <span>extract.js</span>

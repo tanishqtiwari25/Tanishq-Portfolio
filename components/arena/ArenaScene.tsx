@@ -17,6 +17,7 @@ type Project = {
   liveUrl?: string;
   githubUrl?: string;
   visual?: string;
+  mark?: string;
   problem?: string;
   myRole?: string;
 };
@@ -118,7 +119,7 @@ function ProjectDisplay({
           <div className="project-screen-content">
             <div className="screen-kicker">
               <span>RINGSIDE / SELECTED WORK</span>
-              <span>{String(selected + 1).padStart(2, "0")} / 05</span>
+              <span>{String(selected + 1).padStart(2, "0")} / {String(projectsData.length).padStart(2, "0")}</span>
             </div>
             <div className="screen-project-layout">
               <div>
@@ -143,7 +144,7 @@ function ProjectDisplay({
                   />
                 ) : (
                   <span>
-                    {project.visual === "wealth-pilot"
+                    {project.mark ?? (project.visual === "wealth-pilot"
                       ? "wp."
                       : project.visual === "grow"
                         ? "tg."
@@ -151,7 +152,7 @@ function ProjectDisplay({
                           ? "{ }"
                           : project.visual === "game"
                             ? "PLAY"
-                            : "pickk."}
+                            : "pickk.")}
                   </span>
                 )}
                 <small>
@@ -185,13 +186,13 @@ function ProjectDisplay({
               </button>
               <div className="screen-pagination">
                 <button
-                  onClick={() => onSelect((selected + 4) % 5)}
+                  onClick={() => onSelect((selected + projectsData.length - 1) % projectsData.length)}
                   aria-label="Previous project"
                 >
                   ←
                 </button>
                 <button
-                  onClick={() => onSelect((selected + 1) % 5)}
+                  onClick={() => onSelect((selected + 1) % projectsData.length)}
                   aria-label="Next project"
                 >
                   →
@@ -223,6 +224,8 @@ export default function ArenaScene(props: Props) {
       onReady={onReady}
       onFailure={onFailure}
       running={running}
+      opening={chapter === 0}
+      projects={chapter === 3}
     >
       <PhysicalScreen
         p={[0, 9.2, -40.62]}

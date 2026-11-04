@@ -6,7 +6,7 @@ import * as T from "three";
 import { TIERS } from "@/lib/arena/venueDesign.mjs";
 
 /** Stadium crowd impostors: one alpha-tested draw call, not a scene backdrop. */
-export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; reduced: boolean }) {
+export default function SpectatorLOD({ mobile, reduced, opening = false }: { mobile: boolean; reduced: boolean; opening?: boolean }) {
   const atlas = useTexture("/textures/spectators-atlas-v2.webp");
   const count = mobile ? 1000 : 4480;
   const mesh = useRef<T.InstancedMesh>(null);
@@ -39,6 +39,10 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
     }
     x += Math.sin(i * 12.9898) * .04;
     z += Math.cos(i * 7.233) * .06;
+    // Reserve the physical stair approach, including shoulder/shoe clearance.
+    // Spectators stand outside this aisle rather than intersecting the performer.
+    if (i >= floor && i < floor+ringside && x < -3.5 && x > -8 && z > -6.8 && z < -.8)
+      x -= 4.5;
     return { x, y, z, scale: .84 + (i % 13) * .019, phase: i * 1.813 };
   }), [count, mobile]);
   const geometry = useMemo(() => {
@@ -64,6 +68,7 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
   useEffect(() => () => { geometry.dispose(); material.dispose(); }, [geometry, material]);
   const dummy = useMemo(() => new T.Object3D(), []);
   const lastCamera = useRef(new T.Vector3(Infinity, Infinity, Infinity));
+  useEffect(()=>{lastCamera.current.set(Infinity,Infinity,Infinity);},[opening]);
   useEffect(() => {
     lastCamera.current.set(Infinity,Infinity,Infinity);
     people.forEach((_, i) => mesh.current?.setColorAt(i, new T.Color(["#cbd0d9", "#aeb5bf", "#e0c4bf", "#88939f", "#bac4d1"][i % 5])));
@@ -78,7 +83,9 @@ export default function SpectatorLOD({ mobile, reduced }: { mobile: boolean; red
     people.forEach((p, i) => {
       dummy.position.set(p.x, p.y + .008, p.z);
       dummy.rotation.set(0, Math.atan2(camera.position.x - p.x, camera.position.z - p.z), 0);
-      dummy.scale.set((i % 5 === 0 ? -1 : 1) * p.scale, p.scale, p.scale); dummy.updateMatrix(); mesh.current!.setMatrixAt(i, dummy.matrix);
+      const replaced = opening && i < 160 && Math.floor(i / 2) % 4 === 0 && p.z > -29 && p.z < -19;
+      const scale = replaced ? 0 : p.scale;
+      dummy.scale.set((i % 5 === 0 ? -1 : 1) * scale, scale, scale); dummy.updateMatrix(); mesh.current!.setMatrixAt(i, dummy.matrix);
     });
     mesh.current.instanceMatrix.needsUpdate = true;
   });

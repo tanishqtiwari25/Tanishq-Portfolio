@@ -204,7 +204,7 @@ function PhoneFlashes({
     </points>
   );
 }
-export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
+export function ReflectiveRamp({ mobile, opening = false }: { mobile: boolean; opening?: boolean }) {
   const surface = useMemo(brushedMetal, []);
   const details=useMemo(()=>{
     const joints:T.BufferGeometry[]=[],bolts:T.BufferGeometry[]=[];
@@ -232,6 +232,7 @@ export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
   return (
     <group><mesh geometry={continuation} receiveShadow><meshStandardMaterial color="#9298a2" metalness={.95} roughness={.38} roughnessMap={surface.roughnessMap} bumpMap={surface.roughnessMap} bumpScale={.0006}/></mesh><mesh
       position={[0, 0.625, -21.5]}
+      receiveShadow={opening}
       rotation={[-Math.PI / 2 + Math.atan(1 / 23), 0, 0]}
     >
       <planeGeometry args={[4.12, Math.hypot(23, 1)]} />
@@ -268,9 +269,11 @@ export function ReflectiveRamp({ mobile }: { mobile: boolean }) {
 export default function ArenaDecor({
   mobile,
   reduced,
+  opening = false,
 }: {
   mobile: boolean;
   reduced: boolean;
+  opening?: boolean;
 }) {
   return (
     <group>
@@ -297,7 +300,7 @@ export default function ArenaDecor({
         />
       </Environment>
       <Haze mobile={mobile} reduced={reduced} />
-      <ReflectiveRamp mobile={mobile} />
+      <ReflectiveRamp mobile={mobile} opening={opening} />
       <LightGrid mobile={mobile} />
       <PhoneFlashes mobile={mobile} reduced={reduced} />
     </group>

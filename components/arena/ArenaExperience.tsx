@@ -18,6 +18,7 @@ import {
   VolumeX,
   X,
 } from "lucide-react";
+import { projectsData } from "@/data/projectsData";
 import { CHAPTERS, sampleJourney } from "@/lib/arena/journey.mjs";
 import type { JourneyState } from "./ArenaWorld";
 import { useArenaAudio } from "./useArenaAudio";
@@ -51,7 +52,7 @@ export default function ArenaExperience() {
     [ready, setReady] = useState(false),
     [failed, setFailed] = useState(false),
     [chapter, setChapter] = useState(0),
-    [selected, setSelected] = useState(1),
+    [selected, setSelected] = useState(0),
     [deskSection, setDeskSection] = useState("skills"),
     [paused, setPaused] = useState(false),
     [menu, setMenu] = useState(false),
@@ -243,9 +244,7 @@ export default function ArenaExperience() {
             className="arena-text-control"
             onClick={() => {
               if (chapter === 3) {
-                void import("@/data/projectsData").then((m) =>
-                  read("project", m.projectsData[selected]),
-                );
+                read("project", projectsData[selected]);
               } else read(chapter === 5 ? "contact" : chapter === 4 ? deskSection : "about");
             }}
           >
@@ -302,23 +301,15 @@ export default function ArenaExperience() {
           <button onClick={() => read("skills")}>Skills ↗</button>
           <button onClick={() => read("contact")}>Contact ↗</button>
           <div className="fallback-projects">
-            {[
-              "Data Scraper",
-              "Wealth Pilot",
-              "Truly Grow",
-              "E-Commerce Website",
-              "Game",
-            ].map((name, i) => (
+            {projectsData.map((project, i) => (
               <button
-                key={name}
+                key={project.id}
                 onClick={() => {
                   setSelected(i);
-                  void import("@/data/projectsData").then((m) =>
-                    read("project", m.projectsData[i]),
-                  );
+                  read("project", project);
                 }}
               >
-                {name} ↗
+                {project.title} ↗
               </button>
             ))}
           </div>
@@ -356,6 +347,18 @@ export default function ArenaExperience() {
                 Skip entrance <ArrowUpRight size={14} />
               </button>
             </div>
+          )}
+          {chapter === 3 && (
+            <nav className="arena-project-picker" aria-label="All projects">
+              <strong>Projects <span>{projectsData.length}</span></strong>
+              <div>
+                {projectsData.map((project, index) => (
+                  <button key={project.id} aria-pressed={selected === index} onClick={() => setSelected(index)}>
+                    {project.title}
+                  </button>
+                ))}
+              </div>
+            </nav>
           )}
           <div className="arena-bottom">
             <div className="arena-scroll-cue">
@@ -462,6 +465,7 @@ export default function ArenaExperience() {
           <a href="https://github.com/tanishqtiwari25">GitHub</a>
           <a href="https://montra.realtanishqtiwari.in">Wealth Pilot</a>
           <a href="https://trulygrow.realtanishqtiwari.in">Truly Grow</a>
+          <ul>{projectsData.filter(project => project.featured && !project.liveUrl).map(project => <li key={project.id}><strong>{project.title}</strong> — {project.shortDescription}</li>)}</ul>
         </div>
       </noscript>
     </main>

@@ -66,9 +66,53 @@ const originalProjects = [
 ];
 const clean = p => ({...p, githubUrl: p.githubUrl?.includes('your-username') ? '' : p.githubUrl});
 export const projectsData = [
-{...clean(originalProjects[0]), title: 'Data Scraper', subtitle: 'Data Scraper & Lead Collection System', visual: 'scraper'},
+{
+  id: 'sole-track', title: 'Sole Track', mark: 'ST', featured: true,
+  subtitle: 'Inventory, invoices and WhatsApp — together.',
+  category: 'Business operations / PWA', visual: 'sole-track',
+  shortDescription: 'An inventory management PWA that connects stock management, customer billing and daily reports, with invoices delivered directly to customers through WhatsApp.',
+  technologies: ['PWA', 'WhatsApp'], liveUrl: '', githubUrl: '',
+  keyFeatures: [
+    'Inventory and stock management in a progressive web app.',
+    'Customer billing with invoices sent directly through WhatsApp.',
+    'Daily reports for reviewing business activity.'
+  ],
+  problem: 'Stock records, customer invoices and daily reporting can become disconnected when managed across separate tools.',
+  solution: 'Bring inventory, invoicing, WhatsApp delivery and daily reports into one PWA workflow.'
+},
+{
+  id: 'orbit-crm', title: 'Orbit CRM', mark: 'OR', featured: true,
+  subtitle: 'A live view of your team and their work.',
+  category: 'CRM / Team operations', visual: 'orbit-crm',
+  shortDescription: 'A professional CRM with live employee activity monitoring, visibility into who is working on each task, and progress and completion-time tracking.',
+  technologies: [], liveUrl: '', githubUrl: '',
+  keyFeatures: [
+    'Live monitoring of employee work activity.',
+    'Visibility into who is working on which task.',
+    'Task progress, timelines and expected completion tracking.'
+  ],
+  problem: 'Managers need a clear view of active work, task ownership and completion timelines without relying on scattered status updates.',
+  solution: 'Combine live team activity and task progress in a professional CRM workspace.'
+},
+{
+  id: 'instock', title: 'InStock', mark: 'IN', featured: true,
+  subtitle: 'Market context, connected by an LLM.',
+  category: 'AI / Investment research', visual: 'instock',
+  shortDescription: 'An LLM-based investment research assistant that combines live market data, news and company reports to generate stock outlooks and potential entry-timing insights.',
+  technologies: ['LLM'], liveUrl: '', githubUrl: '',
+  keyFeatures: [
+    'Live market tracking and market-news analysis.',
+    'Company-report analysis for stock research.',
+    'LLM-based bullish and bearish stock outlooks.',
+    'Potential purchase-timing insights from the research.',
+    'Continuously refreshed analysis as new market information arrives.'
+  ],
+  problem: 'Market moves, financial news and company reports are spread across multiple sources, making it difficult to connect them into a coherent stock outlook.',
+  solution: 'Use an LLM-based research workflow to connect these sources and surface stock outlooks and potential entry timing.'
+},
 { id: 'wealth-pilot', liveUrl: 'https://montra.realtanishqtiwari.in', title: 'Wealth Pilot', category: 'Financial software', shortDescription: 'Wealth Pilot is a financial software designed to help users track and manage their money, including income and expenses.', technologies: [], keyFeatures: ['Income tracking', 'Expense tracking', 'Money management'], visual: 'wealth-pilot' },
 { id: 'truly-grow', liveUrl: 'https://trulygrow.realtanishqtiwari.in', title: 'Truly Grow', category: 'Business / Digital growth', shortDescription: 'A modern business growth website offering web development, digital marketing, SEO and paid advertising services.', technologies: [], keyFeatures: ['Web Development', 'Digital Marketing', 'SEO', 'Paid Ads'], visual: 'grow' },
+{...clean(originalProjects[0]), title: 'Data Scraper', subtitle: 'Data Scraper & Lead Collection System', visual: 'scraper'},
 {...clean(originalProjects[1]), title: 'E-Commerce Website', visual: 'commerce'},
 {...clean(originalProjects[2]), title: 'Game', subtitle: 'Interactive 2D Browser Game', visual: 'game'}
 ];
