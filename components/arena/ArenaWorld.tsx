@@ -1,6 +1,7 @@
 "use client";
 import { brushedMetal, spectatorHead, spectatorTorso } from "./arenaMaterials";
-import { useMemo, useRef, useEffect, useContext, createContext, Suspense } from "react";
+import { useMemo, useRef, useEffect, useContext, createContext, Suspense, useState, useCallback } from "react";
+import { QUALITY, nextQuality } from "@/lib/arena/performance.mjs";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, useGLTF } from "@react-three/drei";
 import * as T from "three";
@@ -27,6 +28,7 @@ export type JourneyState = {
   reduced: boolean;
   mobile: boolean;
   metrics?: boolean;
+  quality?: number;
 };
 type V = [number, number, number];
 const STEEL = "#3b424c",
@@ -990,8 +992,8 @@ function CameraRig({ journey }: { journey: MutableRefObject<JourneyState> }) {
       j.current = j.reduced ? j.target : T.MathUtils.damp(
         j.current,
         j.target,
-        4,
-        Math.min(delta, 0.05),
+        5,
+        Math.min(delta, 0.1),
       );
     const sample = sampleJourney(j.current);
     pos.set(...(sample.camera as V));
@@ -1073,7 +1075,6 @@ export function PhysicalScreen({
       {visible && (
         <Html
           transform
-          occlude
           position={[0, 0, 0.075]}
           distanceFactor={(size[0] * 400) / 900}
           zIndexRange={[15, 1]}
@@ -1121,6 +1122,22 @@ function Ready({
   }, [gl, invalidate, onReady, onFailure]);
   return null;
 }
+function RenderBudget({ quality, onSlow }: { quality: number; onSlow: () => void }) {
+  const sample = useRef({ warmup: 0, elapsed: 0, frames: 0 });
+  useEffect(() => { sample.current = { warmup: 0, elapsed: 0, frames: 0 }; }, [quality]);
+  useFrame((_, delta) => {
+    const s = sample.current;
+    if (document.hidden || delta > .25) return;
+    s.warmup += delta;
+    if (s.warmup < 4 || quality === 0) return;
+    s.elapsed += delta; s.frames++;
+    if (s.elapsed >= 3) {
+      if (nextQuality(quality, s.elapsed * 1000 / s.frames) < quality) onSlow();
+      s.elapsed = 0; s.frames = 0;
+    }
+  });
+  return null;
+}
 function ScoreboardLabels({ projects }: { projects: boolean }) {
   const group = useRef<T.Group>(null);
   useFrame((_, delta) => {
@@ -1148,38 +1165,43 @@ export default function ArenaWorld({
   projects?: boolean;
 }) {
   const mobile = journey.current.mobile;
+  const [quality, setQuality] = useState(journey.current.quality ?? 0);
+  const budget = QUALITY[quality];
+  const lightweight = quality < 2;
+  const downgrade = useCallback(() => setQuality(q => Math.max(0, q - 1)), []);
   const textures = useMemo(brushedMetal, []);
   useEffect(() => () => {textures.map.dispose();textures.roughnessMap.dispose();}, [textures]);
   return (
     <Canvas
       frameloop={running ? "always" : "never"}
-      shadows={!mobile}
-      dpr={mobile ? 1 : [1, 1.4]}
+      shadows={budget.shadows}
+      dpr={budget.dpr}
       camera={{ position: [0, 4.5, -23], near: 0.1, far: 180, fov: 45 }}
-      gl={{ antialias: !mobile, powerPreference: "high-performance" }}
+      gl={{ antialias: false, powerPreference: "high-performance" }}
       onCreated={({ gl }) => { gl.toneMappingExposure = 1.15; }}
     >
       <color attach="background" args={["#080b11"]} />
       <fog attach="fog" args={["#11151d", 40, 115]} />
       <MetalMaps.Provider value={textures}>
-      <EquipmentLibrary mobile={mobile}>
+      <EquipmentLibrary mobile={lightweight}>
       <Suspense fallback={null}>
         <CameraRig journey={journey} />
+        <RenderBudget quality={quality} onSlow={downgrade} />
         <BlenderArchitecture journey={journey} />
         <ArenaVenue projects={projects} />
         <ScoreboardLabels projects={projects} />
-        <EntranceProduction mobile={mobile} />
-        <ArenaDecor mobile={mobile} reduced={journey.current.reduced} opening={opening} />
+        <EntranceProduction mobile={lightweight} />
+        <ArenaDecor mobile={lightweight} reduced={journey.current.reduced} opening={opening} />
         <Ring progress={journey} />
-        <SpectatorLOD mobile={mobile} reduced={journey.current.reduced} opening={opening && !mobile} />
-        {opening && !mobile && <OpeningCrowd reduced={journey.current.reduced} />}
-        {opening && !mobile && <OpeningHardware />}
-        <MovingLights reduced={journey.current.reduced} mobile={mobile} opening={opening} />
+        <SpectatorLOD mobile={lightweight} count={budget.crowd} reduced={journey.current.reduced} opening={opening && !lightweight} />
+        {opening && !lightweight && <OpeningCrowd reduced={journey.current.reduced} />}
+        {opening && !lightweight && <OpeningHardware />}
+        <MovingLights reduced={journey.current.reduced} mobile={lightweight} opening={opening} />
         <JourneyAvatar journey={journey} />
         {children}
         <Ready onReady={onReady} onFailure={onFailure} />
         {journey.current.metrics && <ArenaMetrics />}
-        {!mobile && <ArenaLook />}
+        {budget.effects && <ArenaLook />}
       </Suspense>
       </EquipmentLibrary>
       </MetalMaps.Provider>

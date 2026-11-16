@@ -6,9 +6,8 @@ import * as T from "three";
 import { TIERS } from "@/lib/arena/venueDesign.mjs";
 
 /** Stadium crowd impostors: one alpha-tested draw call, not a scene backdrop. */
-export default function SpectatorLOD({ mobile, reduced, opening = false }: { mobile: boolean; reduced: boolean; opening?: boolean }) {
+export default function SpectatorLOD({ mobile, reduced, opening = false, count = 1000 }: { mobile: boolean; reduced: boolean; opening?: boolean; count?: number }) {
   const atlas = useTexture("/textures/spectators-atlas-v2.webp");
-  const count = mobile ? 1000 : 4480;
   const mesh = useRef<T.InstancedMesh>(null);
   const time=useMemo(()=>({value:0}),[]);
   const people = useMemo(() => Array.from({ length: count }, (_, i) => {
@@ -52,7 +51,7 @@ export default function SpectatorLOD({ mobile, reduced, opening = false }: { mob
   }, [count]);
   const material = useMemo(() => {
     atlas.colorSpace = T.SRGBColorSpace;
-    const m = new T.MeshLambertMaterial({ map: atlas, color: "#e0d8d3", alphaTest: .5, side: T.DoubleSide });
+    const m = new T.MeshBasicMaterial({ map: atlas, color: "#b5a9aa", alphaTest: .5, side: T.DoubleSide });
     m.onBeforeCompile = shader => {
       shader.uniforms.crowdTime=time;
       shader.vertexShader = "attribute float atlasCell; uniform float crowdTime;\n" + shader.vertexShader;
@@ -61,33 +60,37 @@ export default function SpectatorLOD({ mobile, reduced, opening = false }: { mob
       shader.vertexShader = shader.vertexShader.replace("#include <uv_vertex>", `#include <uv_vertex>
         vMapUv.x = (vMapUv.x * .992 + .004 + mod(atlasCell,4.)) * .25;
         vMapUv.y = (vMapUv.y * .992 + .004 + floor(atlasCell/4.)) / 3.;`);
+      // Camera-facing impostors on the GPU: instance transforms are uploaded
+      // once, rather than rebuilding thousands of matrices on every scroll frame.
+      shader.vertexShader = shader.vertexShader.replace("#include <project_vertex>", `
+        vec4 crowdCenter = modelViewMatrix * instanceMatrix * vec4(0.,0.,0.,1.);
+        vec4 mvPosition = crowdCenter;
+        mvPosition.xy += transformed.xy * vec2(instanceMatrix[0][0], instanceMatrix[1][1]);
+        gl_Position = projectionMatrix * mvPosition;
+      `);
     };
-    m.customProgramCacheKey = () => "tt-spectator-lit-atlas-v4-gpu-sway";
+    m.customProgramCacheKey = () => "tt-spectator-atlas-v5-gpu-billboard";
     return m;
   }, [atlas,time]);
   useEffect(() => () => { geometry.dispose(); material.dispose(); }, [geometry, material]);
   const dummy = useMemo(() => new T.Object3D(), []);
-  const lastCamera = useRef(new T.Vector3(Infinity, Infinity, Infinity));
-  useEffect(()=>{lastCamera.current.set(Infinity,Infinity,Infinity);},[opening]);
   useEffect(() => {
-    lastCamera.current.set(Infinity,Infinity,Infinity);
     people.forEach((_, i) => mesh.current?.setColorAt(i, new T.Color(["#cbd0d9", "#aeb5bf", "#e0c4bf", "#88939f", "#bac4d1"][i % 5])));
     if (mesh.current?.instanceColor) mesh.current.instanceColor.needsUpdate = true;
   }, [people]);
-  useFrame(({ camera, clock }) => {
+  useEffect(() => {
     if (!mesh.current) return;
-    time.value=reduced ? 0 : clock.elapsedTime;
-    const moved = lastCamera.current.distanceToSquared(camera.position) > .0001;
-    if (!moved) return;
-    lastCamera.current.copy(camera.position);
     people.forEach((p, i) => {
       dummy.position.set(p.x, p.y + .008, p.z);
-      dummy.rotation.set(0, Math.atan2(camera.position.x - p.x, camera.position.z - p.z), 0);
+      dummy.rotation.set(0, 0, 0);
       const replaced = opening && i < 160 && Math.floor(i / 2) % 4 === 0 && p.z > -29 && p.z < -19;
       const scale = replaced ? 0 : p.scale;
       dummy.scale.set((i % 5 === 0 ? -1 : 1) * scale, scale, scale); dummy.updateMatrix(); mesh.current!.setMatrixAt(i, dummy.matrix);
     });
     mesh.current.instanceMatrix.needsUpdate = true;
+  }, [people, opening, dummy]);
+  useFrame(({ clock }) => {
+    time.value = reduced ? 0 : clock.elapsedTime;
   });
   return <instancedMesh ref={mesh} geometry={geometry} material={material} args={[undefined, undefined, count]} frustumCulled={false} />;
 }

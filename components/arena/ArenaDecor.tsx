@@ -300,7 +300,7 @@ export default function ArenaDecor({
         />
       </Environment>
       <Haze mobile={mobile} reduced={reduced} />
-      <ReflectiveRamp mobile={mobile} opening={opening} />
+      <ReflectiveRamp mobile={mobile || !opening} opening={opening} />
       <LightGrid mobile={mobile} />
       <PhoneFlashes mobile={mobile} reduced={reduced} />
     </group>

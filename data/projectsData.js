@@ -7,7 +7,7 @@ const originalProjects = [
     featured: true,
     technologies: ["JavaScript", "Node.js", "Express.js", "Selenium", "ChromeDriver"],
     githubUrl: "https://github.com/your-username/data-scraper", // Replace with real links
-    liveUrl: "", // Optional or leave empty if CLI/Local
+    liveUrl: "https://diamond.realtanishqtiwari.in",
     keyFeatures: [
       "Automated headful/headless DOM navigation using Selenium WebDriver.",
       "Custom anti-blocking logic with randomized delay headers.",
@@ -85,7 +85,7 @@ export const projectsData = [
   subtitle: 'A live view of your team and their work.',
   category: 'CRM / Team operations', visual: 'orbit-crm',
   shortDescription: 'A professional CRM with live employee activity monitoring, visibility into who is working on each task, and progress and completion-time tracking.',
-  technologies: [], liveUrl: '', githubUrl: '',
+  technologies: [], liveUrl: 'https://orbit.realtanishqtiwari.in', githubUrl: '',
   keyFeatures: [
     'Live monitoring of employee work activity.',
     'Visibility into who is working on which task.',

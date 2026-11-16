@@ -49,7 +49,7 @@
   z-index: 0;
 }
 .arena-scrollspace {
-  height: 1000svh;
+  height: 1500svh;
   pointer-events: none;
 }
 .arena-header {
@@ -1244,3 +1244,5 @@
 .arena-project-picker button:hover,.arena-project-picker button[aria-pressed="true"]{background:#9e1830;border-color:#ff4861}
 .arena-project-picker button:focus-visible{outline:2px solid white;outline-offset:2px}
 @media(max-width:767px){.arena-project-picker{left:12px;right:12px;top:auto;bottom:104px;width:auto;max-height:150px;padding:10px}.arena-project-picker>div{grid-template-columns:repeat(2,minmax(0,1fr))}.arena-project-picker strong{margin-bottom:6px;font-size:15px}}
+
+.console-scroll-section{animation:desk-section-reveal .4s ease-out both}@keyframes desk-section-reveal{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}@media(prefers-reduced-motion:reduce){.console-scroll-section{animation:none}}

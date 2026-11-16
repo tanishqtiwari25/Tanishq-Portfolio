@@ -104,17 +104,22 @@ function ProjectDisplay({
   };
   const capture = captures[project.id];
   useFrame(() => {
-    if (mount.current)
+    if (mount.current) {
+      // Retract the whole suspended assembly before the camera approaches
+      // the production desk, including the steel mounting hardware.
+      const exit = T.MathUtils.smoothstep(journey.current.current, 0.72, 0.77);
       mount.current.position.y = T.MathUtils.lerp(
         7.5,
         0,
-        T.MathUtils.smoothstep(journey.current.current, 0.59, 0.64) * (1 - T.MathUtils.smoothstep(journey.current.current, 0.76, 0.81)),
+        T.MathUtils.smoothstep(journey.current.current, 0.59, 0.64) * (1 - exit),
       );
+      mount.current.visible = journey.current.current < 0.77;
+    }
   });
   return (
     <group visible={visible}>
-      <Mount offset={offset} />
       <group ref={mount}>
+        <Mount offset={offset} />
         <PhysicalScreen p={[offset, 5.3, 1.2]} rotation={[0, offset > 0 ? -0.2 : 0.2, offset > 0 ? .035 : -.035]} size={[6.4, 4.7]} visible={visible}>
           <div className="project-screen-content">
             <div className="screen-kicker">
@@ -263,6 +268,7 @@ export default function ArenaScene(props: Props) {
             <span className="on-air">● ON AIR</span>
           </div>
           <nav className="console-tabs" aria-label="Portfolio sections">{["about", "skills", "experience", "education"].map(section => <button key={section} aria-pressed={deskSection === section} onClick={() => setDeskSection(section)}>{section}</button>)}</nav>
+          <div key={deskSection} className={journey.current.reduced ? "" : "console-scroll-section"}>
           {deskSection === "about" ? <div className="console-columns">
             <div>
               <p className="screen-category">THE PERSON BEHIND THE WORK</p>
@@ -295,6 +301,7 @@ export default function ArenaScene(props: Props) {
             <h2>{deskSection === "skills" ? "ABOUT & SKILLS" : deskSection === "education" ? "EDUCATION" : "EXPERIENCE"}</h2>
             {deskSection === "skills" ? <div className="console-skill-grid">{skillsData.slice(0,3).map((category,index) => <div key={category.category}><h3>{["FRONTEND", "BACKEND", "TOOLS"][index]}</h3><div className="console-tech-tiles">{category.skills.slice(0,4).map((skill,i) => <div key={skill.name} className={"console-tech-tile tile-"+index+"-"+i}><b aria-hidden="true">{[["5","3","JS","⚛"],["API","JS","EX","DB"],["Git","GH","VS","DEV"]][index][i]}</b><span>{skill.name}</span></div>)}</div></div>)}</div> : deskSection === "education" ? <div className="console-credentials"><p><strong>2024–2026 / MBA</strong><br />Information Technology / Naraina College of Engineering & Technology</p><p><strong>2021–2024 / BBA</strong><br />Naraina College of Management</p><p>Full Stack Web Development / Coding Ninjas</p></div> : <div className="console-credentials"><p><strong>INDEPENDENT DEVELOPMENT</strong><br />Building web projects with React, Next.js and JavaScript.</p><p><strong>CODING NINJAS</strong><br />Full Stack Web Development Bootcamp graduate.</p></div>}
           </div>}
+          </div>
         </div>
       </PhysicalScreen>
       </group>}

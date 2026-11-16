@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { projectsData } from "@/data/projectsData";
 import { CHAPTERS, sampleJourney } from "@/lib/arena/journey.mjs";
+import { scrollToJourney, journeyToScroll, deskSectionAt, deskSectionProgress } from "@/lib/arena/deskScroll.mjs";
+import { initialQuality } from "@/lib/arena/performance.mjs";
 import type { JourneyState } from "./ArenaWorld";
 import { useArenaAudio } from "./useArenaAudio";
 const Scene = dynamic(() => import("./ArenaScene"), { ssr: false });
@@ -53,7 +55,7 @@ export default function ArenaExperience() {
     [failed, setFailed] = useState(false),
     [chapter, setChapter] = useState(0),
     [selected, setSelected] = useState(0),
-    [deskSection, setDeskSection] = useState("skills"),
+    [deskSection, setDeskSection] = useState("about"),
     [paused, setPaused] = useState(false),
     [menu, setMenu] = useState(false),
     [visible, setVisible] = useState(true),
@@ -72,8 +74,10 @@ export default function ArenaExperience() {
     journey.current.metrics=params.get('metrics')==='1';
     const forceReduced = params.get("motion") === "reduce";
     if (params.get("view") === "readable") setFailed(true);
+    let scrollRange = 1;
     const resize = () => {
       journey.current.mobile = innerWidth < 768;
+      scrollRange = Math.max(1, document.documentElement.scrollHeight - innerHeight);
     };
     const reduce = () => {
       journey.current.reduced = motion.matches || forceReduced;
@@ -88,17 +92,19 @@ export default function ArenaExperience() {
         1,
         Math.max(
           0,
-          scrollY /
-            Math.max(1, document.documentElement.scrollHeight - innerHeight),
+          scrollY / scrollRange,
         ),
       );
+      const mapped = scrollToJourney(p);
       if (!journey.current.paused)
         journey.current.target = journey.current.reduced
-          ? CHAPTERS[sampleJourney(p).chapter].at
-          : p;
+          ? (sampleJourney(mapped).chapter === 4 ? mapped : CHAPTERS[sampleJourney(mapped).chapter].at)
+          : mapped;
     };
     const visibility = () => setVisible(!document.hidden);
     resize();
+    const device = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
+    journey.current.quality = initialQuality({ mobile: journey.current.mobile, cores: navigator.hardwareConcurrency || 4, memory: device.deviceMemory || 4, saveData: device.connection?.saveData });
     reduce();
     scroll();
     setMounted(true);
@@ -124,13 +130,18 @@ export default function ArenaExperience() {
     if (!ready || !visible) return;
     let frame = 0,
       last = performance.now();
+    let lastChapter = -1, lastSection = "";
     const loop = (now: number) => {
       const delta = Math.min((now - last) / 1000, 0.05);
       last = now;
       const j = journey.current;
       if (!j.paused) j.intro = Math.min(1, j.intro + delta / 2.8);
       const c = sampleJourney(j.current).chapter;
-      setChapter((old) => (old === c ? old : c));
+      if (lastChapter !== c) { setChapter(c); lastChapter = c; }
+      if (c === 4) {
+        const section = deskSectionAt(j.current);
+        if (lastSection !== section) { setDeskSection(section); lastSection = section; }
+      }
       if (progress.current)
         progress.current.style.transform = `scaleX(${j.current})`;
       frame = requestAnimationFrame(loop);
@@ -172,10 +183,10 @@ export default function ArenaExperience() {
     setPaused(false);
     journey.current.paused = false;
     journey.current.intro = 1;
-    journey.current.target = p;
+    if (journey.current.reduced) journey.current.target = p;
     window.scrollTo({
-      top: p * (document.documentElement.scrollHeight - innerHeight),
-      behavior: "instant",
+      top: journeyToScroll(p) * (document.documentElement.scrollHeight - innerHeight),
+      behavior: journey.current.reduced ? "instant" : "smooth",
     });
   }, []);
   const read = useCallback((section: string, project?: any) => {
@@ -210,7 +221,7 @@ export default function ArenaExperience() {
               chapter={chapter}
               selected={selected}
               deskSection={deskSection}
-              onDeskSection={setDeskSection}
+              onDeskSection={(section) => jump(deskSectionProgress(section))}
               onSelect={setSelected}
               onRead={read}
               onReady={onReady}
