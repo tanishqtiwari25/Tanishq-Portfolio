@@ -9,7 +9,7 @@
     "Inter",
     "Georgia italic accents"
   ],
-  "motion": "Character-by-character React editor with staged UI preview on a CSS 3D perspective stage; one-time code-style scroll reveals. Typing pauses outside viewport and hidden tabs. Reduced-motion shows complete static scene. No WebGL payload.",
+  "motion": "Continuous CSS 3D panel drift, repeat code typing with a completed-state hold, preview shimmer and terminal cursor. Pause/resume control; viewport/visibility pause; reduced-motion static scene. Native scroll and one-time content reveals.",
   "palette": {
     "background": "#f5f7fb",
     "ink": "#172b4d",
