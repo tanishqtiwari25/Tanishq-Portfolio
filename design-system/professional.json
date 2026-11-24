@@ -1,0 +1,20 @@
+{
+  "audiences": [
+    "Recruiters",
+    "Clients"
+  ],
+  "notes": "Adapted portfolio storytelling recommendation; casual handwriting and brutalist anti-design recommendations rejected as unsuitable. Resume is content source. No invented employment, testimonials, metrics or availability.",
+  "typography": [
+    "Space Grotesk",
+    "Inter",
+    "Georgia italic accents"
+  ],
+  "motion": "Character-by-character React editor with staged UI preview on a CSS 3D perspective stage; one-time code-style scroll reveals. Typing pauses outside viewport and hidden tabs. Reduced-motion shows complete static scene. No WebGL payload.",
+  "palette": {
+    "background": "#f5f7fb",
+    "ink": "#172b4d",
+    "accent": "#c4d5fa",
+    "muted": "#5c687d"
+  },
+  "name": "Tanishq Professional"
+}

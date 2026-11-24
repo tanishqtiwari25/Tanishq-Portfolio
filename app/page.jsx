@@ -1,4 +1,2 @@
-import ArenaExperience from "@/components/arena/ArenaExperience";
-export default function Home() {
-  return <ArenaExperience />;
-}
+import ProfessionalHome from '@/components/professional/ProfessionalHome';
+export default function Home(){return <ProfessionalHome/>;}

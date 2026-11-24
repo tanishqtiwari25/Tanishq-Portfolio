@@ -1,0 +1,42 @@
+import Link from 'next/link';
+import {ArrowUpRight,Code2,Workflow,Download,MapPin} from 'lucide-react';
+import {profile,work} from '@/data/professional';
+import {profileSchema,serializeSchema} from '@/lib/seo.mjs';
+import Header from './Header';
+import CodingScene from './CodingScene';
+import ContactForm from './ContactForm';
+import ProjectVisual from './ProjectVisual';
+import './professional.css';
+const Arrow=()=> <ArrowUpRight size={18} aria-hidden="true"/>;
+export default function ProfessionalHome(){
+  const configured=Boolean((process.env.RESEND_API_KEY||process.env.EMAIL_API_KEY)&&process.env.CONTACT_FROM_EMAIL&&process.env.CONTACT_RECEIVER_EMAIL);
+  return <main className="professional-site">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html:serializeSchema(profileSchema(work))}}/>
+    <a className="pro-skip" href="#main-content">Skip to content</a><Header/>
+    <section className="pro-hero pro-container" id="main-content">
+      <div className="pro-hero-copy"><p className="pro-eyebrow"><span/> REACT FRONTEND DEVELOPER</p>
+        <h1>Good ideas.<br/>Thoughtful code.<br/><em>Real impact.</em></h1>
+        <p className="pro-introduction">I’m <strong>Tanishq Tiwari.</strong> {profile.introduction}</p>
+        <div className="pro-actions"><a className="pro-button" href="#work">View my work <Arrow/></a><a className="pro-text-link" href="#contact">Contact me <Arrow/></a></div>
+        <div className="pro-hero-foot"><span><MapPin size={14} aria-hidden="true"/>{profile.location}</span><a href={profile.resume} download><Download size={14} aria-hidden="true"/>Download resume</a></div>
+      </div>
+      <CodingScene/>
+    </section>
+    <div className="pro-capability-strip"><div className="pro-container"><span>Built around real needs.</span><b>React.js</b><b>JavaScript</b><b>Responsive design</b><b>REST APIs</b><b>Business workflows</b></div></div>
+    <section id="work" className="pro-work pro-container"><div className="pro-section-heading"><div><p className="pro-eyebrow">01 / SELECTED WORK</p><h2>Less talk.<br/>More <em>working products.</em></h2></div><p>Business websites, useful applications and the engineering decisions behind them.</p></div>
+      <div className="pro-work-grid">{work.slice(0,4).map((project,index)=><article className="pro-work-card" key={project.id}>
+        <Link href={`/work/${project.id}`} className="pro-visual-link" aria-label={`Read ${project.title} case study`}><ProjectVisual project={project}/><span className="pro-visual-arrow"><Arrow/></span></Link>
+        <div className="pro-work-meta"><span>{project.category}</span><span>0{index+1}</span></div><h3><Link href={`/work/${project.id}`}>{project.title}</Link></h3><p>{project.description}</p>
+        <div className="pro-work-links"><Link href={`/work/${project.id}`}>View case study <Arrow/></Link>{project.liveUrl&&<a href={project.liveUrl} target="_blank" rel="noopener noreferrer">Live site <Arrow/></a>}</div>
+      </article>)}</div>
+      <div className="pro-more-work"><h3>More from the workbench.</h3>{work.slice(4).map(project=><Link key={project.id} href={`/work/${project.id}`}><span>{project.title}</span><small>{project.category}</small><Arrow/></Link>)}</div>
+    </section>
+    <section id="about" className="pro-about"><div className="pro-container pro-about-grid"><div><p className="pro-eyebrow">02 / THE PERSON BEHIND THE CODE</p><h2>A developer’s craft.<br/><em>A business perspective.</em></h2></div><div><p>I’m a React frontend developer based in Kanpur, India. My work connects clean interfaces with practical business needs—from accepting payments to managing stock and tracking finances.</p><p>A background in business administration and information technology shapes the way I build: understand the problem, make the workflow clear, and pay attention to the details that people actually use.</p><p>I completed a Full Stack Web Development Bootcamp and work with component-based architecture, API integrations and responsive, cross-browser interfaces.</p><div className="pro-audience"><span><Code2 size={18} aria-hidden="true"/><strong>For teams</strong><small>Practical React development and a thoughtful approach to learning.</small></span><span><Workflow size={18} aria-hidden="true"/><strong>For clients</strong><small>Clear communication, useful interfaces and a defined delivery process.</small></span></div></div></div></section>
+    <section id="skills" className="pro-skills pro-container"><div className="pro-section-heading"><div><p className="pro-eyebrow">03 / SKILLS & EXPERTISE</p><h2>The tools.<br/><em>The thinking behind them.</em></h2></div><p>A practical toolkit, grounded in the work—not percentage bars.</p></div><div className="pro-skills-grid">{profile.skills.map((group,index)=><article key={group.title}><span className="pro-number">0{index+1}</span><h3>{group.title}</h3><p>{group.capability}</p><ul>{group.items.map(skill=><li key={skill}>{skill}</li>)}</ul></article>)}</div></section>
+    <section id="experience" className="pro-background pro-container"><div><p className="pro-eyebrow">04 / BACKGROUND</p><h2>Built through<br/><em>practice & learning.</em></h2><p>My experience is demonstrated through the projects above. Employment and internship details have not been supplied.</p></div><div className="pro-timeline"><article><small>PROJECT-BASED EXPERIENCE</small><h3>React frontend development</h3><p>Responsive applications, reusable components, state management, payment flows and API-connected interfaces.</p></article><article><small>2024–2026</small><h3>MBA · Information Technology</h3><p>Naraina College of Engineering & Technology</p></article><article><small>2021–2024</small><h3>Bachelor of Business Administration</h3><p>Naraina College of Management</p></article><article><small>CERTIFICATIONS</small><h3>Continued learning</h3><p>Frontend Development · Coding Ninjas<br/>Generative AI & Digital Marketing · IBM</p></article></div></section>
+    <section id="services" className="pro-services"><div className="pro-container"><div className="pro-section-heading"><div><p className="pro-eyebrow">05 / FOR YOUR NEXT PROJECT</p><h2>From “what if”<br/>to <em>“it works.”</em></h2></div><a className="pro-button pro-button-light" href="#contact">Discuss your project <Arrow/></a></div><div className="pro-services-grid">{profile.services.map((service,index)=><article key={service.title}><span>0{index+1}</span><h3>{service.title}</h3><p>{service.description}</p><small>{service.deliverables}</small></article>)}</div><div className="pro-process">{['Discovery','Planning','Development','Testing','Launch & support'].map((step,index)=><span key={step}><small>0{index+1}</small>{step}{index<4&&<ArrowUpRight size={16} aria-hidden="true"/>}</span>)}</div><p className="pro-service-note">Scope, timelines and post-launch support are agreed before development begins.</p></div></section>
+    <section id="resume" className="pro-resume pro-container"><div><p className="pro-eyebrow">06 / THE SHORT VERSION</p><h2>The background.<br/><em>In one document.</em></h2><p>Projects, technical skills, education and certifications—ready for your hiring conversation.</p></div><div className="pro-resume-card"><span className="pro-paper-icon"><Download size={28} aria-hidden="true"/></span><h3>Tanishq Tiwari</h3><p>React Frontend Developer</p><div className="pro-actions"><a className="pro-button" href={profile.resume} download>Download PDF <Download size={16} aria-hidden="true"/></a><a href={profile.resume} target="_blank" rel="noopener noreferrer" className="pro-text-link">Preview <Arrow/></a></div><small>One PDF. The same document across this website.</small></div></section>
+    <section id="contact" className="pro-contact pro-container"><div><p className="pro-eyebrow">07 / LET’S TALK</p><h2>A role to fill?<br/>An idea to <em>build?</em></h2><p>I’d like to hear about it. Tell me what you’re working on and where I can help.</p><a className="pro-email" href={`mailto:${profile.email}`}>{profile.email} <Arrow/></a><div className="pro-social"><a href={profile.github}>GitHub <Arrow/></a><a href={profile.linkedin}>LinkedIn <Arrow/></a></div></div><ContactForm configured={configured} email={profile.email}/></section>
+    <footer className="pro-footer pro-container"><a className="pro-wordmark" href="#">tanishq<span>.</span></a><p>Thoughtful interfaces. Useful outcomes.</p><div><a href="#work">Work</a><a href="#contact">Contact</a><span>© {new Date().getFullYear()} Tanishq Tiwari</span></div></footer>
+  </main>;
+}

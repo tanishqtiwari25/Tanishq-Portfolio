@@ -3,16 +3,15 @@ import "@fontsource/inter/500.css";
 import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/600.css";
 import "./globals.css";
-import "./arena.css";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo.mjs";
 
 export const metadata = {
   metadataBase: new URL("https://realtanishqtiwari.in"),
   title: {
-    default: "Tanishq Tiwari | Frontend Developer",
+    default: SITE_TITLE,
     template: "%s | Tanishq Tiwari",
   },
-  description:
-    "Frontend Developer specializing in JavaScript, React.js, Next.js, and modern web applications. Explore responsive projects, interactive UIs, and clean frontend architecture.",
+  description: SITE_DESCRIPTION,
   alternates: { canonical: "https://realtanishqtiwari.in" },
   keywords: [
     "Frontend Developer",
@@ -28,19 +27,18 @@ export const metadata = {
   creator: "Tanishq Tiwari",
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: "https://realtanishqtiwari.in",
-    title: "Tanishq Tiwari | Frontend Developer & React Specialist",
-    description:
-      "Frontend Developer building modern, scalable, and user-focused web experiences with React.js, Next.js, and JavaScript.",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
     siteName: "Tanishq Tiwari Portfolio",
+    images: [{ url: "/images/social/portfolio.png", width: 1200, height: 630, alt: "Tanishq Tiwari — Frontend Developer, React, Next.js and JavaScript" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tanishq Tiwari | Frontend Developer",
-    description:
-      "Frontend Developer building modern web experiences with React.js & Next.js.",
-    creator: "@realtanishqtiwari",
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    images: ["/images/social/portfolio.png"],
   },
   robots: {
     index: true,
@@ -54,7 +52,7 @@ export const metadata = {
     },
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },
 };
 
