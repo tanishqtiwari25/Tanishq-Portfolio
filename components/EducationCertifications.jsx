@@ -45,7 +45,7 @@ export default function EducationCertifications() {
           <div className="space-y-8">
             <div className="space-y-2">
               <span className="text-xs font-mono font-semibold uppercase tracking-wider text-accentPrimary">
-                {"// Academic Foundation"}
+                {'// Academic Foundation'}
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-textMain flex items-center gap-2">
                 <GraduationCap className="w-7 h-7 text-accentPrimary" />
@@ -80,7 +80,7 @@ export default function EducationCertifications() {
           <div className="space-y-8">
             <div className="space-y-2">
               <span className="text-xs font-mono font-semibold uppercase tracking-wider text-accentPrimary">
-                {"// Credentials"}
+                {'// Credentials'}
               </span>
               <h2 className="text-2xl sm:text-3xl font-bold text-textMain flex items-center gap-2">
                 <Award className="w-7 h-7 text-accentPrimary" />

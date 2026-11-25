@@ -1,4 +1,4 @@
-# TT Arena portfolio
+# Portfolio enhancement
 
 This is an enhancement of the supplied Next.js App Router / Tailwind portfolio. Personal content, education, experience, social contacts, and valid E-Commerce/Game URLs are preserved. The original ZIP remains untouched.
 
@@ -29,17 +29,13 @@ POST /api/contact validates bounded JSON, checks origin, limits requests, checks
 
 Secrets belong in .env.local or host settings, never NEXT_PUBLIC variables. All environment files are ignored except .env.example. The implementation uses the [Resend send-email API](https://resend.com/docs/api-reference/emails/send-email) and [Next.js Route Handlers](https://nextjs.org/docs/14/app/building-your-application/routing/route-handlers).
 
-## TT Arena experience
+## Design and motion
 
-The homepage is now a real-time React Three Fiber arena: entrance stage, ramp, ring, animated audience, mechanical project display and ringside consoles. One reversible journey controls the camera and development rig. Sound is muted until enabled. Portfolio details and the retained contact form are available through a keyboard-accessible reader.
+The new dark/light design uses self-hosted Space Grotesk and Inter, semantic color tokens, an interactive iridescent R3F sculpture, GSAP/Lenis scroll choreography, desktop custom cursor, bento skills and sticky project cards. Case studies open in keyboard-accessible Motion dialogs. A short first-visit intro gives way to the editorial hero.
 
-See [docs/TT-ARENA.md](docs/TT-ARENA.md) for the implementation, asset status and verification. The previous visual design is retained in source and documented in DESIGN-NOTES.md; Project Pink remains the Git baseline tag.
+Mobile, low-core devices, data-saving connections and reduced-motion preferences use a lightweight CSS sculpture. Desktop 3D is deferred, pixel density is capped and rendering pauses in hidden tabs. Illustrative project artwork is labeled as concept visuals; no product screenshots or testimonials were invented.
 
-The model is a deliberately faceless temporary rig, not a validated likeness of Tanishq. /avatar-review provides front, three-quarter and side views beside the supplied reference photographs. A photo-matched, textured and rigged final character plus authored stair/rope-entry clips are required for final avatar delivery.
-
-Four project previews are captures of the user's live public sites. Data Scraper keeps a labelled identity visual because no screenshot or valid live URL is supplied. No resume file exists in the baseline, so no download was fabricated.
-
-For reproducible checks, /?motion=reduce forces the simplified motion path and /?view=readable selects the WebGL-independent portfolio fallback. Normal reduced-motion settings are respected automatically.
+See [DESIGN-NOTES.md](DESIGN-NOTES.md) for the component map, animation ownership, dependencies, setup and further polish.
 
 ## Projects and content
 
@@ -47,6 +43,6 @@ The five projects remain Data Scraper, Wealth Pilot, Truly Grow, E-Commerce Webs
 
 ## Verification
 
-There are 20 automated tests: 16 contact tests and four reversible-journey/grounding invariants. Run npm test, then npm run build. TypeScript is enabled incrementally through tsconfig.json; existing JSX remains supported. Deployment still requires server-only email settings above.
+Contact validation and delivery handling have 16 automated tests. Run npm test, then npm run build. TypeScript is enabled incrementally through tsconfig.json; existing JSX remains supported. Deployment still requires server-only email settings above.
 
-Current browser verification and dependency-release caveats are documented in docs/TT-ARENA.md. Historical Project Pink measurements are in DESIGN-NOTES.md. Local audit results are measurements of one environment, not a guarantee across devices.
+Performance measurements and browser verification are documented in DESIGN-NOTES.md. Local audit results are measurements of one environment, not a guarantee across devices.

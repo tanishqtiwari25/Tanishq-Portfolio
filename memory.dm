@@ -1,11 +1,9 @@
 # Project memory
 
-- Project name: Arena.
+- Current portfolio: Project Pink.
+- Restored at the user's request from baseline bc5bba8e60098a36c1bd402221164cd0f41ae2f4 (project-pink tag).
 - Owner: Tanishq Tiwari.
-- Arena refers to the existing cinematic 3D portfolio in this directory.
-- Includes the arena journey, projects, skills, experience, education, contact form, adaptive performance settings and React/Next.js focused SEO.
-- When the user says Arena, continue work on this portfolio rather than creating a new project.
-- Project Pink is an earlier portfolio checkpoint; do not confuse it with Arena.
-- This file records project identity. It is not a backup snapshot or a Git tag.
-- Recorded on: 2026-11-24.
-- 2026-11-24: User explicitly requested replacing Arena with a professional recruiter/client portfolio. Homepage now uses the professional design; old Arena is no longer a public route.
+- Original design, dark/light themes, responsive skills and contact handler are restored.
+- Four JSX text-label compatibility fixes preserve the original visual wording.
+- Later Arena and professional editions remain in Git history; the local redesign backup is separate.
+- Environment secrets must remain outside Git.

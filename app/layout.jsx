@@ -3,15 +3,15 @@ import "@fontsource/inter/500.css";
 import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/600.css";
 import "./globals.css";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/seo.mjs";
 
 export const metadata = {
   metadataBase: new URL("https://realtanishqtiwari.in"),
   title: {
-    default: SITE_TITLE,
+    default: "Tanishq Tiwari | Frontend Developer",
     template: "%s | Tanishq Tiwari",
   },
-  description: SITE_DESCRIPTION,
+  description:
+    "Frontend Developer specializing in JavaScript, React.js, Next.js, and modern web applications. Explore responsive projects, interactive UIs, and clean frontend architecture.",
   alternates: { canonical: "https://realtanishqtiwari.in" },
   keywords: [
     "Frontend Developer",
@@ -27,18 +27,19 @@ export const metadata = {
   creator: "Tanishq Tiwari",
   openGraph: {
     type: "website",
-    locale: "en_IN",
+    locale: "en_US",
     url: "https://realtanishqtiwari.in",
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
+    title: "Tanishq Tiwari | Frontend Developer & React Specialist",
+    description:
+      "Frontend Developer building modern, scalable, and user-focused web experiences with React.js, Next.js, and JavaScript.",
     siteName: "Tanishq Tiwari Portfolio",
-    images: [{ url: "/images/social/portfolio.png", width: 1200, height: 630, alt: "Tanishq Tiwari — Frontend Developer, React, Next.js and JavaScript" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: SITE_TITLE,
-    description: SITE_DESCRIPTION,
-    images: ["/images/social/portfolio.png"],
+    title: "Tanishq Tiwari | Frontend Developer",
+    description:
+      "Frontend Developer building modern web experiences with React.js & Next.js.",
+    creator: "@realtanishqtiwari",
   },
   robots: {
     index: true,
@@ -52,7 +53,7 @@ export const metadata = {
     },
   },
   icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    icon: "/favicon.ico",
   },
 };
 
