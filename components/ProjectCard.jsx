@@ -1,5 +1,6 @@
 "use client";
 import ProjectArtwork from "./ProjectArtwork";
+import Link from "next/link";
 import { useRef } from "react";
 import { ArrowUpRight, Github } from "lucide-react";
 export default function ProjectCard({ project, index, onOpenModal }) {
@@ -46,7 +47,7 @@ export default function ProjectCard({ project, index, onOpenModal }) {
           <span>{String(index + 1).padStart(2, "0")} / SELECTED WORK</span>
           <span>{project.category}</span>
         </div>
-        <h3>{project.title}</h3>
+        <h3><Link href={`/work/${project.id}`}>{project.title}</Link></h3>
         {project.subtitle && (
           <p className="project-subtitle">{project.subtitle}</p>
         )}
@@ -60,6 +61,7 @@ export default function ProjectCard({ project, index, onOpenModal }) {
           <button onClick={() => onOpenModal(project)}>
             View case study <ArrowUpRight size={17} />
           </button>
+          <Link href={`/work/${project.id}`} aria-label={`Read ${project.title} case study`}>Full case study ↗</Link>
           <div className="flex gap-4">
             {project.githubUrl && (
               <a

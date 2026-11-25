@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import {trackEvent} from "@/lib/analytics.mjs";
 import { validateContact } from "@/lib/contact-validation.mjs";
 import {
   Mail,

@@ -11,7 +11,7 @@ export default function Hero() {
         </div>
         <div className="hero-copy">
           <p className="hero-intro hero-enter" style={{ "--delay": "100ms" }}>
-            Tanishq Tiwari <span>— Frontend Developer</span>
+            Tanishq Tiwari <span>— React & Next.js Developer · Kanpur</span>
           </p>
           <h1>
             <span className="headline-mask">

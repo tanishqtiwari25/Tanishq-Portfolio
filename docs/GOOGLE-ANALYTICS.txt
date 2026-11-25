@@ -1,0 +1,10 @@
+Google Tag Manager: GTM-P8GZL86K
+Standard bootstrap plus noscript fallback installed; direct GA loader is not used.
+Account configuration still required and not verified:
+- Google tag: actual GA4 G-ID, Initialization All Pages trigger, send_page_view=false.
+- Disable automatic Enhanced Measurement browser-history pageviews.
+- GA4 event page_view: Custom Event trigger portfolio_page_view. Map data layer variables page_location and page_referrer.
+- Custom Event triggers and matching GA4 events: view_case_study, project_open, live_demo_click, generate_lead, resume_download, contact_click. Map project_id, method, document_type as needed. Do not send contact form values.
+- Preview with Tag Assistant, publish container, verify one page_view per route and expected custom events in GA4 Realtime/DebugView.
+Build and unit tests do not verify Google account configuration or incoming Analytics hits.
+https://developers.google.com/tag-platform/tag-manager/datalayer

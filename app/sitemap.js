@@ -1,12 +1,3 @@
 import {projectsData} from '@/data/projectsData';
-export default async function sitemap() {
-  return [
-    ...projectsData.map(project=>({url:`https://realtanishqtiwari.in/work/${project.id}`,changeFrequency:"monthly",priority:0.7})),
-    {
-      url: "https://realtanishqtiwari.in",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 1,
-    },
-  ];
-}
+import {SITE_URL} from '@/lib/seo.mjs';
+export default function sitemap(){return [{url:SITE_URL,changeFrequency:'monthly',priority:1},...projectsData.map(p=>({url:`${SITE_URL}/work/${p.id}`,changeFrequency:'monthly',priority:.7}))];}

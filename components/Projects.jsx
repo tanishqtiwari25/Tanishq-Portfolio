@@ -1,5 +1,6 @@
 "use client";
 
+import {trackEvent} from "@/lib/analytics.mjs";
 import { useState } from "react";
 import { projectsData } from "@/data/projectsData";
 import ProjectCard from "./ProjectCard";
@@ -34,7 +35,7 @@ export default function Projects() {
               key={project.id}
               project={project}
               index={index}
-              onOpenModal={(p) => setSelectedProject(p)}
+              onOpenModal={(p) => {trackEvent("view_case_study",{project_id:p.id});setSelectedProject(p);}}
             />
           ))}
         </div>

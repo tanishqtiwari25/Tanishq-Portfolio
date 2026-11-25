@@ -1,0 +1,29 @@
+PROJECT PINK / SEO AUDIT AND IMPLEMENTATION
+Date: 2026-11-26
+Primary audience: recruiters and clients
+Target: React / Next.js developer; Tanishq Tiwari; Kanpur frontend developer
+
+HIGH: Project pages lacked crawlable homepage links. Source: ProjectCard only opened a modal. Fixed: linked project titles and explicit full-study anchors; modal remains available.
+MEDIUM: Generic root title/description and missing social image. Fixed: consistent React/Next.js and Kanpur positioning, 1200x630 share image, coherent Open Graph and Twitter metadata. Removed unverified Twitter handle.
+MEDIUM: Case pages inherited generic social metadata. Fixed: unique case titles/descriptions, project-specific canonical and Open Graph URLs.
+MEDIUM: Case sections skipped from H1 to H3. Fixed: H2 sections/H3 subsections on full pages; modal keeps H3/H4 below its H2 title.
+MEDIUM: Source did not output profile/project JSON-LD. Added server-rendered Person/WebSite/ProfilePage/ItemList and CreativeWork data using supplied facts. Validation is against generated local HTML, not web-fetch schema detection. No ratings, testimonials or invented credentials.
+LOW: Sitemap generated a new modification date without an editorial change. Removed fabricated freshness; all 9 public canonical URLs retained. /api/ excluded from crawler directives, not used as access control.
+
+PRESERVED: Project Pink appearance, modal, contact service, dark/light themes, original public project routes.
+
+NOT MEASURED / NOT VERIFIED:
+- Live retrieval through the research tool failed. This is not evidence the website is down.
+- Search Console coverage, indexed URLs, impressions, queries, CTR and backlinks: access not provided.
+- Core Web Vitals, mobile rendering and live rich-result validation: not measured; no performance score claimed.
+- The original animated hero/intro still needs real-device LCP/INP/CLS measurement.
+- Detailed content is supplied for four projects. Other overview pages would benefit from genuine contribution details and fuller case-study accounts.
+- No ranking increase or top position is guaranteed.
+
+NEXT AFTER PUBLICATION:
+1. Submit https://realtanishqtiwari.in/sitemap.xml in Google Search Console.
+2. Inspect homepage and the four detailed case-study URLs, then request indexing if appropriate.
+3. Measure mobile field/lab performance and review queries/CTR before further keyword changes.
+4. Provide actual screenshots, project role details and missing detailed studies; avoid invented evidence.
+
+Primary technical reference: https://developers.google.com/search/docs/crawling-indexing/links-crawlable

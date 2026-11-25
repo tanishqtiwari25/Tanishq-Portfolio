@@ -1,3 +1,5 @@
+import {projectsData} from '@/data/projectsData';
+import {profileSchema,serializeSchema} from '@/lib/seo.mjs';
 import Intro from "@/components/Intro";
 import CustomCursor from "@/components/CustomCursor";
 import ScrollExperience from "@/components/ScrollExperience";
@@ -16,6 +18,7 @@ import Footer from "@/components/Footer";
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{__html:serializeSchema(profileSchema(projectsData))}}/>
       <a className="skip-link" href="#about">
         Skip to content
       </a>

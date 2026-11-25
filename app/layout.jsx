@@ -1,17 +1,20 @@
+import GoogleAnalytics from '@/components/GoogleAnalytics';
+import {GTM_CONTAINER_ID} from '@/lib/analytics.mjs';
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/space-grotesk/500.css";
 import "@fontsource/space-grotesk/600.css";
 import "./globals.css";
+import {SITE_TITLE,SITE_DESCRIPTION,SOCIAL_IMAGE} from "@/lib/seo.mjs";
 
 export const metadata = {
   metadataBase: new URL("https://realtanishqtiwari.in"),
   title: {
-    default: "Tanishq Tiwari | Frontend Developer",
+    default: SITE_TITLE,
     template: "%s | Tanishq Tiwari",
   },
   description:
-    "Frontend Developer specializing in JavaScript, React.js, Next.js, and modern web applications. Explore responsive projects, interactive UIs, and clean frontend architecture.",
+    SITE_DESCRIPTION,
   alternates: { canonical: "https://realtanishqtiwari.in" },
   keywords: [
     "Frontend Developer",
@@ -27,19 +30,20 @@ export const metadata = {
   creator: "Tanishq Tiwari",
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: "https://realtanishqtiwari.in",
-    title: "Tanishq Tiwari | Frontend Developer & React Specialist",
+    title: SITE_TITLE,
     description:
-      "Frontend Developer building modern, scalable, and user-focused web experiences with React.js, Next.js, and JavaScript.",
+      SITE_DESCRIPTION,
     siteName: "Tanishq Tiwari Portfolio",
+    images: [{url:SOCIAL_IMAGE,width:1200,height:630,alt:"Tanishq Tiwari — React and Next.js developer in Kanpur"}],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tanishq Tiwari | Frontend Developer",
+    title: SITE_TITLE,
     description:
-      "Frontend Developer building modern web experiences with React.js & Next.js.",
-    creator: "@realtanishqtiwari",
+      SITE_DESCRIPTION,
+    images: [SOCIAL_IMAGE],
   },
   robots: {
     index: true,
@@ -72,7 +76,9 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
         className="bg-background text-textMain min-h-screen flex flex-col font-sans antialiased"
       >
+        <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}`} height="0" width="0" style={{display:'none',visibility:'hidden'}} title="Google Tag Manager"/></noscript>
         {children}
+        <GoogleAnalytics containerId={GTM_CONTAINER_ID}/>
       </body>
     </html>
   );
