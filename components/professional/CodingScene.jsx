@@ -17,14 +17,13 @@ export function Build() {
 export default function CodingScene(){
  const host=useRef(null),count=useRef(0);
  const [length,setLength]=useState(0);
- const [paused,setPaused]=useState(false);
  const hold=useRef(0);
  useEffect(()=>{
   const node=host.current,motion=matchMedia('(prefers-reduced-motion: reduce)');
   let timer,observer;
   const stop=()=>{clearInterval(timer);timer=undefined;node.dataset.running='false';};
   const start=()=>{
-   if(timer||paused||motion.matches||document.hidden)return;
+   if(timer||motion.matches||document.hidden)return;
    node.dataset.running='true';
    timer=setInterval(()=>{
     if(count.current===code.length){
@@ -44,7 +43,7 @@ export default function CodingScene(){
   const visibility=()=>{if(document.hidden)stop();else{observer?.unobserve(node);observer?.observe(node);}};
   setup();motion.addEventListener('change',setup);document.addEventListener('visibilitychange',visibility);
   return()=>{stop();observer?.disconnect();motion.removeEventListener('change',setup);document.removeEventListener('visibilitychange',visibility);};
- },[paused]);
+ },[]);
  const phase=length<80?0:length<150?1:length<220?2:3;
  return <div ref={host} className="pro-hero-art pro-coding-scene" role="group" aria-label="Animated three-dimensional code editor and interface preview">
   <div className="pro-coding-stage" aria-hidden="true">
@@ -54,6 +53,5 @@ export default function CodingScene(){
    <div className="pro-coding-terminal"><small>TERMINAL <span>npm run build</span></small><code>{phase===3?'✓ Your idea is ready.':phase===2?'› Rendering components…':phase===1?'› Building your interface…':'› Writing the first lines…'}<b>_</b></code></div>
    <span className="pro-coding-caption">01 / WRITE &nbsp; → &nbsp; 02 / BUILD &nbsp; → &nbsp; 03 / SHIP</span>
   </div>
-  <button className="pro-coding-motion-toggle" type="button" aria-pressed={paused} onClick={()=>setPaused(value=>!value)}>{paused?'▶ Resume motion':'Ⅱ Pause motion'}</button>
  </div>;
 }
