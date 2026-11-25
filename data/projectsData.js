@@ -1,3 +1,4 @@
+import { caseStudies } from './caseStudies.js';
 const originalProjects = [
   {
     id: "data-scraper-system",
@@ -65,10 +66,25 @@ const originalProjects = [
   }
 ];
 const clean = p => ({...p, githubUrl: p.githubUrl?.includes('your-username') ? '' : p.githubUrl});
-export const projectsData = [
+const pinkProjects = [
 {...clean(originalProjects[0]), title: 'Data Scraper', subtitle: 'Data Scraper & Lead Collection System', visual: 'scraper'},
 { id: 'wealth-pilot', liveUrl: 'https://montra.realtanishqtiwari.in', title: 'Wealth Pilot', category: 'Financial software', shortDescription: 'Wealth Pilot is a financial software designed to help users track and manage their money, including income and expenses.', technologies: [], keyFeatures: ['Income tracking', 'Expense tracking', 'Money management'], visual: 'wealth-pilot' },
 { id: 'truly-grow', liveUrl: 'https://trulygrow.realtanishqtiwari.in', title: 'Truly Grow', category: 'Business / Digital growth', shortDescription: 'A modern business growth website offering web development, digital marketing, SEO and paid advertising services.', technologies: [], keyFeatures: ['Web Development', 'Digital Marketing', 'SEO', 'Paid Ads'], visual: 'grow' },
 {...clean(originalProjects[1]), title: 'E-Commerce Website', visual: 'commerce'},
 {...clean(originalProjects[2]), title: 'Game', subtitle: 'Interactive 2D Browser Game', visual: 'game'}
 ];
+
+const additions = [
+ {id:'sole-track',title:'SoleTrack',visual:'sole',category:'Inventory PWA',technologies:[],keyFeatures:[],githubUrl:'',liveUrl:''},
+ {id:'orbit-crm',title:'Orbit CRM',visual:'orbit',category:'CRM / Team workspace',technologies:[],keyFeatures:[],githubUrl:'',liveUrl:'https://orbit.realtanishqtiwari.in'},
+ {id:'instock',title:'InStock',visual:'instock',category:'Investment research assistant',shortDescription:'An LLM-based assistant connecting market information, news and company reports for stock research.',technologies:['LLM'],keyFeatures:['Market, news and company-report research','LLM-based investment analysis'],githubUrl:'',liveUrl:''}
+];
+export const projectsData = [...pinkProjects,...additions].map(project=>{
+ const study=caseStudies[project.id];
+ if(!study)return project;
+ return {...project,title:study.title,subtitle:study.category,category:study.category,
+  shortDescription:study.description,technologies:study.stack,keyFeatures:study.features,
+  myRole:study.role,liveUrl:study.liveUrl||project.liveUrl,sections:study.sections,
+  problem:undefined,solution:undefined,challenges:undefined,whatILearned:undefined,
+  engagement:study.engagement};
+});

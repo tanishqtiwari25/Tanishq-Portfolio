@@ -1,9 +1,10 @@
 # Project memory
 
-- Current portfolio: Project Pink.
-- Restored at the user's request from baseline bc5bba8e60098a36c1bd402221164cd0f41ae2f4 (project-pink tag).
+- Current portfolio: Project Pink, restored from project-pink baseline bc5bba8.
 - Owner: Tanishq Tiwari.
-- Original design, dark/light themes, responsive skills and contact handler are restored.
-- Four JSX text-label compatibility fixes preserve the original visual wording.
-- Later Arena and professional editions remain in Git history; the local redesign backup is separate.
-- Environment secrets must remain outside Git.
+- Extended with eight projects and detailed owner-supplied Diamond Scraper, SoleTrack, WealthPilot and Orbit CRM case studies.
+- Orbit CRM live URL: https://orbit.realtanishqtiwari.in.
+- Detailed studies open in the original modal and at /work/[project-id].
+- Historical test figures are owner-supplied, not independently re-run product audits.
+- Original Project Pink visuals and dark/light themes are preserved.
+- Environment secrets remain outside Git. Newer redesigns remain in earlier history and local backups.

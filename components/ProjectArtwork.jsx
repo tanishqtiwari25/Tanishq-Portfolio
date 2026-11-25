@@ -69,6 +69,8 @@ export default function ProjectArtwork({ project }) {
           </div>
           <p>A clearer view of your money.</p>
         </div>
+      ) : ['sole','orbit','instock'].includes(project.visual) ? (
+        <div className="pink-product-art"><strong>{project.title}</strong><div>{(project.visual==='sole'?['Receive stock','Review sizes','Bill & share']:project.visual==='orbit'?['Assign work','View team','Track deadlines']:['Market context','Company reports','LLM research']).map((label,index)=><span key={label}><i>0{index+1}</i>{label}</span>)}</div><p>{project.visual==='orbit'?'A shared view of assigned work.':project.visual==='sole'?'Every pair. Every bill. Connected.':'Research context for investment decisions.'}</p></div>
       ) : project.visual === "grow" ? (
         <div className="grow-art">
           <span>TRULY GROW®</span>

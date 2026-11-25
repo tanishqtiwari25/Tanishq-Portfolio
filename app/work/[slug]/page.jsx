@@ -1,0 +1,10 @@
+import Link from 'next/link';
+import {notFound} from 'next/navigation';
+import {projectsData} from '@/data/projectsData';
+import CaseStudySections from '@/components/CaseStudySections';
+export function generateStaticParams(){return projectsData.map(project=>({slug:project.id}));}
+export function generateMetadata({params}){const p=projectsData.find(item=>item.id===params.slug);return p?{title:`${p.title} — Case Study`,description:p.shortDescription,alternates:{canonical:`https://realtanishqtiwari.in/work/${p.id}`}}:{title:'Project not found'};}
+export default function CaseStudy({params}){
+ const project=projectsData.find(item=>item.id===params.slug);if(!project)notFound();
+ return <main className="pink-case-page"><Link className="pink-case-full" href="/#projects">← Back to Project Pink</Link><header><span className="text-accentPrimary text-xs font-mono">PROJECT CASE STUDY / {project.category}</span><h1>{project.title}</h1><p>{project.shortDescription}</p><div className="pink-case-actions">{project.liveUrl&&<a href={project.liveUrl} target="_blank" rel="noopener noreferrer">Live project ↗</a>}{project.githubUrl&&<a href={project.githubUrl} target="_blank" rel="noopener noreferrer">Source ↗</a>}</div></header><div className="pink-case-summary"><p><strong>Contribution</strong>{project.myRole||'Individual contribution details not supplied.'}</p><p><strong>Technologies</strong>{project.technologies.join(' · ')||'Details not supplied.'}</p>{project.engagement&&<p><strong>Context</strong>{project.engagement}</p>}</div>{project.sections?<CaseStudySections sections={project.sections}/>:<div className="pink-case-sections"><section><h3>Project overview</h3><p>{project.problem||project.shortDescription}</p>{project.solution&&<p>{project.solution}</p>}<ul>{project.keyFeatures.map(text=><li key={text}>{text}</li>)}</ul><p className="pink-case-note">A detailed case-study account for this project has not been supplied.</p></section></div>}<footer><Link className="pink-case-full" href="/#contact">Discuss a similar project ↗</Link><Link href="/#projects">Explore all projects</Link></footer></main>;
+}

@@ -1,6 +1,8 @@
 "use client";
 
 import ProjectArtwork from "./ProjectArtwork";
+import CaseStudySections from "./CaseStudySections";
+import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import {
@@ -24,7 +26,7 @@ export default function ProjectModal({ project, onClose }) {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") onClose();
       if (e.key === "Tab") {
-        const items = dialog.current.querySelectorAll("button,a[href]");
+        const items = dialog.current.querySelectorAll('button:not([disabled]),a[href],summary,[tabindex="0"]');
         const first = items[0],
           last = items[items.length - 1];
         if (e.shiftKey && document.activeElement === first) {
@@ -96,6 +98,7 @@ export default function ProjectModal({ project, onClose }) {
             <span>PROJECT NOTES / SELECTED WORK</span>
             <h3>{project.title}</h3>
           </div>
+          {project.sections ? <><p>{project.shortDescription}</p><div className="pink-case-summary"><p><strong>Contribution</strong>{project.myRole}</p><p><strong>Stack</strong>{project.technologies.join(' · ')}</p><p><strong>Context</strong>{project.engagement}</p></div><Link href={`/work/${project.id}`} className="pink-case-full">Open full case study ↗</Link><CaseStudySections sections={project.sections}/></> : <>
           {/* Overview */}
           <div className="space-y-2">
             <h3 className="text-xs font-mono font-semibold text-textMain uppercase tracking-wider flex items-center gap-1.5">
@@ -185,7 +188,8 @@ export default function ProjectModal({ project, onClose }) {
                 </div>
               </div>
             </>
-          )}
+          )}</>}
+
         </div>
 
         {/* Modal Footer Links */}
