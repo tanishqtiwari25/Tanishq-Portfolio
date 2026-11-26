@@ -1,5 +1,6 @@
 import {projectsData} from '@/data/projectsData';
 import {profileSchema,serializeSchema} from '@/lib/seo.mjs';
+import ContentMotion from "@/components/ContentMotion";
 import Intro from "@/components/Intro";
 import CustomCursor from "@/components/CustomCursor";
 import ScrollExperience from "@/components/ScrollExperience";
@@ -26,6 +27,7 @@ export default function Home() {
       <CustomCursor />
       <ThreeBackground />
       <ScrollExperience />
+      <ContentMotion />
       <Navbar />
       <Hero />
       <About />

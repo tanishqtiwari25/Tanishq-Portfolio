@@ -17,17 +17,6 @@ export default function ScrollExperience() {
       const tick = (time) => lenis.raf(time * 1000);
       lenis.on("scroll", ScrollTrigger.update);
       gsap.ticker.add(tick);
-      gsap.utils
-        .toArray("section:not(#home) h2, section:not(#home) .rounded-2xl")
-        .forEach((el) => {
-          gsap.from(el, {
-            opacity: 0,
-            y: 24,
-            duration: 0.75,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 94%", once: true },
-          });
-        });
       gsap.fromTo(
         ".timeline-track",
         { scaleY: 0 },

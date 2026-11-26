@@ -1406,3 +1406,31 @@ footer p {
     backdrop-filter: none;
   }
 }
+
+/* Project Pink: restrained, compositor-only interaction details. */
+@media (prefers-reduced-motion: no-preference) {
+  .primary-button svg, .secondary-button svg, .project-actions svg {
+    transition: transform 220ms cubic-bezier(.2,.8,.2,1);
+  }
+  .primary-button:focus-visible svg, .secondary-button:focus-visible svg,
+  .project-actions a:focus-visible svg, .project-actions button:focus-visible svg {
+    transform: translate(2px,-2px);
+  }
+  .project-visual > .pink-product-art, .project-visual > .scraper-art,
+  .project-visual > .wealth-art, .project-visual > .grow-art,
+  .project-visual > .commerce-art, .project-visual > .game-art {
+    transition: transform 500ms cubic-bezier(.16,1,.3,1);
+  }
+}
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+  .skills-bento > div {transition: transform 280ms cubic-bezier(.16,1,.3,1), border-color 220ms;}
+  .skills-bento > div:hover {transform: translateY(-4px);}
+  .project-card:hover .project-visual > .pink-product-art,
+  .project-card:hover .project-visual > .scraper-art,
+  .project-card:hover .project-visual > .wealth-art,
+  .project-card:hover .project-visual > .grow-art,
+  .project-card:hover .project-visual > .commerce-art,
+  .project-card:hover .project-visual > .game-art {transform: translateY(-5px) scale(1.025);}
+  .primary-button:hover svg, .secondary-button:hover svg,
+  .project-actions a:hover svg, .project-actions button:hover svg {transform: translate(2px,-2px);}
+}
