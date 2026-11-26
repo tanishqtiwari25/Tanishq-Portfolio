@@ -1,10 +1,7 @@
-Google Tag Manager: GTM-P8GZL86K
-Standard bootstrap plus noscript fallback installed; direct GA loader is not used.
-Account configuration still required and not verified:
-- Google tag: actual GA4 G-ID, Initialization All Pages trigger, send_page_view=false.
-- Disable automatic Enhanced Measurement browser-history pageviews.
-- GA4 event page_view: Custom Event trigger portfolio_page_view. Map data layer variables page_location and page_referrer.
-- Custom Event triggers and matching GA4 events: view_case_study, project_open, live_demo_click, generate_lead, resume_download, contact_click. Map project_id, method, document_type as needed. Do not send contact form values.
-- Preview with Tag Assistant, publish container, verify one page_view per route and expected custom events in GA4 Realtime/DebugView.
-Build and unit tests do not verify Google account configuration or incoming Analytics hits.
-https://developers.google.com/tag-platform/tag-manager/datalayer
+Direct GA4 integration: G-PDFPRY3HD2 (public ID supplied by owner).
+Replaces GTM-P8GZL86K loader and noscript iframe; no GTM tag publishing required.
+Google tag loads after hydration; config send_page_view=false prevents its automatic initial pageview. The application sends a page_view once per pathname including initial load. Page URLs and referrers exclude query/hash.
+Custom events: view_case_study, project_open, live_demo_click, generate_lead, resume_download, contact_click. Parameters are allowlisted and exclude contact form contents.
+Account-side verification still pending: disable GA4 Enhanced Measurement page changes based on browser history to avoid duplicate SPA pageviews. Optionally disable automatic form, outbound and download events if using only the custom events.
+After deployment, check GA4 Realtime/DebugView on a fresh visit and client-side navigation. Confirm one page_view per route and the expected events. Ad blockers or denied storage may prevent measurement.
+Build/tests verify code only; no incoming production Analytics hits or account settings have been verified.

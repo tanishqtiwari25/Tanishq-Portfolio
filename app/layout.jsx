@@ -1,5 +1,5 @@
 import GoogleAnalytics from '@/components/GoogleAnalytics';
-import {GTM_CONTAINER_ID} from '@/lib/analytics.mjs';
+import {GA_MEASUREMENT_ID} from '@/lib/analytics.mjs';
 import "@fontsource/inter/400.css";
 import "@fontsource/inter/500.css";
 import "@fontsource/space-grotesk/500.css";
@@ -76,9 +76,8 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning
         className="bg-background text-textMain min-h-screen flex flex-col font-sans antialiased"
       >
-        <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}`} height="0" width="0" style={{display:'none',visibility:'hidden'}} title="Google Tag Manager"/></noscript>
         {children}
-        <GoogleAnalytics containerId={GTM_CONTAINER_ID}/>
+        <GoogleAnalytics measurementId={GA_MEASUREMENT_ID}/>
       </body>
     </html>
   );
